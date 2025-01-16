@@ -1,0 +1,3 @@
+[submodule "practica-pokedex/pokemon.json"]
+	path = practica-pokedex/pokemon.json
+	url = https://github.com/fanzeyi/pokemon.json.git

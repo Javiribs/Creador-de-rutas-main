@@ -1,0 +1,15 @@
+body {
+
+    header {
+      grid-column-start: span 12;
+    }
+  
+    main {
+      grid-column-start: span 9;
+      display: flex;
+    }
+  
+    aside {
+      grid-column-start: span 3;
+    }
+  }

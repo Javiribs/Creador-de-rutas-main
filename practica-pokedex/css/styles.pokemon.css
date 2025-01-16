@@ -1,0 +1,277 @@
+.debug {
+    padding: 1em;
+    background-color: rgba(241, 8, 8, .3);
+  }
+  
+  [hidden] {
+    display: none;
+  }
+  
+  body {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    row-gap: 1em;
+    font-size: 18px;
+    font-family: Arial, Helvetica, sans-serif;
+  
+    header {
+      grid-column-start: span 12;
+      display: flex;
+      row-gap: 1em;
+      flex-direction: column-reverse;
+  
+      h1 {
+        font-size: 2em;
+      }
+  
+      nav {
+        background-color: white;
+  
+        ol {
+          display: flex;
+          justify-content: space-evenly;
+          column-gap: 1px;
+  
+          li {
+            flex-grow: 1;
+  
+            a {
+              display: block;
+              line-height: calc(3em - 5px);
+              text-align: center;
+              text-decoration: none;
+              border-bottom: 5px;
+              border-color: red;
+              border-style: solid;
+  
+              &.active,
+              &:hover {
+                background-color: blue;
+                border-color: blue;
+                color: white;
+              }
+            }
+          }
+        }
+      }
+    }
+  
+    main {
+      grid-column-start: span 12;
+      display: flex;
+      flex-direction: column;
+      row-gap: 1em;
+  
+      .taglist {
+        display: flex;
+        column-gap: 10px;
+  
+  
+        .tag {
+          border-radius: 5px;
+          line-height: 2em;
+          text-align: center;
+          padding: 0 1em;
+  
+          /**
+          selector es:
+          <element class="tag">
+          <element class="tag">
+          */
+          &:has(+ .tag),
+          &+.tag {
+            flex-grow: 1;
+            padding: 0;
+          }
+  
+          &.grass {
+            background-color: #9bcc50;
+          }
+          &.poison {
+            background-color: #b97fc9;
+            color: white;
+          }
+          &.bug {
+            background-color: #729f3f;
+            color: white;
+          }
+          &.normal {
+            background-color: #a4acaf;
+            color: white;
+          }
+          &.flying {
+            background: linear-gradient(180deg, #3dc7ef 50%, #bdb9b8 50%);
+          }
+          &.ground {
+            background: linear-gradient(180deg, #f7de3f 50%, #ab9842 50%);
+          }
+          &.water {
+            background-color: #4592c4;
+            color: white;
+          }
+          &.electric {
+            background-color: #eed535;
+          }
+          &.steel {
+            background-color: #9eb7b8;
+          }
+          &.ice {
+            background-color: #51c4e7;
+          }
+          &.psychic {
+            background-color: #f366b9;
+            color: white;
+          }
+          &.fighting {
+            background-color: #d56723;
+            color: white;
+          }
+          &.rock {
+            background-color: #a38c21;
+            color: white;
+          }
+          &.fairy {
+            background-color: #fdb9e9;
+          }
+          &.fire {
+            background-color: #fd7d24;
+            color: white;
+          }
+          &.dragon {
+            background: linear-gradient(180deg, #53a4cf 50%, #f16e57 50%);
+            color: white;
+          }
+          &.dark {
+            background-color: #707070;
+            color: white;
+          }
+          &.ghost {
+            background-color: #7b62a3;
+            color: white;
+          }
+        }
+      }
+  
+  
+      .pokemon-gallery {
+        --gallery-columns: 3;
+        --gallery-column-width: 276px;
+        display: grid;
+        grid-template-columns: repeat(var(--gallery-columns), 1fr);
+        width: calc(var(--gallery-column-width)*var(--gallery-columns));
+        justify-items: center;
+        margin: 0 auto;
+        background-color: white;
+  
+        .pokemon-card {
+          width: calc(var(--gallery-column-width) - 20px);
+        }
+      }
+  
+      .pokemon-card {
+        padding: 10px 10px 20px;
+  
+        a {
+          text-decoration: none;
+  
+          figure {
+            img {
+              display: block;
+              width: 100%;
+              max-width: 100%;
+              border-radius: 5px;
+              transition: margin-top .3s;
+  
+              &:hover {
+                margin-top: -20px;
+              }
+            }
+  
+            figcaption {
+              margin-top: .3em;
+              font-size: .8em;
+              color: #919191;
+            }
+          }
+        }
+  
+        h1 {
+          margin-top: .5em;
+          font-weight: bold;
+        }
+  
+        p {
+          margin-top: .5em;
+        }
+      }
+  
+      form {
+        display: flex;
+        flex-direction: row;
+        column-gap: 1em;
+        padding: 1em;
+        align-items: flex-end;
+        background-color: #333;
+  
+        fieldset {
+          display: flex;
+          flex-direction: column;
+          row-gap: 1em;
+          width: 100px;
+  
+          label {
+            font-weight: bold;
+            color: white;
+          }
+  
+          input {
+            width: 200px;
+            line-height: 40px;
+            font-size: 36px;
+          }
+        }
+  
+        button {
+          height: 45px;
+          width: 80px;
+          font-size: 24px;
+          background-color: red;
+          border-radius: 8px;
+          border-width: 0;
+          cursor: pointer;
+          color: white;
+        }
+  
+        p {
+          padding: 1em;
+          flex-grow: 1;
+          border-radius: 10px;
+          background-color: green;
+          color: white;
+          height: calc(100% - 2em);
+          line-height: 1.3em;
+        }
+      }
+  
+      table {
+        width: 100%;
+        background-color: white;
+  
+        caption {
+          line-height: 2em;
+          font-weight: bold;
+        }
+      }
+  
+      /* LO DEJO COMO REFERENCIA, pero no se usa */
+      /* .old-pokemon-gallery {
+        display: flex;
+        flex-wrap: wrap;
+        background-color: white;
+        li {
+          max-width: 25%;
+          flex-grow: 1;
+        }
+      } */
+    }
+  }

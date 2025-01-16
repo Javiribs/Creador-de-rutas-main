@@ -1,0 +1,14 @@
+body {
+
+    header {
+      grid-column-start: span 12;
+    }
+  
+    main {
+      grid-column-start: span 12;
+    }
+  
+    aside {
+      grid-column-start: span 12;
+    }
+  }

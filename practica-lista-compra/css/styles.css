@@ -1,0 +1,71 @@
+[hidden] {
+    display: none;
+  }
+  
+  .debug {
+    background-color: rgba(241, 8, 8, .3);
+  }
+  
+  body {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+  
+    font-size: 18px;
+  
+    header {
+      display: flex;
+      justify-content: space-between;
+      padding: 1em;
+      color: #ccc;
+  
+      h1 {
+        font-size: 2em;
+      }
+    }
+    main {
+      display: flex;
+      flex-direction: column;
+      margin-top: 1em;
+      padding: 1em;
+      form {
+        display: flex;
+        gap: .5em;
+        flex-direction: column;
+        padding: .3em;
+        fieldset {
+          display: flex;
+        }
+      }
+      #log {
+        margin: 1em 0 0;
+        padding: .3em;
+      }
+      table {
+        margin-top: 1em;
+        width: 100%;
+        th,
+        td {
+          border: 1px solid #000;
+          padding: .3em;
+        }
+      }
+    }
+    aside {
+      display: flex;
+      flex-direction: column;
+      margin-top: 1em;
+      padding: 1em;
+      gap: .5em;
+      justify-content: flex-start;
+  
+  
+      nav {
+        display: flex;
+        gap: .5em;
+        padding: .3em;
+        li {
+          padding: .3em;
+        }
+      }
+    }
+  }
