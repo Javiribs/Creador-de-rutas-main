@@ -1,71 +1,144 @@
+/* Ocultar elementos */
 [hidden] {
-    display: none;
-  }
-  
-  .debug {
-    background-color: rgba(241, 8, 8, .3);
-  }
-  
-  body {
-    display: grid;
-    grid-template-columns: repeat(12, 1fr);
-  
-    font-size: 18px;
-  
-    header {
-      display: flex;
-      justify-content: space-between;
-      padding: 1em;
-      color: #ccc;
-  
-      h1 {
-        font-size: 2em;
-      }
-    }
-    main {
-      display: flex;
-      flex-direction: column;
-      margin-top: 1em;
-      padding: 1em;
-      form {
-        display: flex;
-        gap: .5em;
-        flex-direction: column;
-        padding: .3em;
-        fieldset {
-          display: flex;
-        }
-      }
-      #log {
-        margin: 1em 0 0;
-        padding: .3em;
-      }
-      table {
-        margin-top: 1em;
-        width: 100%;
-        th,
-        td {
-          border: 1px solid #000;
-          padding: .3em;
-        }
-      }
-    }
-    aside {
-      display: flex;
-      flex-direction: column;
-      margin-top: 1em;
-      padding: 1em;
-      gap: .5em;
-      justify-content: flex-start;
-  
-  
-      nav {
-        display: flex;
-        gap: .5em;
-        padding: .3em;
-        li {
-          padding: .3em;
-        }
-      }
-    }
-  }
+  display: none;
+}
+
+/* Modo de depuración */
+.debug {
+  background-color: rgba(0, 0, 0, 0.1);  /* Gris suave */
+  color: #333;  /* Negro para el texto */
+  padding: 0.5em;
+  border-radius: 4px;
+  font-weight: bold;
+}
+
+/* Estilos generales */
+body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f4f4; /* Gris muy claro */
+  color: #333; /* Negro para el texto */
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  font-size: 18px;
+  margin: 0;
+  padding: 0;
+}
+
+/* Cabecera */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5em;
+  background-color: #333; /* Negro */
+  color: #fff;  /* Blanco para el texto */
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+header h1 {
+  font-size: 2em;
+  text-align: center;  
+  margin: 0 auto;     
+  width: fit-content; 
+}
+
+/* Contenido principal */
+main {
+  display: flex;
+  flex-direction: column;
+  padding: 2em;
+  background-color: #fff; /* Blanco */
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  margin-top: 2em;
+}
+
+form {
+  display: flex;
+  gap: 1em;
+  flex-direction: column;
+  padding: 1em;
+  border: 1px solid #ccc; /* Gris claro */
+  border-radius: 8px;
+  background-color: #fafafa; /* Gris muy claro */
+}
+
+form fieldset {
+  display: flex;
+  gap: 1em;
+}
+
+#log {
+  margin-top: 1em;
+  padding: 1em;
+  background-color: #f1f1f1; /* Gris muy claro */
+  border-radius: 8px;
+  border: 1px solid #ccc; /* Gris claro */
+}
+
+/* Estilo para la tabla */
+table {
+  margin-top: 2em;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table th, table td {
+  padding: 1em;
+  text-align: left;
+  border: 1px solid #ccc; /* Gris claro */
+}
+
+table th {
+  background-color: #f4f4f4; /* Gris muy claro */
+  font-weight: bold;
+}
+
+table td {
+  background-color: #fff; /* Blanco */
+}
+
+/* Estilo para la barra lateral */
+aside {
+  display: flex;
+  flex-direction: column;
+  margin-top: 2em;
+  padding: 1.5em;
+  background-color: #fff; /* Blanco */
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+aside nav {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
+
+aside nav li {
+  padding: 0.8em;
+  background-color: #f4f4f4; /* Gris muy claro */
+  border-radius: 8px;
+  transition: background-color 0.3s;
+}
+
+aside nav li:hover {
+  background-color: #333; /* Negro */
+  color: #fff; /* Blanco */
+}
+
+/* Estilo de los elementos interactivos */
+button {
+  background-color: #333; /* Negro */
+  color: white;
+  padding: 0.8em;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #222; /* Gris oscuro */
+}
