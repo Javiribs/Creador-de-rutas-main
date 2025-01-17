@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Práctica del Master de Fullstack</title>
+    <title>Práctica del Bootcamp de Fullstack</title>
     <script type="importmap">
       {
         "imports": {
@@ -17,39 +17,35 @@
       }
     </script>
     <!-- <script type="module" src="./js/index.modules.js" defer></script> -->
-    <script src="./js/index.practica.js"></script>
+    <!-- <script src="./js/index.practica.js"></script> -->
+    <script type="module" src="./js/compra.js"></script>
     <link rel="stylesheet" href="./css/reset.css"></link>
     <link rel="stylesheet" href="./css/styles.css"></link>
     <link rel="stylesheet" href="./css/styles.mobile.css" media="screen and (max-width: 768px)"></link>
     <link rel="stylesheet" href="./css/styles.desktop.css" media="screen and (min-width: 769px)"></link>
   </head>
-  <body class="debug">
-    <header class="debug">
+  <body>
+    <header>
       <h1>Lista de la compra <span hidden id="total"></span></h1>
     </header>
-    <main class="debug">
-      <form id="formulario" class="debug">
-        <fieldset>
-          <legend>Añadir a la lista</legend>
-          <!-- <datalist id="productos"></datalist> -->
-          <label>Nombre: <input type="text" id="article" placeholder="nuevo artículo" list="productos" autocomplete="off" /></label>
-          <label>Cantidad: <input type="number" id="qty" placeholder="0" min="0" max="10" step="1" /></label>
-          <label>Precio: <input type="number" id="price" placeholder="0€" min="0" max="100" step="1" /></label>
-          <button type="button" id="newArticle" onclick="addToShoppingList()">Añadir</button>
-          <button type="reset" id="newList" onclick="resetShoppingList()">Nueva lista de la compra</button>
-        </fieldset>
-        <fieldset hidden>
-          <legend>Filtrar</legend>
-          <input type="text" id="filtro" placeholder="nombre del artículo" autocomplete="off" />
-        </fieldset>
+    <main>
+      <h1>Añadir a la lista</h1>
+      <form id="articleForm">
+        <!-- <datalist id="productos"></datalist> -->
+        <label>Nombre: <input type="text" id="articleName" placeholder="nuevo artículo" list="productos" autocomplete="off" /></label>
+        <label>Cantidad: <input type="number" id="qty" placeholder="0" min="0" max="10" step="1" /></label>
+        <label>Precio: <input type="number" id="price" placeholder="0€" min="0" max="100" step="1" /></label>
+        <button type="button" id="newArticle" disabled>Añadir</button>
+        <button type="reset" id="newList">Nueva lista de la compra</button>
       </form>
-      <table id="shoppingListTable" class="debug">
+      <table id="shoppingListTable">
         <thead>
           <tr>
             <th>cantidad</th>
             <th>nombre del artículo</th>
             <th>precio</th>
             <th>subtotal</th>
+            <th></th>
           </tr>
         </thead>
         <tbody id="shoppingListTableBody">
@@ -58,18 +54,17 @@
           <tr>
             <th colspan="3">TOTAL:</th>
             <td><span id="shoppingListTableTotal">XXXX</span> €</td>
+            <td></td>
           </tr>
         </tfoot>
       </table>
     </main>
-    <aside class="debug">
-      <nav class="debug">
-        <ul class="debug">
-          <li class="debug">Opción de menú 1</li>
-          <li class="debug">Opción de menú 2</li>
-          <li class="debug">Opción de menú 3</li>
-          <li class="debug">Opción de menú 4</li>
-          <li class="debug">Opción de menú 5</li>
+    <aside id="menu">
+      <nav>
+        <ul>
+          <li><a href="#">Histórico</a></li>
+          <li><a href="#">Menús</a></li>
+          <li><a href="#">Estadísticas</a></li>
         </ul>
       </nav>
     </aside>
