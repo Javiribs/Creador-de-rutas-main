@@ -113,7 +113,7 @@ aside {
 aside nav {
   display: flex;
   flex-direction: column;
-  gap: 1em;
+  gap: 1em;  
 }
 
 aside nav li {
@@ -142,3 +142,8 @@ button {
 button:hover {
   background-color: #222; /* Gris oscuro */
 }
+
+aside nav li a {
+  color: rgb(37, 30, 30);
+}
+

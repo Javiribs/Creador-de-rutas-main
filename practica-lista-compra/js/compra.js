@@ -1,3 +1,6 @@
+//importar api lista productos
+import USUAL_PRODUCTS from '../api/get.articles.json' with { type: 'json' }
+
 // Crear una lista de compras vacía (shoppingList) para ser rellenar con productos.
 const shoppingList = []
 // Assign DOM Content Loaded event
@@ -34,6 +37,7 @@ function onDomContentLoaded() {
     addNewRowToShoppingListTable(savedArticle)
   });  
   getShoppingListTotalAmount() //Calcular el monto total de la lista de compras llamando a la función `getShoppingListTotalAmount`.
+  getUsualProducts() //Llamamos funcion que optiene datos de una API
 }
 //Obtener referencias al elemento de entrada del nombre del artículo (`articleNameElement`) y al botón "Agregar Nuevo Artículo" (`newArticleElement`).
 function onArticleNameKeyUp(e) {
@@ -220,4 +224,30 @@ function getShoppingListTotalAmount() {
 function resetFocus(){
   const articleNameElement = document.getElementById('articleName')
   articleNameElement.focus()
+}
+
+//Obtener elementos de una lista (API) local
+async function getUsualProducts() {
+    const dataListElement = document.getElementById('productos')
+    const apiData = await getAPIData()
+
+    apiData.forEach((product) => {
+        const newOptionElement = document.createElement('option')
+        newOptionElement.value = product.name
+        dataListElement.appendChild(newOptionElement)
+    })
+}
+
+async function getAPIData() {
+  const API_USUAL_PRODUCT_URL = 'api/get.articles.json'
+
+  const apiData = await fetch(API_USUAL_PRODUCT_URL)
+    .then((response) => {
+      if (!response.ok) {
+        showError(response.status)
+    }
+      return response.json();
+    })
+
+    return apiData
 }
