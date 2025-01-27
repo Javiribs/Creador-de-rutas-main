@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Creador de Rutas</title>
+  <link rel="stylesheet" href="./css/reset.css" />
+  <link rel="stylesheet" href="./css/style.rutas.css" />
+  <script type="module" src="./js/creador.rutas.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+</head>
+<body class="debug">
+  <!-- Cabecera de la página -->
+  <header>
+    <h1>Creador de Rutas</h1>
+    <nav>
+      <ol>
+        <li><a href="index.html" class="active">Buscador</a></li>
+        <li><a href="#">Perfil</a></li>
+        <li><a href="#">Ajustes</a></li>
+      </ol>
+    </nav>
+  </header>
+  <!-- Componente: creador -->
+  <main>
+    <form id="searchForm">
+      <fieldset>
+        <label for="search">Qué ciudad quieres visitar?</label>
+        <input list="ciudades" type="text" id="searchInput" autocomplete="off" />
+        <datalist id="ciudades"></datalist>
+      </fieldset>
+      <button type="button" id="searchButton" title="Buscar">Buscar</button>
+    </form>
+    <!-- Componente: Nombre ciudad como título -->
+    <h1 class="tituloCiudad" id="tituloCiudad"></h1>
+    <!-- Componente: lista de paradas a visitar -->
+    <ol class="paradas-interesantes"></ol>
+  </main>
+</body>
+</html>
