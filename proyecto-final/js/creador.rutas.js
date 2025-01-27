@@ -88,22 +88,25 @@ function searchButtonOnClick(e) {
         resultadosList.innerHTML = ''
     }
     const searchInput = document.getElementById('searchInput')
-        //aseguramos que el input pase a minúscula
-        //a la vez que pasamos el valor sarch input(del usuario) por la funcion que obtiene su value
-        const nameBuscado = getInputValue(searchInput)?.toLowerCase()
-        //condición para que input y info de json coincidan(buscador)
-        const ciudadEncontrada = ciudades.find((/** @type {{ name: string; }} */ ciudad) => ciudad.name.toLowerCase() === nameBuscado) 
-           if (ciudadEncontrada) {
-           const nameEncontrado = ciudadEncontrada
-           //funcion que imprime nombre ciudad buscada
-           addTitle(nameEncontrado)
-           //funcion que imprime lista monumentos ciudad buscada
-           addParadasList(ciudadEncontrada)
-           console.log("La ciudad encontrada es:", nameEncontrado)
+    //aseguramos que el input pase a minúscula
+    //a la vez que pasamos el valor sarch input(del usuario) por la funcion que obtiene su value
+    const nameBuscado = getInputValue(searchInput)?.toLowerCase()
+    //obtenemos el nombre de la ciudad buscada para que se tenga en cuenta el país
+    const nombreCiudad = nameBuscado.split(' (')[0]
+    //condición para que input y info de json coincidan(buscador)
+    const ciudadEncontrada = ciudades.find((/** @type {{ name: string; }} */ ciudad) => ciudad.name.toLowerCase() === nombreCiudad) 
+    
+    if (ciudadEncontrada) {
+        const nameEncontrado = ciudadEncontrada
+        //funcion que imprime nombre ciudad buscada
+        addTitle(nameEncontrado)
+        //funcion que imprime lista monumentos ciudad buscada
+        addParadasList(ciudadEncontrada)
+        console.log("La ciudad encontrada es:", nameEncontrado)
         } else {
-            notFound(nameBuscado)
-            console.log('Ciudad no encontrada')
-    }
+        notFound(nameBuscado)
+        console.log('Ciudad no encontrada')
+        }
     searchInput?.setAttribute('value', " ")
 }
 //C.R.U.D
@@ -145,8 +148,10 @@ function addParadasList(ciudadEncontrada){
     paradas.forEach (( /** @type {{ nombre_parada: string; imagen: string; descripcion: string; categoria: string; }} */ parada) => {
     //Crear elemntos en DOM para almacenar la info
     const newParadasItem = document.createElement('li')
+    const newArticleParadas = document.createElement('article')
     const newFigureParadas = document.createElement('figure')
     const newImgParadas = document.createElement('img')
+    const newCardParadas = document.createElement('section')
     const newNameParadas = document.createElement('h2')
     const newDescriptionParadas = document.createElement('p')
     const newCategoriaParadas = document.createElement('h3')
@@ -154,15 +159,18 @@ function addParadasList(ciudadEncontrada){
 
     //Asociar cada elemento DOM con info de json
     //Asociar cada elemento hijo con su padre
-    newParadasItem.appendChild(newFigureParadas)
+    newParadasItem.appendChild(newArticleParadas)
+    newArticleParadas.appendChild(newFigureParadas)
     newImgParadas.src = parada.imagen
     newFigureParadas.appendChild(newImgParadas)
+    newArticleParadas.appendChild(newCardParadas)
     newNameParadas.innerText = parada.nombre_parada
-    newParadasItem.appendChild(newNameParadas)
+    newCardParadas.appendChild(newNameParadas)
     newDescriptionParadas.innerText = parada.descripcion
-    newParadasItem.appendChild(newDescriptionParadas)
-    newCategoriaParadas.innerText = parada.categoria
-    newParadasItem.appendChild(newCategoriaParadas)
+    newCardParadas.appendChild(newDescriptionParadas)
+    newCategoriaParadas.innerText = 'Categoría: ' + parada.categoria
+    newCardParadas.appendChild(newCategoriaParadas)
+    
     //almacenado todo a la OL del html
     LISTADO.appendChild(newParadasItem)
     })

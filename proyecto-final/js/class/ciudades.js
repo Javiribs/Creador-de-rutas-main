@@ -21,6 +21,7 @@
     }
 } 
 
+
 //creamos la clase paradas (objeto con info interior)
  export class Paradas {
     id
