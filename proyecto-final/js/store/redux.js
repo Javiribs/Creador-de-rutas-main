@@ -109,10 +109,25 @@ const ACTION_TYPES = {
     }
   }
   
+/**
+ * @typedef {Object} PublicMethods
+ * @property {function} create
+  *@property {function} update
+ * @property {function} delete
+ * @property {function} read
+ * @property {function} getById
+ * @property {function} getAll
+ * /
+/**
+ * @typedef {Object} Store
+ * @property {function} getState
+ * @property {PublicMethods} ciudad
+ * @property {PublicMethods} parada
+ */
   /**
  * Creates the store singleton.
  * @param {appReducer} reducer
- * @returns {Object}
+ * @returns {Store}
  */
   const createStore = (/** @type {any} */ reducer) => {
     let currentState = INITIAL_STATE
@@ -164,13 +179,36 @@ const deleteParada = (paradas) => _dispatch({ type: ACTION_TYPES.DELETE_PARADA, 
 const readList = () => _dispatch({ type: ACTION_TYPES.READ_LIST });
 
 // Public methods
+ /**
+   *
+   * @returns {State}
+   */
 const getState = () => { return currentState };
 /**
- * Returns the article with the specified id
+ * Returns the ciudad with the specified id
  * @param {string} id
  * @returns {Ciudad | undefined}
  */
 const getCiudadById = (id) => { return currentState.ciudad.find((/** @type {Ciudad} */ ciudad) => ciudad.id === id) };
+
+/**
+ * Returns the parada with the specified id
+ * @param {string} id
+ * @returns {Paradas | undefined}
+ */
+const getParadaById = (id) => { return currentState.ciudad.find((/** @type {Paradas} */ parada) => parada.id === id) };
+
+ /**
+   * Returns all the ciudades
+   * @returns {Array<Ciudad>}
+   */
+ const getAllCiudades = () => { return currentState.ciudades };
+
+ /**
+   * Returns all the paradas
+   * @returns {Array<Paradas>}
+   */
+ const getAllParadas = () => { return currentState.paradas };
 
     // Private methods
   /**
@@ -216,16 +254,33 @@ const getCiudadById = (id) => { return currentState.ciudad.find((/** @type {Ciud
     }, {});
   }
  
+// Namespaced actions
+  /** @type {PublicMethods} */
+  const ciudad = {
+    create: createCiudad,
+    update: updateCiudad,
+    delete: deleteCiudad,
+    read: readList,
+    getById: getCiudadById,
+    getAll: getAllCiudades
+  }
+
+  // Namespaced actions
+  /** @type {PublicMethods} */
+  const parada = {
+    create: createParada,
+    update: updateParada,
+    delete: deleteParada,
+    read: readList,
+    getById: getParadaById,
+    getAll: getAllParadas
+  }
+
+
     return {
         //Actions
-      createCiudad,
-      updateCiudad,
-      deleteCiudad,
-      createParada,
-      updateParada,
-      deleteParada,
-      readList,
-      getCiudadById,
+      ciudad,
+      parada,
        //Public methods
        getState
     }
