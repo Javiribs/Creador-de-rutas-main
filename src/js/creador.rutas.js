@@ -18,7 +18,10 @@ function onDomContentLoaded() {
     const searchInput = document.getElementById('searchInput');
     //el propio formulario completo de busqueda
     const searchForm = document.getElementById('searchForm');
-
+    //boton de volver al inicio (resetear toda la info)
+    const volverInicioButton = document.getElementById('boton-inicio')
+    //guardar y recuperar datos local Storeage
+    recuperarLocalStorage()
     //Procesar datos de json/API
     processCiudadesData()
     //Evitar refresh boton enter
@@ -27,31 +30,11 @@ function onDomContentLoaded() {
     searchInput?.addEventListener('input', searchProposal)
     //Buscador de la app (coincidencia input con base datos)
     searchButton?.addEventListener('click', searchButtonOnClick)
+    //resetear el buscador y volver inicio
+    volverInicioButton?.addEventListener('click', inicioButtonClick)
 }
 
-
-// METODOS que están recogidos en el Listener
-
-//funcion para leer datos del json/API
-async function getCiudadesData () {
-    /** @type {Ciudad[]} */
-    const ciudadesData = await fetch (API_CIUDADES_URL)
-    .then ((response) => {
-        if (!response.ok) {
-            showError(response.status)
-        }
-        return response.json();
-    })
-    return ciudadesData
-}
-//funcion para obtener datos del json/API
-async function pushCiudadesData() {
-    const datosCiudades = await getCiudadesData()
-    ciudades = datosCiudades
-    
-}
-
-//funcion para bloquear el boton enter teclado
+//evento para bloquear el boton enter teclado
 /**
  * @param {SubmitEvent} e
  */
@@ -59,24 +42,15 @@ function blockEnterButton(e) {
     e.preventDefault();
 }
 
-//funcion propuesta autocompletar inputSearch usuario
-function searchProposal() {
-    const searchInput = document.getElementById('searchInput')
-    const nameBuscado = getInputValue(searchInput)?.toLowerCase()
-    const sugerencias = ciudades.filter(ciudad =>
-    ciudad.name.toLowerCase().startsWith(nameBuscado))
-    const datalist = document.getElementById('ciudades')
-    if(datalist) {
-        datalist.innerHTML = '' // Limpiar opciones anteriores
-    }  
-    sugerencias.forEach(ciudad => {
-        const option = document.createElement('option')
-        option.value = `${ciudad.name} (${ciudad.country})`
-        datalist?.appendChild(option);
-    })
+/**
+ * 
+ * @param {MouseEvent} e 
+ */
+function inicioButtonClick(e) {
+    resetBuscador()
 }
 
-//funcion buscadora, main funcion para buscar coincidencias de ciudades
+//evento buscadora, main funcion para buscar coincidencias de ciudades
 /**
  * @param {MouseEvent} e
  */
@@ -102,6 +76,8 @@ function searchButtonOnClick(e) {
         addTitle(nameEncontrado)
         //funcion que imprime lista monumentos ciudad buscada
         addParadasList(ciudadEncontrada)
+        //funcion que guarda datos en localStorage
+        localStorage.setItem('paradasRecomendadas', JSON.stringify(ciudadEncontrada.paradas))
         console.log("La ciudad encontrada es:", nameEncontrado)
         } else {
         notFound(nameBuscado)
@@ -109,6 +85,68 @@ function searchButtonOnClick(e) {
         }
     searchInput?.setAttribute('value', " ")
 }
+
+
+// METODOS que están recogidos en el Listener
+
+//funcion para resetear toda la busqueda
+function resetBuscador() {
+    localStorage.removeItem('paradasRecomendadas')
+    const LISTADO = document.getElementsByClassName('paradas-interesantes')[0]
+    if (LISTADO) {
+        LISTADO.innerHTML = '' // Elimina todos los elementos de la lista
+    }
+
+    // 2. Limpiar el título de la ciudad (si lo tienes)
+    const titleList = document.getElementById('tituloCiudad');
+    if (titleList) {
+        titleList.innerText = '' // Restablece el título a su valor inicial o vacío
+    }
+
+    // 3. Limpiar el input de búsqueda (si lo tienes)
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.value = '' // Limpia el input de búsqueda
+    }
+}
+
+//funcion para leer datos del json/API
+async function getCiudadesData () {
+    /** @type {Ciudad[]} */
+    const ciudadesData = await fetch (API_CIUDADES_URL)
+    .then ((response) => {
+        if (!response.ok) {
+            showError(response.status)
+        }
+        return response.json();
+    })
+    return ciudadesData
+}
+//funcion para obtener datos del json/API
+async function pushCiudadesData() {
+    const datosCiudades = await getCiudadesData()
+    ciudades = datosCiudades
+    return ciudades
+}
+
+//funcion propuesta autocompletar inputSearch usuario
+function searchProposal() {
+    const searchInput = document.getElementById('searchInput')
+    const nameBuscado = getInputValue(searchInput)?.toLowerCase()
+    const sugerencias = ciudades.filter(ciudad =>
+    ciudad.name.toLowerCase().startsWith(nameBuscado))
+    const datalist = document.getElementById('ciudades')
+    if(datalist) {
+        datalist.innerHTML = '' // Limpiar opciones anteriores
+    }  
+    sugerencias.forEach(ciudad => {
+        const option = document.createElement('option')
+        option.value = `${ciudad.name} (${ciudad.country})`
+        datalist?.appendChild(option);
+    })
+}
+
+
 //C.R.U.D
 
 //funcion para obtener el value del elemento concreto
@@ -173,6 +211,7 @@ function addParadasList(ciudadEncontrada){
     newCardParadas.appendChild(newCategoriaParadas)
     newBotonParadas.textContent = '+ Info'
     newBotonParadas.addEventListener('click', () => {
+        localStorage.setItem('paradasRecomendadas', JSON.stringify(ciudadEncontrada))
         window.location.href = `info-parada.html?nombre_parada=${parada.nombre_parada}`
     })
     newCardParadas.appendChild(newBotonParadas)
@@ -210,3 +249,26 @@ function processCiudadesData() {
 function showError(status) {
     throw new Error("Function not implemented.")
 }
+
+//funcion para guardar y cargar elementos guardados local storage
+async function recuperarLocalStorage() {
+    const paradasGuardadas = localStorage.getItem('paradasRecomendadas')
+    if (paradasGuardadas) {
+        try {
+            const datosRecuperados = JSON.parse(paradasGuardadas);
+            addParadasList(datosRecuperados)
+        } catch (error) {
+            console.error("Error al parsear datos guardados:", error)
+            // Manejar el error
+        }
+    } else {
+        try {
+            const ciudadEncontrada = await pushCiudadesData();
+            addParadasList(ciudadEncontrada)
+        } catch (error) {
+            console.error("Error al obtener datos:", error);
+            // Manejar el error
+        }
+    }
+}
+

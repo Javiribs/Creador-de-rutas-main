@@ -1,0 +1,44 @@
+
+/* General styles */
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+  }
+  
+  header {
+    background-color: #f0f0f0;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  h1 {
+    font-size: 2em;
+    margin-bottom: 0;
+  }
+  
+  nav {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  nav ol {
+    list-style: none;
+    padding-top: 10px;
+    margin: 0;
+  }
+  
+  nav li {
+    display: inline-block;
+    margin-right: 20px;
+  }
+  
+  a {
+    text-decoration: none;
+    color: #333;
+  }
+  
+  .active {
+    font-weight: bold;
+  }

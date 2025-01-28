@@ -24,8 +24,20 @@ async function onDomContentLoaded() {
     await processCiudadesData()
     //Procesar datos de json/API
     await processParadasData()
+    //boton de volver al inicio (resetear toda la info)
+    const volverInicioButton = document.getElementById('boton-inicio')
+    //resetear el buscador y volver inicio
+    volverInicioButton?.addEventListener('click', inicioButtonClick)
     //Imprime ficha de la parada
     printParada()
+}
+
+/**
+ * 
+ * @param {MouseEvent} e 
+ */
+function inicioButtonClick(e) {
+    resetBuscador()
 }
 
 //Mtetodos
@@ -90,6 +102,27 @@ function showError(status) {
     throw new Error("Function not implemented.")
 }
 
+function resetBuscador() {
+    localStorage.removeItem('paradasRecomendadas')
+    const LISTADO = document.getElementsByClassName('paradas-interesantes')[0]
+    if (LISTADO) {
+        LISTADO.innerHTML = '' // Elimina todos los elementos de la lista
+    }
+
+    // 2. Limpiar el título de la ciudad (si lo tienes)
+    const titleList = document.getElementById('tituloCiudad');
+    if (titleList) {
+        titleList.innerText = '' // Restablece el título a su valor inicial o vacío
+    }
+
+    // 3. Limpiar el input de búsqueda (si lo tienes)
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.value = '' // Limpia el input de búsqueda
+    }
+    // 4. Redirigir a la página inicial
+    window.location.href = 'index.html'
+}
 
 //Funcion para imprimir ficha de la parada
 function printParada () {
@@ -111,19 +144,19 @@ function printParada () {
     
     //Asociar cada elemento DOM con info de json
     //Asociar cada elemento hijo con su padre
-    newH1Parada.innerText = paradaSeleccionada.nombre_parada
-    newPResumenParada.innerText = paradaSeleccionada.descripcion
+    newH1Parada.innerText = paradaSeleccionada?.nombre_parada ?? ""
+    newPResumenParada.innerText = paradaSeleccionada?.descripcion ?? ""
     newPictureParada.appendChild(newImagenParada)
-    newImagenParada.src = paradaSeleccionada.imagen
+    newImagenParada.src = paradaSeleccionada?.imagen ?? ""
     newPictureParada.appendChild(newSpanNombreFotoParada)
-    newSpanNombreFotoParada.innerText = paradaSeleccionada.nombre_parada
+    newSpanNombreFotoParada.innerText = paradaSeleccionada?.nombre_parada ?? ""
     newArticleParada.appendChild(newInfoParada)
-    newInfoParada.innerText = paradaSeleccionada.info
+    newInfoParada.innerText = paradaSeleccionada?.info
     newArticleParada.appendChild(newEnlaceParada)
-    newEnlaceParada.href = paradaSeleccionada.enalce
+    newEnlaceParada.href = paradaSeleccionada?.enlace ?? ""
     newEnlaceParada.textContent = 'Visita sitio web'
     newArticleParada.appendChild(newSpanCategoriaParada)
-    newSpanCategoriaParada.innerText = paradaSeleccionada.categoria
+    newSpanCategoriaParada.innerText = paradaSeleccionada?.categoria ?? ""
 
     LISTA.appendChild(newH1Parada)
     LISTA.appendChild(newPResumenParada)
