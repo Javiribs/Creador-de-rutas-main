@@ -1,8 +1,0 @@
-body {
-    main {
-      .pokemon-gallery {
-        --gallery-columns: 1;
-        --gallery-column-width: calc(276px*1.5);
-      }
-    }
-  }
