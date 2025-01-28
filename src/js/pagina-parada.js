@@ -92,14 +92,13 @@ function showError(status) {
 
 
 //Funcion para imprimir ficha de la parada
-
 function printParada () {
     const urlParams = new URLSearchParams(window.location.search)
     const nombreParada = decodeURIComponent(urlParams.get('nombre_parada'))
     const paradaSeleccionada = paradas.find(parada => parada.nombre_parada === nombreParada)
+    console.log()
     const LISTA = document.getElementsByClassName('ficha-parada')[0]
-
-    const newH2CiudadParada = document.createElement('h2')
+    //Crear elemntos en DOM para almacenar la info
     const newH1Parada = document.createElement('h1')
     const newPResumenParada = document.createElement('p')
     const newPictureParada = document.createElement('picture')
@@ -110,20 +109,24 @@ function printParada () {
     const newEnlaceParada = document.createElement('a')
     const newSpanCategoriaParada = document.createElement('span')
     
-    
-    
-}
+    //Asociar cada elemento DOM con info de json
+    //Asociar cada elemento hijo con su padre
+    newH1Parada.innerText = paradaSeleccionada.nombre_parada
+    newPResumenParada.innerText = paradaSeleccionada.descripcion
+    newPictureParada.appendChild(newImagenParada)
+    newImagenParada.src = paradaSeleccionada.imagen
+    newPictureParada.appendChild(newSpanNombreFotoParada)
+    newSpanNombreFotoParada.innerText = paradaSeleccionada.nombre_parada
+    newArticleParada.appendChild(newInfoParada)
+    newInfoParada.innerText = paradaSeleccionada.info
+    newArticleParada.appendChild(newEnlaceParada)
+    newEnlaceParada.href = paradaSeleccionada.enalce
+    newEnlaceParada.textContent = 'Visita sitio web'
+    newArticleParada.appendChild(newSpanCategoriaParada)
+    newSpanCategoriaParada.innerText = paradaSeleccionada.categoria
 
-/*<h2>Ciudad, País</h2>
-<h1>Nombre Parada</h1>
-<p>resumen</p>
-<picture>
-    <img src="" alt=""> foto
-    <span>nombre foto</span>
-</picture>
-<article>
-    <p>info</p> 
-    <a href="#">+ info</a>
-    <span>categoria</span> 
-</article> -->
-*/
+    LISTA.appendChild(newH1Parada)
+    LISTA.appendChild(newPResumenParada)
+    LISTA.appendChild(newPictureParada)
+    LISTA.appendChild(newArticleParada)
+}
