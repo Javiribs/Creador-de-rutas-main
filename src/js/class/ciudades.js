@@ -31,6 +31,8 @@
     imagen
     horario
     categoria
+    enlace
+    info
     /**
      * @param {string} nombre_parada 
      * @param {Number[]} coordenadas
@@ -38,6 +40,8 @@
      * @param {string} imagen
      * @param {string} horario
      * @param {string} categoria
+     * @param {string} enlace
+     * @param {string} info
      */
     constructor(nombre_parada, coordenadas, descripcion, imagen, horario, categoria) {
         const timestamp = new Date()
@@ -48,6 +52,8 @@
         this.imagen = imagen
         this.horario = horario
         this.categoria = categoria
+        this.enlace = enlace
+        this.info = info
     }
 } 
 
