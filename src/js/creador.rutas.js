@@ -137,7 +137,7 @@ function addTitle(nameEncontrado) {
     }
 }
 
-//Crear la lista con los puntos de visita a la lista
+//Crear la lista con elementos html pintados
 /**
  * @param {{ paradas: any; }} ciudadEncontrada
  */
@@ -145,7 +145,7 @@ function addParadasList(ciudadEncontrada){
     const LISTADO = document.getElementsByClassName('paradas-interesantes')[0]
     const paradas = ciudadEncontrada.paradas
     
-    paradas.forEach (( /** @type {{ nombre_parada: string; imagen: string; descripcion: string; categoria: string; }} */ parada) => {
+    paradas.forEach (( /** @type {{ nombre_parada: string; imagen: string; descripcion: string; categoria: string; info: string;}} */ parada) => {
     //Crear elemntos en DOM para almacenar la info
     const newParadasItem = document.createElement('li')
     const newArticleParadas = document.createElement('article')
@@ -155,6 +155,7 @@ function addParadasList(ciudadEncontrada){
     const newNameParadas = document.createElement('h2')
     const newDescriptionParadas = document.createElement('p')
     const newCategoriaParadas = document.createElement('h3')
+    const newBotonParadas = document.createElement('button')
     
 
     //Asociar cada elemento DOM con info de json
@@ -170,6 +171,12 @@ function addParadasList(ciudadEncontrada){
     newCardParadas.appendChild(newDescriptionParadas)
     newCategoriaParadas.innerText = 'Categoría: ' + parada.categoria
     newCardParadas.appendChild(newCategoriaParadas)
+    newBotonParadas.textContent = '+ Info'
+    newBotonParadas.addEventListener('click', () => {
+        window.location.href = `info-parada.html?nombre_parada=${parada.nombre_parada}`
+    })
+    newCardParadas.appendChild(newBotonParadas)
+    
     
     //almacenado todo a la OL del html
     LISTADO.appendChild(newParadasItem)
