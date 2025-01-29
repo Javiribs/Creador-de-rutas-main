@@ -1,8 +1,8 @@
 // @ts-check
 
 //Importo datos del json
-const API_CIUDADES_URL = './ciudades.json/lista-ciudades.json'
-import {Ciudad, Paradas} from './class/ciudades.js'
+import { apiConfig } from './data/singleton.js'
+/** @import {Ciudad} from './class/ciudades.js' */
 //variable vacia a rellenar con datos de json/api fetch
 /** @type {Ciudad[]} */
 let ciudades = []
@@ -42,20 +42,15 @@ function blockEnterButton(e) {
     e.preventDefault();
 }
 
-/**
- * 
- * @param {MouseEvent} e 
- */
-function inicioButtonClick(e) {
+//funcion para resetear toda la busqueda
+function inicioButtonClick() {
     resetBuscador()
 }
 
 //evento buscadora, main funcion para buscar coincidencias de ciudades
-/**
- * @param {MouseEvent} e
- */
+
 //esta funcion recoge todo lo que sucede al apretar boton buscar
-function searchButtonOnClick(e) {
+function searchButtonOnClick() {
     //limpiamos resultados busqueda anterior
     const resultadosList = document.querySelector('.paradas-interesantes')
     if (resultadosList) {
@@ -68,7 +63,7 @@ function searchButtonOnClick(e) {
     //obtenemos el nombre de la ciudad buscada para que se tenga en cuenta el país
     const nombreCiudad = nameBuscado.split(' (')[0]
     //condición para que input y info de json coincidan(buscador)
-    const ciudadEncontrada = ciudades.find((/** @type {{ name: string; }} */ ciudad) => ciudad.name.toLowerCase() === nombreCiudad) 
+    const ciudadEncontrada = ciudades.find(ciudad => ciudad.name.toLowerCase() === nombreCiudad)
     
     if (ciudadEncontrada) {
         const nameEncontrado = ciudadEncontrada
@@ -113,10 +108,10 @@ function resetBuscador() {
 //funcion para leer datos del json/API
 async function getCiudadesData () {
     /** @type {Ciudad[]} */
-    const ciudadesData = await fetch (API_CIUDADES_URL)
+    const ciudadesData = await fetch (apiConfig.API_CIUDADES_URL)
     .then ((response) => {
         if (!response.ok) {
-            showError(response.status)
+            showError()
         }
         return response.json();
     })
@@ -124,8 +119,7 @@ async function getCiudadesData () {
 }
 //funcion para obtener datos del json/API
 async function pushCiudadesData() {
-    const datosCiudades = await getCiudadesData()
-    ciudades = datosCiudades
+    ciudades = await getCiudadesData()
     return ciudades
 }
 
@@ -164,7 +158,7 @@ function getInputValue(inputElement) {
 
 //Crear el título con el nombre de la ciudad encontrada
 /**
- * @param {{ name: string; }} nameEncontrado
+ * @param {Ciudad} nameEncontrado
  */
 function addTitle(nameEncontrado) {
     const titleList = document.getElementById('tituloCiudad')
@@ -177,13 +171,12 @@ function addTitle(nameEncontrado) {
 
 //Crear la lista con elementos html pintados
 /**
- * @param {{ paradas: any; }} ciudadEncontrada
+ * @param {Ciudad} ciudadEncontrada
  */
 function addParadasList(ciudadEncontrada){
     const LISTADO = document.getElementsByClassName('paradas-interesantes')[0]
-    const paradas = ciudadEncontrada.paradas
     
-    paradas.forEach (( /** @type {{ nombre_parada: string; imagen: string; descripcion: string; categoria: string; info: string;}} */ parada) => {
+    ciudadEncontrada.paradas.forEach (( /** @type {{ nombre_parada: string; imagen: string; descripcion: string; categoria: string; info: string;}} */ parada) => {
     //Crear elemntos en DOM para almacenar la info
     const newParadasItem = document.createElement('li')
     const newArticleParadas = document.createElement('article')
@@ -242,11 +235,9 @@ function processCiudadesData() {
     pushCiudadesData()
 }
 
-/**
- * @param {number} status
- */
+
 //funcion que muestra error en caso de no obtener datos del API
-function showError(status) {
+function showError() {
     throw new Error("Function not implemented.")
 }
 
