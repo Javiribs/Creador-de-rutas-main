@@ -5,11 +5,14 @@
 //fer el mateix que l'altre js
 
 //Importo datos del json
-const API_CIUDADES_URL = './ciudades.json/lista-ciudades.json'
-import {Ciudad, Paradas} from './class/ciudades.js'
+import { apiConfig } from './data/singleton.js'
+/** @import {Ciudad, Paradas} from './class/ciudades.js' */
+
 //variable vacia a rellenar con datos de json/api fetch
 /** @type {Ciudad[]} */
 let ciudades = []
+console.log(ciudades)
+
 //variable vacia a rellenar con datos de json/api fetch
 /** @type {Paradas[]} */
 let paradas = []
@@ -32,11 +35,8 @@ async function onDomContentLoaded() {
     printParada()
 }
 
-/**
- * 
- * @param {MouseEvent} e 
- */
-function inicioButtonClick(e) {
+
+function inicioButtonClick() {
     resetBuscador()
 }
 
@@ -51,10 +51,10 @@ async function processCiudadesData() {
 //funcion para leer datos del json/API
 async function getCiudadesData () {
     /** @type {Ciudad[]} */
-    const ciudadesData = await fetch (API_CIUDADES_URL)
+    const ciudadesData = await fetch (apiConfig.API_CIUDADES_URL)
     .then ((response) => {
         if (!response.ok) {
-            showError(response.status)
+            showError()
         }
         return response.json();
     })
@@ -71,10 +71,10 @@ async function pushCiudadesData() {
 
 async function getParadasData () {
     /** @type {Ciudad[]} */
-    const ciudadesData = await fetch (API_CIUDADES_URL)
+    const ciudadesData = await fetch (apiConfig.API_CIUDADES_URL)
     .then ((response) => {
         if (!response.ok) {
-            showError(response.status)
+            showError()
         }
         return response.json();
     })
@@ -95,10 +95,7 @@ async function processParadasData() {
 }
 
 //funcion que muestra error en caso de no obtener datos del API
-/**
- * @param {number} status
- */
-function showError(status) {
+function showError() {
     throw new Error("Function not implemented.")
 }
 
@@ -151,7 +148,7 @@ function printParada () {
     newPictureParada.appendChild(newSpanNombreFotoParada)
     newSpanNombreFotoParada.innerText = paradaSeleccionada?.nombre_parada ?? ""
     newArticleParada.appendChild(newInfoParada)
-    newInfoParada.innerText = paradaSeleccionada?.info
+    newInfoParada.innerText = paradaSeleccionada?.info ?? ""
     newArticleParada.appendChild(newEnlaceParada)
     newEnlaceParada.href = paradaSeleccionada?.enlace ?? ""
     newEnlaceParada.textContent = 'Visita sitio web'

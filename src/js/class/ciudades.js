@@ -43,7 +43,7 @@
      * @param {string} enlace
      * @param {string} info
      */
-    constructor(nombre_parada, coordenadas, descripcion, imagen, horario, categoria) {
+    constructor(nombre_parada, coordenadas, descripcion, imagen, horario, categoria, enlace, info) {
         const timestamp = new Date()
         this.id = nombre_parada + '_' + String(timestamp.getTime())
         this.nombre_parada = nombre_parada
