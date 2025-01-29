@@ -1,6 +1,7 @@
 // @ts-check
 //Importo las clases de ciudades.js
 /** @import {Ciudad, Paradas} from 'src/js/class/ciudades.js' */
+/** @import { Usuario } from 'src/js/class/usuario.js' */ // Importa la clase Usuario
 
 
 //Aciones que se pueden ejecutar en la app
@@ -14,6 +15,11 @@
  * @property {string} type
  * @property {Paradas} [paradas]
  */
+/**
+ * @typedef {Object} ActionTypeUsuario
+ * @property {string} type
+ * @property {Usuario} [usuario]
+ */
 
 const ACTION_TYPES = {
     CREATE_CIUDAD: 'CREATE_CIUDAD',
@@ -22,13 +28,20 @@ const ACTION_TYPES = {
     CREATE_PARADA: 'CREATE_PARADA',
     UPDATE_PARADA: 'UPDATE_PARADA',
     DELETE_PARADA: 'DELETE_PARADA',
+    CREATE_USUARIO: 'CREATE_USUARIO',
+    UPDATE_USUARIO: 'UPDATE_USUARIO',
+    DELETE_USUARIO: 'DELETE_USUARIO',
     READ_LIST: 'READ_LIST'
   }
+
   
   // Estado inicial
   /**
  * @typedef {Object.<(string), any>} State
  * @property {Array<Ciudad>} ciudades
+ * @property {Array<Paradas>} paradas
+ * @property {Array<Usuario>} usuarios // Nuevo: array de usuarios
+ * @property {Usuario | null} usuarioActual // Nuevo: usuario logueado
  * @property {boolean} isLoading
  * @property {boolean} error
  */
@@ -37,6 +50,9 @@ const ACTION_TYPES = {
  */
   const INITIAL_STATE = {
     ciudades: [],
+    paradas: [],
+    usuarios: [],
+    usuarioActual: null,
     isLoading: false,
     error: false
   }
@@ -46,12 +62,13 @@ const ACTION_TYPES = {
  * Reducer for the app state.
  *
  * @param {State} state - The current state
- * @param {ActionTypeCiudad | ActionTypeParadas} action - The action to reduce
+ * @param {ActionTypeCiudad | ActionTypeParadas | ActionTypeUsuario} action - The action to reduce
  * @returns {State} The new state
  */
   const appReducer = (state = INITIAL_STATE, action) => {
     const actionWithCiudad = /** @type {ActionTypeCiudad} */(action)
     const actionWithParadas = /** @type {ActionTypeParadas} */(action)
+    const actionWithUsuario = /** @type {ActionTypeUsuario} */(action)
     switch (action.type) {
     //accion 1 añade el objeto ciudad al INITIAL_STATE
     case ACTION_TYPES.CREATE_CIUDAD:
@@ -101,9 +118,31 @@ const ACTION_TYPES = {
                 ...state,
                 paradas: state.paradas.filter((/** @type {{ id: any; }} */ parada) => parada.id !== parada.id)        
             };
-    // accion 7 lee el listado de ciudades
+        //accion 7 crear un nuevo usuario
+        case ACTION_TYPES.CREATE_USUARIO:
+              return {
+                  ...state,
+                  usuario: [
+                      ...state.usuario,
+                      actionWithUsuario.usuario
+                  ]
+              };
+        //accion 8 actualiza usuarios guardados en el INITIAL_STATE
+        case ACTION_TYPES.UPDATE_USUARIO:
+              return {
+                  ...state,
+                  usuario: state.usuario.map((/** @type {{ id: string | undefined; }} */ usuario) =>
+                      usuario.id === actionWithUsuario?.usuario?.id ? actionWithUsuario.usuario : usuario
+                    )
+                };
+        //accion 9 elimina usuario del listado paradas
+        case ACTION_TYPES.DELETE_USUARIO:
+              return {
+                  ...state,
+                  usuario: state.usuario.filter((/** @type {{ id: any; }} */ usuario) => usuario.id !== usuario.id)        
+              };    
+    // accion  lee el listado de ciudades
     case ACTION_TYPES.READ_LIST:
-        return state;
         default:
         return state;
     }
@@ -123,6 +162,7 @@ const ACTION_TYPES = {
  * @property {function} getState
  * @property {PublicMethods} ciudad
  * @property {PublicMethods} parada
+ * @property {PublicMethods} usuario
  */
   /**
  * Creates the store singleton.
@@ -172,6 +212,25 @@ const updateParada = (paradas) => _dispatch({ type: ACTION_TYPES.UPDATE_PARADA, 
  * @returns void
  */
 const deleteParada = (paradas) => _dispatch({ type: ACTION_TYPES.DELETE_PARADA, paradas });
+
+/**
+ * Crea usuario
+ * @param {Usuario} usuario
+ * @returns void
+ */
+const createUsuario = (usuario) => _dispatch({ type: ACTION_TYPES.CREATE_USUARIO, usuario });
+/**
+ * Update an usuario
+ * @param {Usuario} usuario
+ * @returns void
+ */
+const updateUsuario = (usuario) => _dispatch({ type: ACTION_TYPES.UPDATE_USUARIO, usuario }); 
+/**
+ * Deletes a parada
+ * @param {Usuario} usuario
+ * @returns void
+ */
+const deleteUsuario = (usuario) => _dispatch({ type: ACTION_TYPES.DELETE_USUARIO, usuario });
 /**
    * Reads the list of articles
    * @returns state
@@ -198,6 +257,13 @@ const getCiudadById = (id) => { return currentState.ciudad.find((/** @type {Ciud
  */
 const getParadaById = (id) => { return currentState.ciudad.find((/** @type {Paradas} */ parada) => parada.id === id) };
 
+/**
+ * Returns the parada with the specified id
+ * @param {string} id
+ * @returns {Usuario | undefined}
+ */
+const getUsuarioById = (id) => { return currentState.ciudad.find((/** @type {Usuario} */ usuario) => usuario.id === id) };
+
  /**
    * Returns all the ciudades
    * @returns {Array<Ciudad>}
@@ -210,10 +276,16 @@ const getParadaById = (id) => { return currentState.ciudad.find((/** @type {Para
    */
  const getAllParadas = () => { return currentState.paradas };
 
+  /**
+   * Returns all the paradas
+   * @returns {Array<Usuario>}
+   */
+  const getAllUsuario = () => { return currentState.usuario };
+
     // Private methods
   /**
    *
-   * @param {ActionTypeCiudad | ActionTypeParadas} action
+   * @param {ActionTypeCiudad | ActionTypeParadas | ActionTypeUsuario} action
    * @param {function | undefined} [onEventDispatched]
    */
   const _dispatch = (action, onEventDispatched) => {
@@ -276,11 +348,23 @@ const getParadaById = (id) => { return currentState.ciudad.find((/** @type {Para
     getAll: getAllParadas
   }
 
+    // Namespaced actions
+  /** @type {PublicMethods} */
+  const usuario = {
+    create: createUsuario,
+    update: updateUsuario,
+    delete: deleteUsuario,
+    read: readList,
+    getById: getUsuarioById,
+    getAll: getAllUsuario
+  }
+
 
     return {
         //Actions
       ciudad,
       parada,
+      usuario,
        //Public methods
        getState
     }

@@ -20,6 +20,8 @@ function onDomContentLoaded() {
     const searchForm = document.getElementById('searchForm');
     //boton de volver al inicio (resetear toda la info)
     const volverInicioButton = document.getElementById('boton-inicio')
+    //boton perfil
+    const botonPerfil = document.getElementById('boton-perfil')
     //guardar y recuperar datos local Storeage
     recuperarLocalStorage()
     //Procesar datos de json/API
@@ -32,6 +34,8 @@ function onDomContentLoaded() {
     searchButton?.addEventListener('click', searchButtonOnClick)
     //resetear el buscador y volver inicio
     volverInicioButton?.addEventListener('click', inicioButtonClick)
+    //boton accede al perfil
+    botonPerfil?.addEventListener('click', perfilButtonClick)
 }
 
 //evento para bloquear el boton enter teclado
@@ -45,6 +49,11 @@ function blockEnterButton(e) {
 //funcion para resetear toda la busqueda
 function inicioButtonClick() {
     resetBuscador()
+}
+
+//funcion acceder al perfil activando boton
+function perfilButtonClick() {
+    window.location.href = 'perfil.html'; // Redirige a perfil.html
 }
 
 //evento buscadora, main funcion para buscar coincidencias de ciudades
@@ -175,7 +184,7 @@ function addTitle(nameEncontrado) {
  */
 function addParadasList(ciudadEncontrada){
     const LISTADO = document.getElementsByClassName('paradas-interesantes')[0]
-    
+    addTitle(ciudadEncontrada)
     ciudadEncontrada.paradas.forEach (( /** @type {{ nombre_parada: string; imagen: string; descripcion: string; categoria: string; info: string;}} */ parada) => {
     //Crear elemntos en DOM para almacenar la info
     const newParadasItem = document.createElement('li')
@@ -243,23 +252,18 @@ function showError() {
 
 //funcion para guardar y cargar elementos guardados local storage
 async function recuperarLocalStorage() {
-    const paradasGuardadas = localStorage.getItem('paradasRecomendadas')
+    const paradasGuardadas = localStorage.getItem('paradasRecomendadas');
     if (paradasGuardadas) {
-        try {
-            const datosRecuperados = JSON.parse(paradasGuardadas);
-            addParadasList(datosRecuperados)
-        } catch (error) {
-            console.error("Error al parsear datos guardados:", error)
-            // Manejar el error
-        }
+      try {
+        const datosRecuperados = JSON.parse(paradasGuardadas);
+        addParadasList(datosRecuperados);
+      } catch (error) {
+        console.error("Error al parsear datos guardados:", error);
+        // Manejar el error
+      }
     } else {
-        try {
-            const ciudadEncontrada = await pushCiudadesData();
-            addParadasList(ciudadEncontrada)
-        } catch (error) {
-            console.error("Error al obtener datos:", error);
-            // Manejar el error
-        }
+      // No mostrar nada si no hay búsqueda previa
+      return;
     }
-}
+  }
 

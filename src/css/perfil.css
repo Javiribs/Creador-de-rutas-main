@@ -1,0 +1,119 @@
+/* styles.css */
+
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Asegura que el body ocupe toda la altura de la pantalla */
+}
+
+header {
+    background-color: #f0f0f0;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* Alinea verticalmente los elementos del header */
+}
+
+h1 {
+    font-size: 2em;
+    margin: 0; /* Elimina el margen inferior predeterminado */
+}
+
+nav ol {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex; /* Convierte la lista en un contenedor flex */
+}
+
+nav li {
+    margin-left: 20px; /* Espacio entre los elementos de la lista */
+}
+
+nav a {
+    text-decoration: none;
+    color: #333;
+    padding: 10px; /* Añade padding para que los links sean más clickeables */
+    border-radius: 5px; /* Bordes redondeados para los links */
+    transition: background-color 0.3s ease; /* Transición suave para el hover */
+}
+
+nav a:hover {
+    background-color: #ddd; /* Color de fondo al pasar el ratón */
+}
+
+nav button {
+    background-color: #4CAF50; /* Verde */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+nav button:hover {
+    background-color: #45a049; /* Verde más oscuro al pasar el ratón */
+}
+
+
+main {
+    padding: 20px;
+    flex: 1; /* Permite que el main se expanda para llenar el espacio disponible */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centra el contenido horizontalmente */
+}
+
+article {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px; /* Espacio entre el article y las secciones */
+}
+
+figure {
+    margin: 0; /* Elimina el margen predeterminado de figure */
+    text-align: center; /* Centra la imagen y el figcaption */
+}
+
+figure img {
+    max-width: 150px; /* Ancho máximo de la imagen de perfil */
+    border-radius: 50%; /* Hace la imagen circular */
+    margin-bottom: 10px; /* Espacio entre la imagen y el figcaption */
+}
+
+figcaption {
+    font-style: italic;
+    color: #777;
+}
+
+h3 {
+    margin-bottom: 10px;
+    font-weight: bold; /* Texto en negrita */
+    font-size: 1.2em; /* Tamaño de fuente más grande */
+    color: #333; /* Color de texto más oscuro */
+    margin-bottom: 10px; /* Espacio inferior */
+}
+
+section {
+    margin-bottom: 20px; /* Espacio entre las secciones */
+    width: 80%; /* Ocupa un 80% del ancho del main */
+    max-width: 600px; /* Ancho máximo para evitar que se vea demasiado ancho en pantallas grandes */
+}
+
+section ul {
+    list-style: none;
+    padding: 0;
+}
+
+section li {
+    margin-bottom: 5px;
+}

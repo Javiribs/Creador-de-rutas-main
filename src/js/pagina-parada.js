@@ -28,16 +28,29 @@ async function onDomContentLoaded() {
     //Procesar datos de json/API
     await processParadasData()
     //boton de volver al inicio (resetear toda la info)
-    const volverInicioButton = document.getElementById('boton-inicio')
+    const backButton = document.getElementById('back')
     //resetear el buscador y volver inicio
-    volverInicioButton?.addEventListener('click', inicioButtonClick)
+    backButton?.addEventListener('click', backButtonClick)
     //Imprime ficha de la parada
     printParada()
 }
 
 
-function inicioButtonClick() {
-    resetBuscador()
+function backButtonClick() {
+    // 1. Guardar el texto del input de búsqueda
+    const searchInput = document.getElementById('searchInput');
+    localStorage.setItem('busqueda_texto', searchInput?.value);
+
+    // 2. Guardar los resultados de búsqueda (paradas recomendadas)
+    const paradasGuardadas = localStorage.getItem('paradasRecomendadas'); //Ya se guardan al buscar, no hace falta volver a guardarlas
+    localStorage.setItem('paradas_mostradas', paradasGuardadas);
+
+    // 3. Guardar el título de la ciudad
+    const tituloCiudad = document.getElementById('tituloCiudad');
+    localStorage.setItem('titulo_ciudad', tituloCiudad?.innerText);
+
+    // 4. Navegar hacia atrás
+    history.back();
 }
 
 //Mtetodos
@@ -97,28 +110,6 @@ async function processParadasData() {
 //funcion que muestra error en caso de no obtener datos del API
 function showError() {
     throw new Error("Function not implemented.")
-}
-
-function resetBuscador() {
-    localStorage.removeItem('paradasRecomendadas')
-    const LISTADO = document.getElementsByClassName('paradas-interesantes')[0]
-    if (LISTADO) {
-        LISTADO.innerHTML = '' // Elimina todos los elementos de la lista
-    }
-
-    // 2. Limpiar el título de la ciudad (si lo tienes)
-    const titleList = document.getElementById('tituloCiudad');
-    if (titleList) {
-        titleList.innerText = '' // Restablece el título a su valor inicial o vacío
-    }
-
-    // 3. Limpiar el input de búsqueda (si lo tienes)
-    const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-        searchInput.value = '' // Limpia el input de búsqueda
-    }
-    // 4. Redirigir a la página inicial
-    window.location.href = 'index.html'
 }
 
 //Funcion para imprimir ficha de la parada
