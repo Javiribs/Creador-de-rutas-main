@@ -1,6 +1,7 @@
 {
   "name": "practicas_web_developer-main",
   "version": "1.0.0",
+  "type": "module",
   "description": "practicas bootcamp",
   "main": "tailwind.config.js",
   "dependencies": {
