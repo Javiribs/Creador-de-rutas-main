@@ -1,6 +1,6 @@
 // @ts-check
 
-
+import { HttpError } from './class/HttpError.js'
 //crear const amb id de la ciutat i aquesta es la que m'extreu la info 
 //fer el mateix que l'altre js
 
@@ -24,9 +24,9 @@ document.addEventListener('DOMContentLoaded', onDomContentLoaded)
 async function onDomContentLoaded() {
 
     //Procesar datos de json/API
-    await processCiudadesData()
+    ciudades = await getCiudadesData()
     //Procesar datos de json/API
-    await processParadasData()
+    paradas = await getParadasData()
     //boton de volver al inicio (resetear toda la info)
     const backButton = document.getElementById('back')
     //resetear el buscador y volver inicio
@@ -39,15 +39,24 @@ async function onDomContentLoaded() {
 function backButtonClick() {
     // 1. Guardar el texto del input de búsqueda
     const searchInput = document.getElementById('searchInput');
-    localStorage.setItem('busqueda_texto', searchInput?.value);
+    if (searchInput instanceof HTMLInputElement) {
+        localStorage.setItem('busqueda_texto', searchInput.value);
+    } else {
+        console.error('Elemento de búsqueda no encontrado.');
+    }
 
     // 2. Guardar los resultados de búsqueda (paradas recomendadas)
-    const paradasGuardadas = localStorage.getItem('paradasRecomendadas'); //Ya se guardan al buscar, no hace falta volver a guardarlas
-    localStorage.setItem('paradas_mostradas', paradasGuardadas);
+    const paradasGuardadas = localStorage.getItem('paradasRecomendadas');
+    if (paradasGuardadas !== null) {
+      localStorage.setItem('paradas_mostradas', paradasGuardadas);
+    } else {
+      console.log('No paradas guardadas found');
+      localStorage.setItem('paradas_mostradas', '');
+    }
 
     // 3. Guardar el título de la ciudad
     const tituloCiudad = document.getElementById('tituloCiudad');
-    localStorage.setItem('titulo_ciudad', tituloCiudad?.innerText);
+    localStorage.setItem('titulo_ciudad', tituloCiudad?.innerText ?? '');
 
     // 4. Navegar hacia atrás
     history.back();
@@ -55,68 +64,61 @@ function backButtonClick() {
 
 //Mtetodos
 
-//funcion para activar las funciones que obtienen datos del json/API y los añaden el el DOM
-async function processCiudadesData() {
-    getCiudadesData()
-    pushCiudadesData()
-}
-
-//funcion para leer datos del json/API
-async function getCiudadesData () {
-    /** @type {Ciudad[]} */
-    const ciudadesData = await fetch (apiConfig.API_CIUDADES_URL)
-    .then ((response) => {
-        if (!response.ok) {
-            showError()
+/**
+ * @param {string | URL | Request} url
+ */
+async function fetchData(url) {
+    try {
+      const response = await fetch(url, {
+        signal: AbortSignal.timeout(3000),
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+        },
+      });
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.json();
+    } catch (/** @type {any | HttpError} */err) {
+      if (err.name === 'AbortError') {
+        console.error('Fetch abortado');
+      } else if (err instanceof HttpError) {
+        if (err.response.status === 404) {
+          console.error('Not found');
+        } else if (err.response.status === 500) {
+          console.error('Internal server error');
+        } else {
+          console.error('Error desconocido:', err);
         }
-        return response.json();
-    })
-    return ciudadesData
-}
-//funcion para obtener datos del json/API
-async function pushCiudadesData() {
-    const datosCiudades = await getCiudadesData()
-    ciudades = datosCiudades
-    
-}
-
-//funcion para leer datos del json/API
-
-async function getParadasData () {
-    /** @type {Ciudad[]} */
-    const ciudadesData = await fetch (apiConfig.API_CIUDADES_URL)
-    .then ((response) => {
-        if (!response.ok) {
-            showError()
-        }
-        return response.json();
-    })
-    const paradasData = ciudadesData.map(ciudad => ciudad.paradas).flat()
-    return paradasData
-}
-
-//funcion para obtener datos del json/API
-async function pushParadasData() {
-    const datosParadas = await getParadasData()
-    paradas = datosParadas
-}
-
-//funcion para activar las funciones que obtienen datos del json/API y los añaden el el DOM
-async function processParadasData() {
-    await getParadasData()
-    await pushParadasData()
-}
-
-//funcion que muestra error en caso de no obtener datos del API
-function showError() {
-    throw new Error("Function not implemented.")
-}
+      }
+      throw err; // Re-lanzar el error para que pueda ser manejado en el nivel superior
+    }
+  }
+  
+  async function getCiudadesData() {
+    return await fetchData(apiConfig.API_CIUDADES_URL);
+  }
+  
+  async function getParadasData() {
+    const ciudadesData = await fetchData(apiConfig.API_CIUDADES_URL);
+    const paradasData = ciudadesData.map((/** @type {{ paradas: any; }} */ ciudad) => ciudad.paradas).flat();
+    return paradasData;
+  }
 
 //Funcion para imprimir ficha de la parada
 function printParada () {
     const urlParams = new URLSearchParams(window.location.search)
-    const nombreParada = decodeURIComponent(urlParams.get('nombre_parada'))
-    const paradaSeleccionada = paradas.find(parada => parada.nombre_parada === nombreParada)
+    const nombreParada = urlParams.get('nombre_parada');
+    let decodedNombreParada;
+    if (nombreParada !== null) {
+        decodedNombreParada = decodeURIComponent(nombreParada);
+    } else {
+        // handle the case when nombreParada is null
+        console.error("No parada selected");
+        return;
+    }
+    const paradaSeleccionada = paradas.find(parada => parada.nombre_parada === decodedNombreParada)
     console.log()
     const LISTA = document.getElementsByClassName('ficha-parada')[0]
     //Crear elemntos en DOM para almacenar la info

@@ -1,5 +1,7 @@
 // @ts-check
 
+import { simpleFetch } from './simpleFetch.js'
+import { HttpError } from './class/HttpError.js'
 //Importo datos del json
 import { apiConfig } from './data/singleton.js'
 /** @import {Ciudad} from './class/ciudades.js' */
@@ -10,7 +12,7 @@ let ciudades = []
 document.addEventListener('DOMContentLoaded', onDomContentLoaded) 
 
 //Eventos
-function onDomContentLoaded() {
+async function onDomContentLoaded() {
     //Asocio elementos del DOM por su ID a variables
     //boton buscar
     const searchButton = document.getElementById('searchButton');
@@ -25,7 +27,7 @@ function onDomContentLoaded() {
     //guardar y recuperar datos local Storeage
     recuperarLocalStorage()
     //Procesar datos de json/API
-    processCiudadesData()
+    ciudades = await getCiudadesData()
     //Evitar refresh boton enter
     searchForm?.addEventListener('submit', blockEnterButton)
     //Autocompletar input del usuario
@@ -109,28 +111,45 @@ function resetBuscador() {
 
     // 3. Limpiar el input de búsqueda (si lo tienes)
     const searchInput = document.getElementById('searchInput');
-    if (searchInput) {
-        searchInput.value = '' // Limpia el input de búsqueda
+    if (searchInput instanceof HTMLInputElement) {
+        searchInput.value = '';
     }
 }
 
+/**
+ * Get data from API
+ * @returns {Promise<Array<Ciudad>>}
+ */
 //funcion para leer datos del json/API
 async function getCiudadesData () {
+    let ciudadesData
+    try {
     /** @type {Ciudad[]} */
-    const ciudadesData = await fetch (apiConfig.API_CIUDADES_URL)
-    .then ((response) => {
-        if (!response.ok) {
-            showError()
+    ciudadesData = await simpleFetch (apiConfig.API_CIUDADES_URL, {
+        // Si la petición tarda demasiado, la abortamos
+        signal: AbortSignal.timeout(3000),
+        headers: {
+          'Content-Type': 'application/json',
+          // Add cross-origin header
+          'Access-Control-Allow-Origin': '*',
+        },
+      });
+    } catch (/** @type {any | HttpError} */err) {
+        if (err.name === 'AbortError') {
+          console.error('Fetch abortado');
         }
-        return response.json();
-    })
+        if (err instanceof HttpError) {
+          if (err.response.status === 404) {
+            console.error('Not found');
+          }
+          if (err.response.status === 500) {
+            console.error('Internal server error');
+          }
+        }
+      }
     return ciudadesData
 }
-//funcion para obtener datos del json/API
-async function pushCiudadesData() {
-    ciudades = await getCiudadesData()
-    return ciudades
-}
+
 
 //funcion propuesta autocompletar inputSearch usuario
 function searchProposal() {
@@ -236,18 +255,6 @@ function notFound(nameBuscado) {
     } else {
         console.error('Elemento con ID "tituloCiudad" no encontrado.')
     }
-}
-
-//funcion para activar las funciones que obtienen datos del json/API y los añaden el el DOM
-function processCiudadesData() {
-    getCiudadesData()
-    pushCiudadesData()
-}
-
-
-//funcion que muestra error en caso de no obtener datos del API
-function showError() {
-    throw new Error("Function not implemented.")
 }
 
 //funcion para guardar y cargar elementos guardados local storage

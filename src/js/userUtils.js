@@ -18,12 +18,17 @@ function onDomContentLoaded() {
  */
 //Funciones que se activan al apretar el loginbutton
 //busca coincidencias entre email y password
-async function logInButton(e) {
-    e.preventDefault();
-    const loginEmail = document.getElementById('login-email').value
-        const loginPassword = document.getElementById('login-password').value
+    async function logInButton(e) {
+        e.preventDefault();
+      
+        const loginEmailElement = document.getElementById('login-email');
+        const loginPasswordElement = document.getElementById('login-password');
+      
+        if (loginEmailElement instanceof HTMLInputElement && loginPasswordElement instanceof HTMLInputElement) {
+            const loginEmail = loginEmailElement.value;
+            const loginPassword = loginPasswordElement.value;
         try {
-            const response = await fetch('./usuario.json/usuario.json') // Ruta al archivo JSON
+            const response = await fetch('./api/usuario.json') // Ruta al archivo JSON
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`)
             }
@@ -43,4 +48,5 @@ async function logInButton(e) {
             console.error('Error al cargar usuarios desde JSON:', error)
             alert('Error al iniciar sesión. Por favor, inténtalo de nuevo más tarde.')
         }
+    }
 }

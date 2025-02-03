@@ -1,6 +1,6 @@
 {
-  "include": ["./src/**/*.js"],
-  "exclude": ["./**/_hidden/**/*"],
+  "include": ["./src/js/**/*.js"],
+  "exclude": ["./**/_hidden/**/*", "server/**/*"],
   "compileOnSave": false,
   "compilerOptions": {
     /* Visit https://aka.ms/tsconfig to read more about this file */
