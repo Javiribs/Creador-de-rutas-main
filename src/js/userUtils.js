@@ -1,6 +1,7 @@
 // @ts-check
-
-
+import { simpleFetch } from './simpleFetch.js'
+import { HttpError } from './class/HttpError.js'
+/**@import {Usuario} from './class/usuario.js' */
 // Asigno en el DOM los eventos cargados 
 document.addEventListener('DOMContentLoaded', onDomContentLoaded)
 
@@ -28,12 +29,11 @@ function onDomContentLoaded() {
             const loginEmail = loginEmailElement.value;
             const loginPassword = loginPasswordElement.value;
         try {
-            const response = await fetch('./api/usuario.json') // Ruta al archivo JSON
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`)
+            const usuariosJSON = await getAPIData(`http://${location.hostname}:3333/read/usuarios`) // Ruta al archivo JSON
+            if (!usuariosJSON) {
+                throw new Error('Error al obtener datos de la API')
             }
-            const usuariosJSON = await response.json();
-
+            
             const usuarioEncontrado = usuariosJSON.find(
                 (/** @type {{ email: any; password: any; }} */ usuario) => usuario.email === loginEmail && usuario.password === loginPassword
             );
@@ -50,3 +50,40 @@ function onDomContentLoaded() {
         }
     }
 }
+
+
+//C.R.U.D
+
+/**
+ * Get data from API
+ * @returns {Promise<Array<Usuario>>}
+ */
+async function getAPIData(apiURL = './server/BBDD/new.usuarios.json') {
+    let apiData
+  
+    try {
+      apiData = await simpleFetch(apiURL, {
+        // Si la petición tarda demasiado, la abortamos
+        signal: AbortSignal.timeout(3000),
+        headers: {
+          'Content-Type': 'application/json',
+          // Add cross-origin header
+          'Access-Control-Allow-Origin': '*',
+        },
+      });
+    } catch (/** @type {any | HttpError} */err) {
+      if (err.name === 'AbortError') {
+        console.error('Fetch abortado');
+      }
+      if (err instanceof HttpError) {
+        if (err.response.status === 404) {
+          console.error('Not found');
+        }
+        if (err.response.status === 500) {
+          console.error('Internal server error');
+        }
+      }
+    }
+  
+    return apiData
+  }
