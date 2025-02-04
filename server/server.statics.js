@@ -35,9 +35,12 @@ const prepareFile = async (url) => {
 
 http
   .createServer(async (request, response) => {
-    const file = await prepareFile(request.url);
+    const url = new URL(`http://${request.headers.host}${request.url}`);
+    const file = await prepareFile(url.pathname);
     const statusCode = file.found ? 200 : 404;
     const mimeType = MIME_TYPES[file.ext] || MIME_TYPES.default;
+
+    console.log(url.pathname);
 
     // Set Up CORS
     response.setHeader('Access-Control-Allow-Origin', '*');
@@ -48,7 +51,6 @@ http
     response.writeHead(statusCode);
 
     file.stream.pipe(response);
-    console.log(`${request.method} ${request.url} ${statusCode}`);
   })
   .listen(process.env.PORT, process.env.IP);
 
