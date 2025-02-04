@@ -15,11 +15,11 @@ document.addEventListener('DOMContentLoaded', onDomContentLoaded)
 async function onDomContentLoaded() {
     //Asocio elementos del DOM por su ID a variables
     //boton buscar
-    const searchButton = document.getElementById('searchButton');
+    const searchButton = document.getElementById('searchButton')
     //caja usuario pone nombre ciudad
-    const searchInput = document.getElementById('searchInput');
+    const searchInput = document.getElementById('searchInput')
     //el propio formulario completo de busqueda
-    const searchForm = document.getElementById('searchForm');
+    const searchForm = document.getElementById('searchForm')
     //boton de volver al inicio (resetear toda la info)
     const volverInicioButton = document.getElementById('boton-inicio')
     //boton perfil

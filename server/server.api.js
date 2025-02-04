@@ -20,9 +20,10 @@ const MIME_TYPES = {
 http
   .createServer(async (request, response) => {
     const url = new URL(`http://${request.headers.host}${request.url}`);
+    const urlParams = Object.fromEntries(url.searchParams);
     const statusCode = 200
     let responseData = []
-    console.log(url.pathname, url.searchParams);
+    console.log(url.pathname, urlParams);
     // Set Up CORS
     response.setHeader('Access-Control-Allow-Origin', '*');
     response.setHeader('Content-Type', MIME_TYPES.json);
@@ -31,9 +32,14 @@ http
     response.setHeader('Access-Control-Max-Age', 2592000); // 30 days
     response.writeHead(statusCode);
 
+    if (request.method === 'OPTIONS') {
+        response.end();
+        return;
+    }
+
     switch (url.pathname) {
       case '/create/usuarios':
-        crud.create(USUARIOS_URL, url.searchParams, (data) => {
+        crud.create(USUARIOS_URL, urlParams, (data) => {
           console.log(`server ${data.name} creado`, data)
           responseData = data
 

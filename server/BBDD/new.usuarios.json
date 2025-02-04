@@ -1,10 +1,1 @@
-[
-    {
-        "id": "1",
-        "name": "Usuario 1",
-        "country": "España",
-        "email": "usuario1@example.com",
-        "password": "password1",
-        "birthdate": "1990-01-01"
-      }
-]
+[{"id":"1","name":"Usuario 1","country":"España","email":"usuario1@example.com","password":"password1","birthdate":"1990-01-01"}]
