@@ -23,6 +23,26 @@ document.addEventListener('DOMContentLoaded', onDomContentLoaded)
 //Eventos
 async function onDomContentLoaded() {
 
+  // Recuperar datos de sessionStorage al cargar la página
+  const usuarioGuardado = sessionStorage.getItem('usuario');
+
+  if (usuarioGuardado) {
+      try {
+          const usuario = JSON.parse(usuarioGuardado);
+          // El usuario ha iniciado sesión
+
+          // Puedes utilizar la información del usuario para personalizar la página, etc.
+          console.log("Usuario logueado:", usuario);
+      } catch (error) {
+          console.error("Error al parsear datos de usuario:", error);
+          sessionStorage.removeItem('usuario');
+          window.location.href = 'inicio.html';
+      }
+  } else {
+      // El usuario no ha iniciado sesión
+      window.location.href = 'inicio.html';
+  }
+
     //Procesar datos de json/API
     ciudades = await getCiudadesData()
     //Procesar datos de json/API

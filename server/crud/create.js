@@ -19,6 +19,10 @@ async function insertData(file, data, callback) {
   let parsedData = []
   await read(file, (readData) => {
     parsedData = [...readData];
+    if (!data.id) {
+      const timestamp = new Date()
+      data.id = String(timestamp.getTime())
+    }
     parsedData.push(data);
 
     fs.writeFile(file, JSON.stringify(parsedData), function (err) {
