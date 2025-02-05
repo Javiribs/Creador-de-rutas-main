@@ -16,6 +16,8 @@ function onDomContentLoaded() {
     loginForm?.addEventListener('submit', logInButton)
 }
 
+
+// EVENTOS
 /**
  * @param {SubmitEvent} e
  */
