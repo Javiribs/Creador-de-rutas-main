@@ -53,8 +53,7 @@ async function registerUser(e) {
             password: registerPassword,
         }
 
-        const searchParams = new URLSearchParams(userData).toString()
-        const response = await getAPIData(`http://${location.hostname}:3333/create/usuarios?${searchParams}`) // Ruta al archivo JSON 
+        const response = await getAPIData(`http://${location.hostname}:3333/create/usuarios`, 'POST', userData) // Ruta al archivo JSON 
         if (!response) {
             throw new Error('Error al crear usuario') // Muestra el error del servidor o un mensaje genérico
         }
@@ -93,6 +92,7 @@ async function registerUser(e) {
 
             if (usuarioEncontrado) {
                 alert('Inicio de sesión exitoso. ¡Bienvenido, ' + usuarioEncontrado.name + '!')
+                sessionStorage.setItem('usuario', JSON.stringify(usuarioEncontrado)) // Guardar datos en sessionStorage
                 window.location.href = 'index.html' // Redirige a index.html si las credenciales son correctas
             } else {
                 alert('Credenciales incorrectas. Inténtalo de nuevo.')
@@ -109,21 +109,32 @@ async function registerUser(e) {
 
 /**
  * Get data from API
+ * @param {string} apiURL
+ * @param {string} method
+ * @param {Object} [data]
  * @returns {Promise<Array<Usuario>>}
  */
-async function getAPIData(apiURL = './server/BBDD/new.usuarios.json') {
+async function getAPIData(apiURL = './server/BBDD/new.usuarios.json', method = 'GET', data) {
     let apiData
-  
+
+    console.log('getAPIData', method, data)
     try {
+      let headers = new Headers()
+  
+      headers.append('Content-Type', data ? 'application/json' : 'application/x-www-form-urlencoded')
+      headers.append('Access-Control-Allow-Origin', '*')
+      if (data) {
+        headers.append('Content-Length', String(JSON.stringify(data).length))
+      }
       apiData = await simpleFetch(apiURL, {
         // Si la petición tarda demasiado, la abortamos
-        signal: AbortSignal.timeout(3000),
-        headers: {
-          'Content-Type': 'application/json',
-          // Add cross-origin header
-          'Access-Control-Allow-Origin': '*',
-        },
+      signal: AbortSignal.timeout(3000),
+      method: method,
+      // @ts-expect-error TODO
+      body: data ? new URLSearchParams(data) : undefined,
+      headers: headers
       });
+      
     } catch (/** @type {any | HttpError} */err) {
       if (err.name === 'AbortError') {
         console.error('Fetch abortado');

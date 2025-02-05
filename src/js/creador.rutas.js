@@ -38,7 +38,34 @@ async function onDomContentLoaded() {
     volverInicioButton?.addEventListener('click', inicioButtonClick)
     //boton accede al perfil
     botonPerfil?.addEventListener('click', perfilButtonClick)
+
+    // Recuperar datos de sessionStorage al cargar la página
+    const usuarioGuardado = sessionStorage.getItem('usuario');
+
+    if (usuarioGuardado) {
+        try { // Intenta parsear los datos, maneja posibles errores
+            const usuario = JSON.parse(usuarioGuardado);
+            // El usuario ha iniciado sesión
+
+            // Mostrar información del usuario en la página, etc.
+            console.log("Usuario logueado:", usuario);
+
+            const botonPerfil = document.getElementById('boton-perfil');
+            if (botonPerfil) {
+                botonPerfil.textContent = usuario.name;
+            }
+        } catch (error) {
+            console.error("Error al parsear datos de usuario:", error);
+            // Si hay un error al parsear, elimina los datos de sessionStorage y redirige al login
+            sessionStorage.removeItem('usuario');
+            window.location.href = 'inicio.html';
+        }
+    } else {
+        // El usuario no ha iniciado sesión
+        window.location.href = 'inicio.html';
+    }
 }
+
 
 //evento para bloquear el boton enter teclado
 /**
