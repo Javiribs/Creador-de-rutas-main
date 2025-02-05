@@ -6,37 +6,7 @@ document.addEventListener('DOMContentLoaded', onDomContentLoaded);
 
 function onDomContentLoaded() {
     // Recuperar datos de sessionStorage
-    const usuarioGuardado = sessionStorage.getItem('usuario');
-
-    if (usuarioGuardado) {
-        try {
-            const usuario = JSON.parse(usuarioGuardado);
-
-            // Mostrar información del usuario en la página
-            const nombreUsuarioElement = document.querySelector('figure figcaption'); // Usamos querySelector para acceder al elemento
-            if (nombreUsuarioElement) {
-                nombreUsuarioElement.textContent = usuario.name;
-            }
-
-            const paisUsuarioElement = document.querySelector('article h3'); // Usamos querySelector para acceder al elemento
-            if (paisUsuarioElement) {
-                paisUsuarioElement.textContent = usuario.country;
-            }
-
-            const imagenUsuarioElement = document.querySelector('figure img');
-            if (imagenUsuarioElement instanceof HTMLImageElement) {
-                imagenUsuarioElement.src = 'URL_IMAGEN_PERFIL_USUARIO';
-                imagenUsuarioElement.alt = `Foto de perfil de ${usuario.name}`;
-            }
-        } catch (error) {
-            console.error("Error al parsear datos de usuario:", error);
-            sessionStorage.removeItem('usuario');
-            window.location.href = 'inicio.html';
-        }
-    } else {
-        // Usuario no ha iniciado sesión, redirigir a la página de inicio de sesión
-        window.location.href = 'inicio.html';
-    }
+    recuperarSessionStorage()
 
     // Eventos para los botones
     const botonInicio = document.getElementById('boton-inicio');
@@ -94,3 +64,31 @@ async function eliminarUsuario() {
         }
     }
 }
+
+async function recuperarSessionStorage() {
+    // Recuperar datos de sessionStorage al cargar la página
+    const usuarioGuardado = sessionStorage.getItem('usuario');
+
+    if (usuarioGuardado) {
+        try { // Intenta parsear los datos, maneja posibles errores
+            const usuario = JSON.parse(usuarioGuardado);
+            // El usuario ha iniciado sesión
+
+            // Mostrar información del usuario en la página, etc.
+            console.log("Usuario logueado:", usuario);
+
+            const botonPerfil = document.getElementById('boton-perfil');
+            if (botonPerfil) {
+                botonPerfil.textContent = usuario.name;
+            }
+        } catch (error) {
+            console.error("Error al parsear datos de usuario:", error);
+            // Si hay un error al parsear, elimina los datos de sessionStorage y redirige al login
+            sessionStorage.removeItem('usuario');
+            window.location.href = 'inicio.html';
+        }
+    } else {
+        // El usuario no ha iniciado sesión
+        window.location.href = 'inicio.html';
+      }
+  }
