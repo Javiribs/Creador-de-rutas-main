@@ -6,11 +6,9 @@ import { update } from './crud/update.js';
 
 
 const USUARIOS_URL = './server/BBDD/new.usuarios.json'
-// const ARTICLES = './server/BBDD/articles.json'
 
 // READ:
 // read(USERS, (data) => console.log('server', data));
-// read(ARTICLES, (data) => console.log('server', data));
 
 // CREATE:
 // create(USERS, { name: 'pepe', age: 12 }, (data) => console.log(`server ${data.name} creado`, data));

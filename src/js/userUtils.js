@@ -54,8 +54,9 @@ async function registerUser(e) {
             email: registerEmail,
             password: registerPassword,
         }
-
-        const response = await getAPIData(`http://${location.hostname}:3333/create/usuarios`, 'POST', userData) // Ruta al archivo JSON 
+        const payload = JSON.stringify(userData)
+        // Send fetch to API, create new article
+        const response = await getAPIData(`http://${location.hostname}:1337/create/usuarios`, 'POST', payload) // Ruta al archivo JSON 
         if (!response) {
             throw new Error('Error al crear usuario') // Muestra el error del servidor o un mensaje genérico
         }
@@ -83,7 +84,7 @@ async function registerUser(e) {
             const loginEmail = loginEmailElement.value;
             const loginPassword = loginPasswordElement.value;
         try {
-            const usuariosJSON = await getAPIData(`http://${location.hostname}:3333/read/usuarios`) // Ruta al archivo JSON
+            const usuariosJSON = await getAPIData(`http://${location.hostname}:1337/read/usuarios`) // Ruta al archivo JSON
             if (!usuariosJSON) {
                 throw new Error('Error al obtener datos de la API')
             }
@@ -119,11 +120,10 @@ async function registerUser(e) {
 async function getAPIData(apiURL = './server/BBDD/new.usuarios.json', method = 'GET', data) {
     let apiData
 
-    console.log('getAPIData', method, data)
     try {
       let headers = new Headers()
   
-      headers.append('Content-Type', data ? 'application/json' : 'application/x-www-form-urlencoded')
+      headers.append('Content-Type', 'application/json')
       headers.append('Access-Control-Allow-Origin', '*')
       if (data) {
         headers.append('Content-Length', String(JSON.stringify(data).length))
@@ -131,9 +131,8 @@ async function getAPIData(apiURL = './server/BBDD/new.usuarios.json', method = '
       apiData = await simpleFetch(apiURL, {
         // Si la petición tarda demasiado, la abortamos
       signal: AbortSignal.timeout(3000),
-      method: method,
-      // @ts-expect-error TODO
-      body: data ? new URLSearchParams(data) : undefined,
+      method: method,      
+      body: data ?? undefined,
       headers: headers
       });
       
