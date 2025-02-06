@@ -48,10 +48,14 @@ async function eliminarUsuario() {
             const usuarioGuardado = sessionStorage.getItem('usuario');
             if (usuarioGuardado) {
                 const usuario = JSON.parse(usuarioGuardado); //Necesitamos el id del usuario
-                const response = await simpleFetch(`http://${location.hostname}:3333/delete/usuarios/${usuario.id}`);
-                alert(response.message);
+                const options = {
+                    method: 'DELETE'
+                };
+                const response = await simpleFetch(`http://${location.hostname}:1337/delete/usuarios/${usuario.id}`, options);
+                
                 sessionStorage.removeItem('usuario');
                 window.location.href = 'inicio.html';
+                console.log("Respuesta del servidor:", response);
                 if (!response) {
                     throw new Error(`Error al eliminar usuario: ${response.status}`);
                 }

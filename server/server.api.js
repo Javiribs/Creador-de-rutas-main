@@ -55,7 +55,7 @@ http
         response.end();
         return;
     }
-    // Continue on GET request
+    // CRUD
     switch (action.name) {
       case '/create/usuarios':
         request.on('data', (chunk) => {
