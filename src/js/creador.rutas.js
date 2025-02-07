@@ -4,10 +4,26 @@ import { simpleFetch } from './simpleFetch.js'
 import { HttpError } from './class/HttpError.js'
 //Importo datos del json
 import { apiConfig } from './data/singleton.js'
+
 /** @import {Ciudad} from './class/ciudades.js' */
 //variable vacia a rellenar con datos de json/api fetch
 /** @type {Ciudad[]} */
 let ciudades = []
+
+/** @import {Paradas} from './class/ciudades.js' */
+//variable vacia a rellenar con datos de json/api fetch
+/**
+ * @type {Paradas[]}
+ */
+let paradasSeleccionadas = [] // Array para guardar las paradas seleccionadas
+
+//importo funcion boton crear ruta
+import { inicializarCreacionRuta } from './crear-ruta-personalizada.js'
+//varibale de ruta personalizada vacia
+/**
+ * @type {import("./class/rutaPersonalizada.js").RutaPersonalizada[]}
+ */
+let rutas = []
 // Asigno en el DOM los eventos cargados 
 document.addEventListener('DOMContentLoaded', onDomContentLoaded) 
 
@@ -40,6 +56,7 @@ async function onDomContentLoaded() {
     volverInicioButton?.addEventListener('click', inicioButtonClick)
     //boton accede al perfil
     botonPerfil?.addEventListener('click', perfilButtonClick)
+       
 }
 
 
@@ -58,7 +75,7 @@ function inicioButtonClick() {
 
 //funcion acceder al perfil activando boton
 function perfilButtonClick() {
-    window.location.href = 'perfil.html'; // Redirige a perfil.html
+    window.location.href = 'perfil.html' // Redirige a perfil.html
 }
 
 //evento buscadora, main funcion para buscar coincidencias de ciudades
@@ -107,15 +124,15 @@ function resetBuscador() {
     }
 
     // 2. Limpiar el título de la ciudad (si lo tienes)
-    const titleList = document.getElementById('tituloCiudad');
+    const titleList = document.getElementById('tituloCiudad')
     if (titleList) {
         titleList.innerText = '' // Restablece el título a su valor inicial o vacío
     }
 
     // 3. Limpiar el input de búsqueda (si lo tienes)
-    const searchInput = document.getElementById('searchInput');
+    const searchInput = document.getElementById('searchInput')
     if (searchInput instanceof HTMLInputElement) {
-        searchInput.value = '';
+        searchInput.value = ''
     }
 }
 
@@ -205,9 +222,16 @@ function addTitle(nameEncontrado) {
  * @param {Ciudad} ciudadEncontrada
  */
 function addParadasList(ciudadEncontrada){
-    const LISTADO = document.getElementsByClassName('paradas-interesantes')[0]
+  const LISTADO = document.getElementsByClassName('paradas-interesantes')[0]
+    //funcion para añadir el titulo de la ciudad encontrada
     addTitle(ciudadEncontrada)
-    ciudadEncontrada.paradas.forEach (( /** @type {{ nombre_parada: string; imagen: string; descripcion: string; categoria: string; info: string;}} */ parada) => {
+    //creacion de boton para crear ruta
+    const newBotonCrearRuta = document.createElement('button');  
+    newBotonCrearRuta.id = 'crearRuta'
+    newBotonCrearRuta.textContent = 'Crear ruta';
+    
+    //creacion de lista con paradas con metodo forEach de array
+    ciudadEncontrada.paradas.forEach (( /** @type {Paradas}} */ parada) => {
     //Crear elemntos en DOM para almacenar la info
     const newParadasItem = document.createElement('li')
     const newArticleParadas = document.createElement('article')
@@ -217,8 +241,9 @@ function addParadasList(ciudadEncontrada){
     const newNameParadas = document.createElement('h2')
     const newDescriptionParadas = document.createElement('p')
     const newCategoriaParadas = document.createElement('h3')
-    const newBotonParadas = document.createElement('button')
-    
+    const newCheckboxParada = document.createElement('input')
+    const newLabelCheckbox = document.createElement('label')
+    const newBotonParadas = document.createElement('button')    
 
     //Asociar cada elemento DOM con info de json
     //Asociar cada elemento hijo con su padre
@@ -233,17 +258,42 @@ function addParadasList(ciudadEncontrada){
     newCardParadas.appendChild(newDescriptionParadas)
     newCategoriaParadas.innerText = 'Categoría: ' + parada.categoria
     newCardParadas.appendChild(newCategoriaParadas)
+
+    newCheckboxParada.type = 'checkbox'
+    newCheckboxParada.id = `parada-${parada.nombre_parada.replace(/\s+/g, '-').toLowerCase()}` // ID único
+    newCheckboxParada.classList.add('parada-checkbox') // Clase para identificar checkboxes
+    newCardParadas.appendChild(newCheckboxParada)
+    newLabelCheckbox.htmlFor = newCheckboxParada.id
+    newLabelCheckbox.textContent = "Añadir a la ruta" // Texto de la etiqueta
+    newCardParadas.appendChild(newCheckboxParada)
+    newCardParadas.appendChild(newLabelCheckbox)
+    //evento para seleccionar o no la parada
+    newCheckboxParada.addEventListener('change', () => {
+      if (newCheckboxParada.checked) {
+          paradasSeleccionadas.push(parada) // Añadir parada al array
+      } else {
+          paradasSeleccionadas = paradasSeleccionadas.filter(p => p.nombre_parada !== parada.nombre_parada) // Eliminar parada del array
+      }
+      console.log(paradasSeleccionadas) // Mostrar paradas seleccionadas en la consola (para depuración)
+  });
+
     newBotonParadas.textContent = '+ Info'
+    //evento para redirigir al html de la info detallada de la parada
     newBotonParadas.addEventListener('click', () => {
         localStorage.setItem('paradasRecomendadas', JSON.stringify(ciudadEncontrada))
         window.location.href = `info-parada.html?nombre_parada=${parada.nombre_parada}`
     })
     newCardParadas.appendChild(newBotonParadas)
-    
-    
+     
     //almacenado todo a la OL del html
     LISTADO.appendChild(newParadasItem)
-    })
+    }) 
+    //almacenar boton crear ruta al final de la OL
+    LISTADO.appendChild(newBotonCrearRuta)
+
+    //inicializar creacion de rutas
+    inicializarCreacionRuta(newBotonCrearRuta, paradasSeleccionadas, rutas)
+
 }
 
 //Crear texto ciudad no encontrada

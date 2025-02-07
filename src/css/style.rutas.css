@@ -63,7 +63,7 @@ fieldset {
   align-items: center; 
 }
 
-label {
+.search-label-title {
   font-size: 2em;
   color: #888;
   margin-bottom: 20px;
@@ -92,9 +92,16 @@ button {
   margin-top: 10px;
 }
 
-.tituloCiudad {
+.titulo-ciudad {
   font-size: 2.5em;
   margin-bottom: 40px;
   margin-top: 20px;
 }
+
+label {
+  font-size: 1em;
+  color: #888;
+  margin-bottom: 20px;
+}
+
 
