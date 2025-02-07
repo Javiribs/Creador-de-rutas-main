@@ -45,6 +45,8 @@ async function registerUser(e) {
         return;
     }
 
+    const timestamp = new Date()
+
     try {
         const userData = { // Datos del usuario
             name: registerName,
@@ -53,7 +55,11 @@ async function registerUser(e) {
             country: registerCountry,
             email: registerEmail,
             password: registerPassword,
+            id: '',
         }
+        const userId = String(timestamp.getTime()); // Generate a random ID
+        userData.id = userId;
+        localStorage.setItem('userId', userId); 
         const payload = JSON.stringify(userData)
         // Send fetch to API, create new article
         const response = await getAPIData(`http://${location.hostname}:1337/create/usuarios`, 'POST', payload) // Ruta al archivo JSON 

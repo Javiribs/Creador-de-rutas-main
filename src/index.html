@@ -25,14 +25,14 @@
   <main>
     <form id="searchForm">
       <fieldset>
-        <label for="search">Qué ciudad quieres visitar?</label>
+        <label id="searchLabelTitle" class="search-label-title" for="search">Qué ciudad quieres visitar?</label>
         <input list="ciudades" type="text" id="searchInput" autocomplete="off" />
         <datalist id="ciudades"></datalist>
       </fieldset>
       <button type="button" id="searchButton" title="Buscar">Buscar</button>
     </form>
     <!-- Componente: Nombre ciudad como título -->
-    <h1 class="tituloCiudad" id="tituloCiudad"></h1>
+    <h1 class="titulo-ciudad" id="tituloCiudad"></h1>
     <!-- Componente: lista de paradas a visitar -->
     <ol class="paradas-interesantes"></ol>
   </main>
