@@ -242,8 +242,7 @@ function addParadasList(ciudadEncontrada){
     const newDescriptionParadas = document.createElement('p')
     const newCategoriaParadas = document.createElement('h3')
     const newCheckboxParada = document.createElement('input')
-    const newLabelCheckbox = document.createElement('label')
-    const newBotonParadas = document.createElement('button')    
+    const newLabelCheckbox = document.createElement('label')   
 
     //Asociar cada elemento DOM con info de json
     //Asociar cada elemento hijo con su padre
@@ -276,15 +275,7 @@ function addParadasList(ciudadEncontrada){
       }
       console.log(paradasSeleccionadas) // Mostrar paradas seleccionadas en la consola (para depuración)
   });
-
-    newBotonParadas.textContent = '+ Info'
-    //evento para redirigir al html de la info detallada de la parada
-    newBotonParadas.addEventListener('click', () => {
-        localStorage.setItem('paradasRecomendadas', JSON.stringify(ciudadEncontrada))
-        window.location.href = `info-parada.html?nombre_parada=${parada.nombre_parada}`
-    })
-    newCardParadas.appendChild(newBotonParadas)
-     
+   
     //almacenado todo a la OL del html
     LISTADO.appendChild(newParadasItem)
     }) 
@@ -292,7 +283,7 @@ function addParadasList(ciudadEncontrada){
     LISTADO.appendChild(newBotonCrearRuta)
 
     //inicializar creacion de rutas
-    inicializarCreacionRuta(newBotonCrearRuta, paradasSeleccionadas, rutas)
+    inicializarCreacionRuta(newBotonCrearRuta, paradasSeleccionadas, rutas, ciudadEncontrada)
 
 }
 

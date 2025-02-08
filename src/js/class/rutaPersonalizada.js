@@ -1,5 +1,7 @@
 // @ts-check
 
+/** @import {Ciudad} from  './ciudades.js' */ // Importa la clase Ciudad
+
 /** @import {Paradas} from  './ciudades.js' */
 //variable vacia a rellenar con datos de json/api fetch
 /** @type {Paradas[]} */
@@ -7,17 +9,19 @@
 //creamos objeto rutaPersonalizada que contiene los datos de la ruta personalizada
 export class RutaPersonalizada {
     id
+    ciudad
     nombre
     fechaCreacion
     paradas
     usuario
     /**
+     * @param {string} ciudad - El nombre de la ciudad.
      * @param {string} nombre - El nombre de la ruta.
      * @param {Paradas[]} paradas - Un arreglo de objetos con las propiedades de Paradas.
      * @param {string} usuario - El nombre del usuario que crea la ruta.
      * @param {Date} fechaCreacion - La fecha de creación de la ruta.
      */
-    constructor(nombre, paradas, fechaCreacion, usuario) {
+    constructor(ciudad, nombre, paradas, fechaCreacion, usuario) {
         if (!nombre) {
             throw new Error("El nombre de la ruta no puede estar vacío.");
         }
@@ -30,5 +34,6 @@ export class RutaPersonalizada {
         this.fechaCreacion = new Date()
         this.paradas = paradas
         this.usuario = usuario
+        this.ciudad = ciudad
     }
 } 

@@ -14,9 +14,6 @@ app.use(bodyParser.json())
 // for parsing application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }))
 
-app.get('/hello/:nombre', (req, res) => {
-    res.send(`Hola ${req.params.nombre}`);
-})
 
 //CRUD USUARIOS
 app.post('/create/usuarios', (req, res) => {
@@ -43,12 +40,8 @@ app.delete('/delete/usuarios/:id', async (req, res) => {
       res.json(data)
     });
   })
+
   
-  app.listen(port, () => {
-    console.log(`Creador de rutas app listening on port ${port}`)
-  })
-
-
   //CRUD RUTA PERSONALIZADA
   app.post('/create/rutas_personalizadas', (req, res) => {
     console.log("Datos recibidos en /create/rutas_personalizadas:", req.body);
@@ -75,6 +68,10 @@ app.delete('/delete/rutas_personalizadas/:id', async (req, res) => {
     });
   })
   
+
+
+
+  //SOLO TENER 1!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   app.listen(port, () => {
     console.log(`Creador de rutas app listening on port ${port}`)
   })
