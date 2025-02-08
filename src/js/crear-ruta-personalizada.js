@@ -29,7 +29,7 @@ export async function inicializarCreacionRuta(botonCrearRuta, paradasSeleccionad
         const usuario = JSON.parse(usuarioGuardado || '{}');
         const usuarioId = usuario?.id;
 
-        const nuevaRuta = new RutaPersonalizada(ciudadEncontrada,"Mi ruta", paradasSeleccionadas, new Date(), usuarioId);
+        const nuevaRuta = new RutaPersonalizada(ciudadEncontrada.name,"Mi ruta", paradasSeleccionadas, new Date(), usuarioId);
          // *** Comprobacion se recogen los datos***
          console.log("Nueva ruta creada:", nuevaRuta);
          
