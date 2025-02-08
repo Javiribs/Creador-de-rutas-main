@@ -1,0 +1,139 @@
+/* Estilos generales */
+body {
+    font-family: sans-serif;
+    background-color: #f8f8f8;
+    color: #333;
+}
+
+/* Estilos para la cabecera */
+header {
+    background-color: #fff;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px #0000001a;
+}
+
+header h1 {
+    font-size: 1.5em;
+    margin: 0;
+}
+
+nav ol {
+    display: flex; /* Menu horizontal */
+    padding: 0;
+    margin: 0;
+}
+
+nav li {
+    margin-left: 20px;
+}
+
+nav button {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+nav button:hover {
+    background-color: #45a049;
+}
+
+/* Estilos para el título principal */
+/* stylelint-disable-next-line no-descending-specificity */
+h1 {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 2em;
+}
+
+/* Estilos para la imagen y el pie de foto */
+figure {
+    margin: 30px auto;
+    max-width: 80%;
+}
+
+figure img {
+    width: 100%;
+    display: block;
+}
+
+figcaption {
+    text-align: center;
+    font-style: italic;
+    color: #777;
+    margin-top: 10px;
+}
+
+/* Estilos para la lista de paradas */
+.ruta-info {
+    padding: 0;
+    margin: 20px auto;
+    max-width: 80%;
+}
+
+.ruta-info li {
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 5px #0000001a;
+    background-color: #fff;
+    display: flex; /* Flexbox para alinear elementos */
+    align-items: center;
+}
+
+.ruta-info article { /* Contenedor para la información de cada parada */
+    display: flex;
+    align-items: center;
+    flex-grow: 1; /* Para que el contenido se expanda y ocupe el espacio */
+}
+
+.ruta-info figure {
+    margin-right: 15px;
+}
+
+.ruta-info img {
+    max-width: 100px;
+    border-radius: 5px;
+}
+
+.ruta-info section {
+    flex-grow: 1; /* El texto ocupa el espacio disponible */
+}
+
+.ruta-info h2 {
+    font-size: 1.2em;
+    margin-top: 0;
+}
+
+.ruta-info h3 {
+    font-size: 1em;
+    color: #777;
+    margin-bottom: 10px;
+}
+
+/* stylelint-disable-next-line no-descending-specificity */
+.ruta-info button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.ruta-info button:hover {
+    background-color: #0056b3;
+}
+
+/* Estilos para el debug (opcional) */
+.debug {
+    border: 1px solid red;
+}
