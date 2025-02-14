@@ -18,26 +18,26 @@ router.use(bodyParser.urlencoded({ extended: true }))
 //------------------------USUARIO------------------------//
 
 //MÉTODOS USUARIO
-router.get('/api/check/:nombre', async (req, res) => {
+router.get('/check/:nombre', async (req, res) => {
   const usuarios = await db.usuario.count()
   res.send(`Hola ${req.params.nombre}, hay ${usuarios} usuarios`)
 })
 
 //CRUD USUARIOS
-router.post('/api/create/usuarios', async (req, res) => {
+router.post('/create/usuarios', async (req, res) => {
   res.json(await db.usuario.create(req.body))
 })
 
-router.get('/api/read/usuarios', async (req, res) => {
+router.get('/read/usuarios', async (req, res) => {
   res.json(await db.usuario.get())
 })
 
 
-router.put('/api/update/usuarios/:id', requireAuth, async (req, res) => {
+router.put('/update/usuarios/:id', requireAuth, async (req, res) => {
   res.json(await db.usuario.update(req.params.id, req.body))
 })
 
-router.post('/api/login', async (req, res) => {
+router.post('/login', async (req, res) => {
   const user = await db.usuario.logIn(req.body)
   console.log(user)
   if (user) {
@@ -66,25 +66,25 @@ function gooogleOauth2() {
   return '123456'
 }
 
-router.delete('/api/delete/usuarios/:id', requireAuth, async (req, res) => {
+router.delete('/delete/usuarios/:id', requireAuth, async (req, res) => {
   res.json(await db.usuario.delete(req.params.id))
 })
 
 //------------------------CIUDADES------------------------//
 
 //MÉTODOS CIUDADES
-router.get('/api/check/:nombre', async (req, res) => {
+router.get('/check/:nombre', async (req, res) => {
   const ciudades = await db.ciudades.count()
   res.send(`Hola ${req.params.nombre}, hay ${ciudades} ciudades`)
 })
 
 //CRUD CIUDADES
 
-router.get('/api/read/ciudades', requireAuth, async (req, res) => {
+router.get('/read/ciudades', requireAuth, async (req, res) => {
   res.json(await db.ciudades.get())
 })
 
-router.get('/api/filter/ciudades/:name', requireAuth, async (req, res) => {
+router.get('/filter/ciudades/:name', requireAuth, async (req, res) => {
   const ciudades = await db.ciudades.get({ $text: { $search: req.params.name } })
   const ciudadesConParadas = await Promise.all(
     ciudades.map(async (ciudad) => {
@@ -97,7 +97,7 @@ router.get('/api/filter/ciudades/:name', requireAuth, async (req, res) => {
   res.json(ciudadesConParadas)
 })
 
-router.get('/api/filter/ciudadesName/:name', async (req, res) => {
+router.get('/filter/ciudadesName/:name', async (req, res) => {
   const ciudades = await db.ciudades.get({}, {_id: 0, name: 1, country: 1})
   res.json(ciudades) 
 });
@@ -105,14 +105,14 @@ router.get('/api/filter/ciudadesName/:name', async (req, res) => {
 //------------------------PARADAS------------------------//
 
 //MÉTODOS PARADAS
-router.get('/api/check/:nombre', async (req, res) => {
+router.get('/check/:nombre', async (req, res) => {
   const paradas = await db.paradas.count()
   res.send(`Hola ${req.params.nombre}, hay ${paradas} puntos de interés`)
 })
 
 //CRUD PARADAS
 
-router.get('/api/read/paradas', async (req, res) => {
+router.get('/read/paradas', async (req, res) => {
   res.json(await db.paradas.get())
 })
 
@@ -120,13 +120,13 @@ router.get('/api/read/paradas', async (req, res) => {
 //------------------------rutasPersonalizadas------------------------//
 
 //MÉTODOS rutasPersonalizadas
-router.get('/api/check/:nombre', async (req, res) => {
+router.get('/check/:nombre', async (req, res) => {
   const rutasPersonalizadas = await db.rutasPersonalizadas.count()
   res.send(`Hola ${req.params.nombre}, hay ${rutasPersonalizadas} rutas personalizadas`)
 })
 
 //CRUD rutasPersonalizadas
-router.post('/api/create/rutasPersonalizadas', requireAuth, async (req, res) => {
+router.post('/create/rutasPersonalizadas', requireAuth, async (req, res) => {
   //console.log('selectedParadas:', req.body.selectedParadas);
   const rutaPersonalizada = req.body
   const selectedParadas = [...rutaPersonalizada.selectedParadas]
@@ -139,7 +139,7 @@ router.post('/api/create/rutasPersonalizadas', requireAuth, async (req, res) => 
   res.json(nuevaRuta)
 })
 
-router.get('/api/read/rutasPersonalizadas/:id', requireAuth, async (req, res) => {
+router.get('/read/rutasPersonalizadas/:id', requireAuth, async (req, res) => {
   const rutaPersonalizada = await db.rutasPersonalizadas.get(req.params.id);
   const paradasRuta = await db.paradasRuta.get({rutaPersonalizada_id: req.params.id});
   const rutaConParadas = {
@@ -151,37 +151,37 @@ router.get('/api/read/rutasPersonalizadas/:id', requireAuth, async (req, res) =>
 });
 
 
-router.put('/api/update/rutasPersonalizadas/:id', requireAuth, async (req, res) => {
+router.put('/update/rutasPersonalizadas/:id', requireAuth, async (req, res) => {
   res.json(await db.rutasPersonalizadas.update(req.params.id, req.body))
 })
 
-router.delete('/api/delete/rutasPersonalizadas/:id', requireAuth, requireAuth, async (req, res) => {
+router.delete('/delete/rutasPersonalizadas/:id', requireAuth, requireAuth, async (req, res) => {
   res.json(await db.rutasPersonalizadas.delete(req.params.id))
 })
 
 //------------------------paradasRuta------------------------//
 
 //MÉTODOS paradasRuta
-router.get('/api/check/:nombre', async (req, res) => {
+router.get('/check/:nombre', async (req, res) => {
   const paradasRuta = await db.paradasRuta.count()
   res.send(`Hola ${req.params.nombre}, hay ${paradasRuta} paradas para la ruta`)
 })
 
 //CRUD paradasRuta
-router.post('/api/create/paradasRuta', requireAuth, async (req, res) => {
+router.post('/create/paradasRuta', requireAuth, async (req, res) => {
   res.json(await db.paradasRuta.create(req.body))
 })
 
-router.get('/api/read/paradasRuta', requireAuth, async (req, res) => {
+router.get('/read/paradasRuta', requireAuth, async (req, res) => {
   res.json(await db.paradasRuta.get())
 })
 
 
-router.put('/api/update/paradasRuta/:id', requireAuth, async (req, res) => {
+router.put('/update/paradasRuta/:id', requireAuth, async (req, res) => {
   res.json(await db.paradasRuta.update(req.params.id, req.body))
 })
 
-router.delete('/api/delete/paradasRuta/:id', requireAuth, async (req, res) => {
+router.delete('/delete/paradasRuta/:id', requireAuth, async (req, res) => {
   res.json(await db.paradasRuta.delete(req.params.id))
 })
 
