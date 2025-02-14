@@ -3,12 +3,14 @@
 import { simpleFetch } from './simpleFetch.js'
 import { HttpError } from './class/HttpError.js'
 //Importo datos del json
-import { apiConfig } from './data/singleton.js'
+//import { apiConfig } from './data/singleton.js'
+
+const API_PORT = location.port ? `:${location.port}` : ''
 
 /** @import {Ciudad} from './class/ciudades.js' */
 //variable vacia a rellenar con datos de json/api fetch
 /** @type {Ciudad[]} */
-let ciudades = []
+//let ciudades = []
 
 /** @import {Paradas} from './class/ciudades.js' */
 //variable vacia a rellenar con datos de json/api fetch
@@ -17,13 +19,18 @@ let ciudades = []
  */
 let paradasSeleccionadas = [] // Array para guardar las paradas seleccionadas
 
+/** @import {Usuario} from './class/usuario.js' */
+
+
 //importo funcion boton crear ruta
 import { inicializarCreacionRuta } from './crear-ruta-personalizada.js'
+
+/** @import {RutaPersonalizada} from './class/rutaPersonalizada.js' */
 //varibale de ruta personalizada vacia
 /**
- * @type {import("./class/rutaPersonalizada.js").RutaPersonalizada[]}
+ * @type {RutaPersonalizada[]}
  */
-let rutas = []
+
 // Asigno en el DOM los eventos cargados 
 document.addEventListener('DOMContentLoaded', onDomContentLoaded) 
 
@@ -40,12 +47,9 @@ async function onDomContentLoaded() {
     const volverInicioButton = document.getElementById('boton-inicio')
     //boton perfil
     const botonPerfil = document.getElementById('boton-perfil')
-    //guardar y recuperar datos local Storeage
-    recuperarLocalStorage()
     //recuperar datos sessionStorage
     recuperarSessionStorage()
-    //Procesar datos de json/API
-    ciudades = await getCiudadesData()
+    
     //Evitar refresh boton enter
     searchForm?.addEventListener('submit', blockEnterButton)
     //Autocompletar input del usuario
@@ -81,35 +85,38 @@ function perfilButtonClick() {
 //evento buscadora, main funcion para buscar coincidencias de ciudades
 
 //esta funcion recoge todo lo que sucede al apretar boton buscar
-function searchButtonOnClick() {
-    //limpiamos resultados busqueda anterior
-    const resultadosList = document.querySelector('.paradas-interesantes')
-    if (resultadosList) {
-        resultadosList.innerHTML = ''
-    }
-    const searchInput = document.getElementById('searchInput')
-    //aseguramos que el input pase a minúscula
-    //a la vez que pasamos el valor sarch input(del usuario) por la funcion que obtiene su value
-    const nameBuscado = getInputValue(searchInput)?.toLowerCase()
-    //obtenemos el nombre de la ciudad buscada para que se tenga en cuenta el país
-    const nombreCiudad = nameBuscado.split(' (')[0]
-    //condición para que input y info de json coincidan(buscador)
-    const ciudadEncontrada = ciudades.find(ciudad => ciudad.name.toLowerCase() === nombreCiudad)
-    
-    if (ciudadEncontrada) {
-        const nameEncontrado = ciudadEncontrada
-        //funcion que imprime nombre ciudad buscada
-        addTitle(nameEncontrado)
-        //funcion que imprime lista monumentos ciudad buscada
-        addParadasList(ciudadEncontrada)
-        //funcion que guarda datos en localStorage
-        localStorage.setItem('paradasRecomendadas', JSON.stringify(ciudadEncontrada.paradas))
-        console.log("La ciudad encontrada es:", nameEncontrado)
-        } else {
-        notFound(nameBuscado)
-        console.log('Ciudad no encontrada')
-        }
-    searchInput?.setAttribute('value', " ")
+async function searchButtonOnClick() {
+  const resultadosList = document.querySelector('.paradas-interesantes');
+  if (resultadosList) {
+      resultadosList.innerHTML = '';
+  }
+
+  const searchInput = document.getElementById('searchInput');
+  const nameBuscado = getInputValue(searchInput)?.toLowerCase();
+  const nombreCiudad = nameBuscado.split(' (')[0];
+  console.log(nombreCiudad);
+  
+    try {
+      // Obtener datos de ciudades desde el servidor
+      const ciudadEncontrada = await getCiudadesData(`${location.protocol}//${location.hostname}${API_PORT}/api/filter/ciudades/${nombreCiudad}`);
+      console.log('La ciudadEncontrada es:', ciudadEncontrada)
+
+      if (!ciudadEncontrada || ciudadEncontrada.length === 0) {
+        notFound(nameBuscado);
+        return; // Salir de la función para evitar errores posteriores
+      }
+      addTitle(ciudadEncontrada[0])
+      addParadasList(ciudadEncontrada[0])
+      
+      if (!ciudadEncontrada) {
+          throw new Error("No se pudieron obtener las ciudades desde el servidor.");
+      } 
+    } catch (error) {
+      console.error("Error en la búsqueda de ciudades:", error);
+      alert("Ocurrió un error durante la búsqueda. Inténtalo de nuevo más tarde.");
+  } finally {
+      searchInput?.setAttribute('value', " ");
+  }
 }
 
 
@@ -138,21 +145,34 @@ function resetBuscador() {
 
 /**
  * Get data from API
+ * @param {string} apiURL
+ * @param {string} method
+ * @param {Object} [data]
  * @returns {Promise<Array<Ciudad>>}
  */
 //funcion para leer datos del json/API
-async function getCiudadesData () {
+async function getCiudadesData (apiURL, method = 'GET', data) {
     let ciudadesData
     try {
+      let headers = new Headers()
+  
+      headers.append('Content-Type', 'application/json')
+      headers.append('Access-Control-Allow-Origin', '*')
+      if (data) {
+        headers.append('Content-Length', String(JSON.stringify(data).length))
+      }
+      // Set Bearer authorization if user is logged in
+      const loggedUser = getLoggedUserData();
+      if (loggedUser) {
+      headers.append('Authorization', `Bearer ${loggedUser?.token}`)
+      }   
     /** @type {Ciudad[]} */
-    ciudadesData = await simpleFetch (apiConfig.API_CIUDADES_URL, {
+    ciudadesData = await simpleFetch (apiURL, { 
         // Si la petición tarda demasiado, la abortamos
         signal: AbortSignal.timeout(3000),
-        headers: {
-          'Content-Type': 'application/json',
-          // Add cross-origin header
-          'Access-Control-Allow-Origin': '*',
-        },
+        method: method,
+        body: data ?? undefined,
+        headers: headers
       });
     } catch (/** @type {any | HttpError} */err) {
         if (err.name === 'AbortError') {
@@ -170,25 +190,24 @@ async function getCiudadesData () {
     return ciudadesData
 }
 
-
 //funcion propuesta autocompletar inputSearch usuario
-function searchProposal() {
+async function searchProposal() {
     const searchInput = document.getElementById('searchInput')
     const nameBuscado = getInputValue(searchInput)?.toLowerCase()
-    const sugerencias = ciudades.filter(ciudad =>
-    ciudad.name.toLowerCase().startsWith(nameBuscado))
     const datalist = document.getElementById('ciudades')
-    if(datalist) {
-        datalist.innerHTML = '' // Limpiar opciones anteriores
-    }  
-    sugerencias.forEach(ciudad => {
-        const option = document.createElement('option')
-        option.value = `${ciudad.name} (${ciudad.country})`
+    const sugerencias = await getCiudadesData(`${location.protocol}//${location.hostname}${API_PORT}/api/filter/ciudadesName/${nameBuscado}`);
+      if (datalist) {
+        datalist.innerHTML = ""
+      }
+      
+      sugerencias.forEach(ciudad => {
+        const option = document.createElement('option');
+        option.value = `${ciudad.name} (${ciudad.country})`; 
+        
         datalist?.appendChild(option);
-    })
+      });
 }
-
-
+   
 //C.R.U.D
 
 //funcion para obtener el value del elemento concreto
@@ -206,12 +225,12 @@ function getInputValue(inputElement) {
 
 //Crear el título con el nombre de la ciudad encontrada
 /**
- * @param {Ciudad} nameEncontrado
+ * @param {Ciudad} ciudadEncontrada
  */
-function addTitle(nameEncontrado) {
+function addTitle(ciudadEncontrada) {
     const titleList = document.getElementById('tituloCiudad')
     if (titleList) {
-      titleList.innerText = nameEncontrado.name;
+      titleList.innerText = ciudadEncontrada.name;
     } else {
       console.error('Elemento con ID "tituloCiudad" no encontrado.')
     }
@@ -221,71 +240,82 @@ function addTitle(nameEncontrado) {
 /**
  * @param {Ciudad} ciudadEncontrada
  */
-function addParadasList(ciudadEncontrada){
-  const LISTADO = document.getElementsByClassName('paradas-interesantes')[0]
-    //funcion para añadir el titulo de la ciudad encontrada
-    addTitle(ciudadEncontrada)
-    //creacion de boton para crear ruta
-    const newBotonCrearRuta = document.createElement('button');  
-    newBotonCrearRuta.id = 'crearRuta'
-    newBotonCrearRuta.textContent = 'Crear ruta';
-    
-    //creacion de lista con paradas con metodo forEach de array
-    ciudadEncontrada.paradas.forEach (( /** @type {Paradas}} */ parada) => {
-    //Crear elemntos en DOM para almacenar la info
-    const newParadasItem = document.createElement('li')
-    const newArticleParadas = document.createElement('article')
-    const newFigureParadas = document.createElement('figure')
-    const newImgParadas = document.createElement('img')
-    const newCardParadas = document.createElement('section')
-    const newNameParadas = document.createElement('h2')
-    const newDescriptionParadas = document.createElement('p')
-    const newCategoriaParadas = document.createElement('h3')
-    const newCheckboxParada = document.createElement('input')
-    const newLabelCheckbox = document.createElement('label')   
+function addParadasList(ciudadEncontrada) {
+  const LISTADO = document.getElementsByClassName('paradas-interesantes')[0];
+  if (!LISTADO) {
+      console.error("No se encontró el elemento con la clase 'paradas-interesantes'.");
+      return; // Salir de la función si no se encuentra el elemento
+  }
+  LISTADO.innerHTML = ''; // Limpiar la lista antes de añadir nuevas paradas
+  
+  const newBotonCrearRuta = document.createElement('button');
+  newBotonCrearRuta.id = 'crearRuta';
+  newBotonCrearRuta.textContent = 'Crear ruta';
+//error ts en el .paradas
+  // @ts-ignore
+  if (ciudadEncontrada && ciudadEncontrada.paradas && ciudadEncontrada.paradas.length > 0) { // Verifica que ciudadEncontrada y paradas existan y tengan elementos.
+      // @ts-ignore
+      ciudadEncontrada.paradas.forEach((/** @type {Paradas}} */ parada) => {
+          // Crear elementos en el DOM para almacenar la info
+          const newParadasItem = document.createElement('li');
+          const newArticleParadas = document.createElement('article');
+          const newFigureParadas = document.createElement('figure');
+          const newImgParadas = document.createElement('img');
+          const newCardParadas = document.createElement('section');
+          const newNameParadas = document.createElement('h2');
+          const newDescriptionParadas = document.createElement('p');
+          const newCategoriaParadas = document.createElement('h3');
+          const newCheckboxParada = document.createElement('input');
+          const newLabelCheckbox = document.createElement('label');
 
-    //Asociar cada elemento DOM con info de json
-    //Asociar cada elemento hijo con su padre
-    newParadasItem.appendChild(newArticleParadas)
-    newArticleParadas.appendChild(newFigureParadas)
-    newImgParadas.src = parada.imagen
-    newFigureParadas.appendChild(newImgParadas)
-    newArticleParadas.appendChild(newCardParadas)
-    newNameParadas.innerText = parada.nombre_parada
-    newCardParadas.appendChild(newNameParadas)
-    newDescriptionParadas.innerText = parada.descripcion
-    newCardParadas.appendChild(newDescriptionParadas)
-    newCategoriaParadas.innerText = 'Categoría: ' + parada.categoria
-    newCardParadas.appendChild(newCategoriaParadas)
+          // Asociar cada elemento DOM con info de json
+          newParadasItem.appendChild(newArticleParadas);
+          newArticleParadas.appendChild(newFigureParadas);
+          newImgParadas.src = parada.imagen;
+          newFigureParadas.appendChild(newImgParadas);
+          newArticleParadas.appendChild(newCardParadas);
+          newNameParadas.innerText = parada.nombre_parada;
+          newCardParadas.appendChild(newNameParadas);
+          newDescriptionParadas.innerText = parada.descripcion;
+          newCardParadas.appendChild(newDescriptionParadas);
+          newCategoriaParadas.innerText = 'Categoría: ' + parada.categoria;
+          newCardParadas.appendChild(newCategoriaParadas);
 
-    newCheckboxParada.type = 'checkbox'
-    newCheckboxParada.id = `parada-${parada.nombre_parada.replace(/\s+/g, '-').toLowerCase()}` // ID único
-    newCheckboxParada.classList.add('parada-checkbox') // Clase para identificar checkboxes
-    newCardParadas.appendChild(newCheckboxParada)
-    newLabelCheckbox.htmlFor = newCheckboxParada.id
-    newLabelCheckbox.textContent = "Añadir a la ruta" // Texto de la etiqueta
-    newCardParadas.appendChild(newCheckboxParada)
-    newCardParadas.appendChild(newLabelCheckbox)
-    //evento para seleccionar o no la parada
-    newCheckboxParada.addEventListener('change', () => {
-      if (newCheckboxParada.checked) {
-          paradasSeleccionadas.push(parada) // Añadir parada al array
-      } else {
-          paradasSeleccionadas = paradasSeleccionadas.filter(p => p.nombre_parada !== parada.nombre_parada) // Eliminar parada del array
-      }
-      console.log(paradasSeleccionadas) // Mostrar paradas seleccionadas en la consola (para depuración)
-  });
-   
-    //almacenado todo a la OL del html
-    LISTADO.appendChild(newParadasItem)
-    }) 
-    //almacenar boton crear ruta al final de la OL
-    LISTADO.appendChild(newBotonCrearRuta)
+          newCheckboxParada.type = 'checkbox';
+          newCheckboxParada.id = `parada-${parada.nombre_parada.replace(/\s+/g, '-').toLowerCase()}`; // ID único
+          newCheckboxParada.classList.add('parada-checkbox'); // Clase para identificar checkboxes
+          newCardParadas.appendChild(newCheckboxParada);
+          newLabelCheckbox.htmlFor = newCheckboxParada.id;
+          newLabelCheckbox.textContent = "Añadir a la ruta"; // Texto de la etiqueta
+          newCardParadas.appendChild(newCheckboxParada);
+          newCardParadas.appendChild(newLabelCheckbox);
+          // evento para seleccionar o no la parada
+          newCheckboxParada.addEventListener('change', () => {
+              if (newCheckboxParada.checked) {
+                  paradasSeleccionadas.push(parada); // Añadir parada al array
+              } else {
+                  paradasSeleccionadas = paradasSeleccionadas.filter(p => p.nombre_parada !== parada.nombre_parada); // Eliminar parada del array
+              }
+              console.log(paradasSeleccionadas); // Mostrar paradas seleccionadas en la consola (para depuración)
+          });
 
-    //inicializar creacion de rutas
-    inicializarCreacionRuta(newBotonCrearRuta, paradasSeleccionadas, rutas, ciudadEncontrada)
+          // Almacenar todo a la OL del html
+          LISTADO.appendChild(newParadasItem);
+      });
+  } else {
+      console.warn("No se encontraron paradas para la ciudad seleccionada o la información de la ciudad es inválida.");
+      // Puedes agregar un mensaje al usuario indicando que no hay paradas disponibles.
+      const mensajeNoParadas = document.createElement('li');
+      mensajeNoParadas.textContent = "No hay paradas disponibles para esta ciudad.";
+      LISTADO.appendChild(mensajeNoParadas);
+  }
+  // Almacenar botón crear ruta al final de la OL
+  LISTADO.appendChild(newBotonCrearRuta);
 
+  // Inicializar creación de rutas
+  inicializarCreacionRuta(newBotonCrearRuta, paradasSeleccionadas, ciudadEncontrada);
 }
+
 
 //Crear texto ciudad no encontrada
 /**
@@ -295,28 +325,11 @@ function notFound(nameBuscado) {
     const ciudadSinInfo = document.getElementById('tituloCiudad')
 
     if (ciudadSinInfo) {
-        ciudadSinInfo.innerText = 'No hay ruta para ' + nameBuscado.toUpperCase()
+        ciudadSinInfo.innerText = 'No hay propuestas para ' + nameBuscado.toUpperCase()
     } else {
         console.error('Elemento con ID "tituloCiudad" no encontrado.')
     }
 }
-
-//funcion para guardar y cargar elementos guardados local storage
-async function recuperarLocalStorage() {
-    const paradasGuardadas = localStorage.getItem('paradasRecomendadas');
-    if (paradasGuardadas) {
-      try {
-        const datosRecuperados = JSON.parse(paradasGuardadas);
-        addParadasList(datosRecuperados);
-      } catch (error) {
-        console.error("Error al parsear datos guardados:", error);
-        // Manejar el error
-      }
-    } else {
-      // No mostrar nada si no hay búsqueda previa
-      return;
-    }
-  }
 
   async function recuperarSessionStorage() {
     // Recuperar datos de sessionStorage al cargar la página
@@ -346,3 +359,12 @@ async function recuperarLocalStorage() {
       }
   }
 
+  /**
+ * Checks if there is a user logged in by verifying the presence of a token
+ * in the local storage.
+  * @returns {Usuario | null}
+ */
+  function getLoggedUserData() {
+    const storedUser = sessionStorage.getItem('usuario');
+    return storedUser ? JSON.parse(storedUser) : null
+  }
