@@ -3,28 +3,26 @@
 
 //creamos objeto ciudad que contiene el nombre ciudad y sus paradas
  export class Ciudad {
-    id
+    _id
     name
     country
-    paradas
     /**
+     * @param {string} _id - Id generada en mongo
      * @param {string} name - El nombre de la ciudad.
      * @param {string} country - El nombre del país.
-     * @param {Paradas[]} paradas - Un arreglo de objetos con las propiedades de Paradas.
      */
-    constructor(name, country, paradas) {
-        const timestamp = new Date()
-        this.id = name + '_' + String(timestamp.getTime())
+    constructor(_id, name, country) {
+        this._id = _id
         this.name = name
         this.country = country
-        this.paradas = paradas
     }
 } 
 
 
 //creamos la clase paradas (objeto con info interior)
  export class Paradas {
-    id
+    ciudad_id
+    _id
     nombre_parada
     coordenadas
     descripcion
@@ -34,6 +32,8 @@
     enlace
     info
     /**
+     * @param {string} ciudad_id
+     * @param {string} _id
      * @param {string} nombre_parada 
      * @param {Number[]} coordenadas
      * @param {string} descripcion
@@ -43,9 +43,9 @@
      * @param {string} enlace
      * @param {string} info
      */
-    constructor(nombre_parada, coordenadas, descripcion, imagen, horario, categoria, enlace, info) {
-        const timestamp = new Date()
-        this.id = nombre_parada + '_' + String(timestamp.getTime())
+    constructor(ciudad_id, _id, nombre_parada, coordenadas, descripcion, imagen, horario, categoria, enlace, info) {
+        this.ciudad_id = ciudad_id
+        this._id = _id
         this.nombre_parada = nombre_parada
         this.coordenadas = coordenadas
         this.descripcion = descripcion

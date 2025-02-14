@@ -2,6 +2,8 @@
 
 import { simpleFetch } from './simpleFetch.js'
 
+const API_PORT = location.port ? `:${location.port}` : ''
+
 document.addEventListener('DOMContentLoaded', onDomContentLoaded);
 
 function onDomContentLoaded() {
@@ -47,11 +49,8 @@ async function eliminarUsuario() {
         try {
             const usuarioGuardado = sessionStorage.getItem('usuario');
             if (usuarioGuardado) {
-                const usuario = JSON.parse(usuarioGuardado); //Necesitamos el id del usuario
-                const options = {
-                    method: 'DELETE'
-                };
-                const response = await simpleFetch(`http://${location.hostname}:1337/delete/usuarios/${usuario.id}`, options);
+                const usuario = JSON.parse(usuarioGuardado);
+                const response = await simpleFetch(`${location.protocol}//${location.hostname}${API_PORT}/api/delete/usuarios/${usuario._id}`, 'DELETE');
                 
                 sessionStorage.removeItem('usuario');
                 window.location.href = 'inicio.html';

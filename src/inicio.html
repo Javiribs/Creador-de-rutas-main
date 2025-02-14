@@ -1,35 +1,40 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./css/reset.css" />
-    <link rel="stylesheet" href="./css/style.inicio.css" />
-    <script type="module" src="./js/userUtils.js"></script>
-    <title>Inicio</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Buscador</title>
+  <link rel="stylesheet" href="./css/reset.css" />
+  <link rel="stylesheet" href="./css/style.creador-rutas.css" />
+  <script type="module" src="./js/creador.rutas.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 </head>
-<body>
-    <h2>Creador de rutas</h2>
-    <h3>Descubre ciudades en solo un click</h3>
-
-    <form id="register-form">
-        <h3>Registrarse</h3>
-        <input type="text" id="register-name" placeholder="Nombre" required>
-        <input type="text" id="register-lastname" placeholder="Apellidos" required>
-        <label for="register-birthdate">Fecha de nacimiento:</label>
-        <input type="date" id="register-birthdate" required>
-        <input type="text" id="register-country" placeholder="Pais" required>
-        <input type="email" id="register-email" placeholder="Correo electrónico" required>
-        <input type="password" id="register-password" placeholder="Contraseña" required>
-        <button type="submit">Registrarse</button>
+<body class="debug">
+  <!-- Cabecera de la página -->
+  <header>
+    <h1>LOGO</h1>
+    <nav>
+      <ol>
+        <li><button type="reset" id="boton-inicio" class="boton-inicio">Buscador</button></li>
+        <li><button id="boton-perfil">Perfil</button></li>
+        <li><a href="#">Ajustes</a></li>
+      </ol>
+    </nav>
+  </header>
+  <!-- Componente: creador -->
+  <main>
+    <form id="searchForm">
+      <fieldset>
+        <label id="searchLabelTitle" class="search-label-title" for="search">Qué ciudad quieres visitar?</label>
+        <input list="ciudades" type="text" id="searchInput" autocomplete="off" />
+        <datalist id="ciudades"></datalist>
+      </fieldset>
+      <button type="button" id="searchButton" title="Buscar">Buscar</button>
     </form>
-
-    <form id="login-form">
-        <h3>Iniciar sesión</h3>
-        <input type="email" id="login-email" placeholder="Correo electrónico" required>
-        <input type="password" id="login-password" placeholder="Contraseña" required>
-        <button type="submit">Iniciar sesión</button>
-        <a href="#" id="forgot-password">¿Olvidaste tu contraseña?</a>
-    </form>
+    <!-- Componente: Nombre ciudad como título -->
+    <h1 class="titulo-ciudad" id="tituloCiudad"></h1>
+    <!-- Componente: lista de paradas a visitar -->
+    <ol class="paradas-interesantes"></ol>
+  </main>
 </body>
 </html>

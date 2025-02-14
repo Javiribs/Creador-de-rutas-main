@@ -5,82 +5,82 @@
 import { simpleFetch } from './simpleFetch.js'
 import { HttpError } from './class/HttpError.js'
 
+const API_PORT = location.port ? `:${location.port}` : ''
+
 //importo la clase ciudad
 /** @import {Ciudad} from './class/ciudades.js' */
-
-// crear-ruta-personalizada.js
-import { RutaPersonalizada } from './class/rutaPersonalizada.js';
+//importo la clase paradas
+/** @import {Paradas} from './class/ciudades.js' */
+//importo la clase usuario
+/** @import {Usuario} from './class/usuario.js' */
+//importo la clase ciudad
+/** @import {RutaPersonalizada} from './class/rutaPersonalizada.js' */
 
 /**
  * @param {HTMLButtonElement} botonCrearRuta
- * @param {any[]} paradasSeleccionadas
- * @param {RutaPersonalizada[]} rutas
+ * @param {Paradas[]} paradasSeleccionadas
  * @param {Ciudad} ciudadEncontrada
   */
-export async function inicializarCreacionRuta(botonCrearRuta, paradasSeleccionadas, rutas, ciudadEncontrada) {
+export async function inicializarCreacionRuta(botonCrearRuta, paradasSeleccionadas, ciudadEncontrada) {
     botonCrearRuta?.addEventListener('click', async () => {
         if (Array.isArray(paradasSeleccionadas) && paradasSeleccionadas.length < 2) {
             alert("Debes seleccionar al menos dos paradas para crear una ruta.");
             return;
         }
 
-       // Obtener usuarioId desde sessionStorage
+       //Obtener usuarioId desde sessionStorage
         const usuarioGuardado = sessionStorage.getItem('usuario');
         const usuario = JSON.parse(usuarioGuardado || '{}');
         const usuarioId = usuario?.id;
 
-        const nuevaRuta = new RutaPersonalizada(ciudadEncontrada.name,"Mi ruta", paradasSeleccionadas, new Date(), usuarioId);
-         // *** Comprobacion se recogen los datos***
-         console.log("Nueva ruta creada:", nuevaRuta);
-         
-        rutas.push(nuevaRuta);
-        guardarRutas(rutas);
+        let i = 0
+        const selectedParadas = paradasSeleccionadas.map((parada) => {
+          return {
+            parada_id: parada._id,
+            orden: i++,
+            rutaPersonalizada_id: ''
+          }
+        });
 
-        const timestamp = new Date();
-        const rutaId = String(timestamp.getTime()); // ID único para la ruta
-
-        const rutaData = {
-            nombre: nuevaRuta.nombre,
-            ciudad: ciudadEncontrada.name,
-            fecha: nuevaRuta.fechaCreacion,
-            paradas: nuevaRuta.paradas,
-            usuarioId: nuevaRuta.usuario,
-            id: rutaId // Usar el ID generado
+        const rutaPersonalizadaData = { 
+            
+          ciudad_id: ciudadEncontrada._id,
+          nombre: 'Mi ruta',
+          usuario_id: usuarioId,
+          fechaCreacion: new Date(),
+          selectedParadas
         }
 
-        try {
-          const payload = JSON.stringify(rutaData);
-          const response = await getAPIData(`http://${location.hostname}:1337/create/rutas_personalizadas`, 'POST', payload);
+        console.log(selectedParadas)
 
+        try {
+          
+          const payload = JSON.stringify(rutaPersonalizadaData)
+          // Send fetch to API, create new ruta
+          const response = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/create/rutasPersonalizadas`, 'POST', payload) // Ruta al archivo JSON 
           if (!response) {
-              throw new Error('Error al crear ruta');
+            throw new Error('Error al crear la ruta') // Muestra el error del servidor o un mensaje genérico
           }
 
-      } catch (error) {
-          console.error('Error al crear ruta:', error);
-          alert('Error al crear ruta. Por favor, inténtalo de nuevo más tarde.');
-          return; // Importante: Detener la ejecución si hay un error
-      }
-
-      window.location.href = `ruta.html?id=${rutaId}`; // Pasar solo el ID
+          const rutaId = response._id;
+          window.location.href = `ruta.html?id=${rutaId}`;
+        } catch (error) {
+          console.error('Error al crear la ruta:', error)
+          alert('Error al crear la ruta. Por favor, inténtalo de nuevo más tarde.')   
+      } // Pasar solo el ID
   })
-
-    /**
-     * @param {RutaPersonalizada[]} rutas
-     */
-    function guardarRutas(rutas) {
-        localStorage.setItem('rutas', JSON.stringify(rutas));
-    }
 }
+
+//C.R.U.D
 
 /**
  * Get data from API
  * @param {string} apiURL
  * @param {string} method
  * @param {Object} [data]
- * @returns {Promise<Array<RutaPersonalizada>>}
+ * @returns {Promise<RutaPersonalizada>}
  */
-async function getAPIData(apiURL = './server/BBDD/new.usuarios.json', method = 'GET', data) {
+async function getAPIData(apiURL, method = 'GET', data) {
     let apiData
 
     try {
@@ -90,6 +90,11 @@ async function getAPIData(apiURL = './server/BBDD/new.usuarios.json', method = '
       headers.append('Access-Control-Allow-Origin', '*')
       if (data) {
         headers.append('Content-Length', String(JSON.stringify(data).length))
+      }
+      // Set Bearer authorization if user is logged in
+      const loggedUser = getLoggedUserData();
+      if (loggedUser) {
+      headers.append('Authorization', `Bearer ${loggedUser?.token}`)
       }
       apiData = await simpleFetch(apiURL, {
         // Si la petición tarda demasiado, la abortamos
@@ -115,3 +120,15 @@ async function getAPIData(apiURL = './server/BBDD/new.usuarios.json', method = '
   
     return apiData
   }
+
+  /**
+ * Checks if there is a user logged in by verifying the presence of a token
+ * in the local storage.
+  * @returns {Usuario | null}
+ */
+function getLoggedUserData() {
+  const storedUser = sessionStorage.getItem('usuario');
+  return storedUser ? JSON.parse(storedUser) : null
+}
+
+

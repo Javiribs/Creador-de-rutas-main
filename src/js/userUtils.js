@@ -1,10 +1,11 @@
 // @ts-check
 import { simpleFetch } from './simpleFetch.js'
 import { HttpError } from './class/HttpError.js'
-/**@import {Usuario} from './class/usuario.js' */
+/** @import {Usuario} from './class/usuario.js' */
 // Asigno en el DOM los eventos cargados 
 document.addEventListener('DOMContentLoaded', onDomContentLoaded)
 
+const API_PORT = location.port ? `:${location.port}` : ''
 
 //EVENTOS
 function onDomContentLoaded() {
@@ -45,8 +46,6 @@ async function registerUser(e) {
         return;
     }
 
-    const timestamp = new Date()
-
     try {
         const userData = { // Datos del usuario
             name: registerName,
@@ -57,12 +56,10 @@ async function registerUser(e) {
             password: registerPassword,
             id: '',
         }
-        const userId = String(timestamp.getTime()); // Generate a random ID
-        userData.id = userId;
-        localStorage.setItem('userId', userId); 
+        
         const payload = JSON.stringify(userData)
         // Send fetch to API, create new article
-        const response = await getAPIData(`http://${location.hostname}:1337/create/usuarios`, 'POST', payload) // Ruta al archivo JSON 
+        const response = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/create/usuarios`, 'POST', payload) // Ruta al archivo JSON 
         if (!response) {
             throw new Error('Error al crear usuario') // Muestra el error del servidor o un mensaje genérico
         }
@@ -81,37 +78,39 @@ async function registerUser(e) {
 //Funciones que se activan al apretar el loginbutton
 //busca coincidencias entre email y password
     async function logInButton(e) {
-        e.preventDefault();
-      
-        const loginEmailElement = document.getElementById('login-email');
-        const loginPasswordElement = document.getElementById('login-password');
-      
-        if (loginEmailElement instanceof HTMLInputElement && loginPasswordElement instanceof HTMLInputElement) {
-            const loginEmail = loginEmailElement.value;
-            const loginPassword = loginPasswordElement.value;
-        try {
-            const usuariosJSON = await getAPIData(`http://${location.hostname}:1337/read/usuarios`) // Ruta al archivo JSON
-            if (!usuariosJSON) {
-                throw new Error('Error al obtener datos de la API')
-            }
-            
-            const usuarioEncontrado = usuariosJSON.find(
-                (/** @type {{ email: any; password: any; }} */ usuario) => usuario.email === loginEmail && usuario.password === loginPassword
-            );
+        
+        const loginData = {
+          email: getElementValue('login-email'),
+          password: getElementValue('login-password')
+        }
 
-            if (usuarioEncontrado) {
-                alert('Inicio de sesión exitoso. ¡Bienvenido, ' + usuarioEncontrado.name + '!')
-                sessionStorage.setItem('usuario', JSON.stringify(usuarioEncontrado)) // Guardar datos en sessionStorage
-                window.location.href = 'index.html' // Redirige a index.html si las credenciales son correctas
+        e.preventDefault()
+
+        if (loginData.email !== '' && loginData.password !== '') {
+          const payload = JSON.stringify(loginData)
+          const apiData = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/login`, 'POST', payload)
+          if (!apiData) {
+            // Show error
+            alert('El usuario no existe')
+          } else {
+            if ('_id' in apiData
+              && 'name' in apiData
+              && 'lastname' in apiData
+              && 'birthdate' in apiData
+              && 'country' in apiData
+              && 'email' in apiData
+              && 'token' in apiData) {
+              // @ts-ignore
+              const userData = /** @type {Usuario} */(apiData)
+              sessionStorage.setItem('usuario', JSON.stringify(userData)) // Guardar datos en sessionStorage
+              window.location.href = 'inicio.html'
             } else {
-                alert('Credenciales incorrectas. Inténtalo de nuevo.')
+              alert('Invalid user data')
             }
-        } catch (error) {
-            console.error('Error al cargar usuarios desde JSON:', error)
-            alert('Error al iniciar sesión. Por favor, inténtalo de nuevo más tarde.')
+          }
         }
     }
-}
+
 
 
 //C.R.U.D
@@ -123,7 +122,7 @@ async function registerUser(e) {
  * @param {Object} [data]
  * @returns {Promise<Array<Usuario>>}
  */
-async function getAPIData(apiURL = './server/BBDD/new.usuarios.json', method = 'GET', data) {
+async function getAPIData(apiURL, method = 'GET', data) {
     let apiData
 
     try {
