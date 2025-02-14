@@ -54,13 +54,6 @@ router.post('/login', async (req, res) => {
   }
 })
 
-// for parsing application/json
-api.use(bodyParser.json())
-// for parsing application/x-www-form-urlencoded
-api.use(bodyParser.urlencoded({ extended: true }))
-api.use('/api/', router)
-
-export const handler = serverless(api);
 
 function gooogleOauth2() {
   return '123456'
@@ -196,6 +189,13 @@ function requireAuth(req, res, next) {
   }
 }
 
+// for parsing application/json
+api.use(bodyParser.json())
+// for parsing application/x-www-form-urlencoded
+api.use(bodyParser.urlencoded({ extended: true }))
+api.use('/api/', router)
+
+export const handler = serverless(api);
 
 //------------------MONGODB------------------//
 
