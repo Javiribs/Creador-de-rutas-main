@@ -9,11 +9,11 @@ const router = Router();
 //const USUARIOS_URL = './server/BBDD/new.usuarios.json'
 //const RUTA_PERSONALIZADA_URL = './server/BBDD/new.ruta.personalizada.json'
 
-router.use(express.static('src'))
-// for parsing application/json
-router.use(bodyParser.json())
-// for parsing application/x-www-form-urlencoded
-router.use(bodyParser.urlencoded({ extended: true }))
+// router.use(express.static('src'))
+// // for parsing application/json
+// router.use(bodyParser.json())
+// // for parsing application/x-www-form-urlencoded
+// router.use(bodyParser.urlencoded({ extended: true }))
 
 //------------------------USUARIO------------------------//
 
