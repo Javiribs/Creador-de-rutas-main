@@ -32,6 +32,9 @@ export const db = {
         count: countParadasRuta,
         update: updateParadasRuta,
         delete: deleteParadasRuta
+      },
+      rutaConParadas: {
+        get: getRutaConParadas
       }
   }
 
@@ -230,9 +233,9 @@ async function getRutaPersonalizada(id){
     const client = new MongoClient(URI);
     const creadorDB = client.db('CreadorRutas');
     const rutaPersonalizadaCollection = creadorDB.collection('RutaPersonalizada');
-    return await rutaPersonalizadaCollection.find({ _id: new ObjectId(id) }).toArray()
+    const ruta = await rutaPersonalizadaCollection.findOne({ _id: new ObjectId(id) }); 
+    return ruta;
 }
-
 
 /**
  * Actualiza las RutaPersonalizada de la database CreadorRutas.
@@ -301,18 +304,15 @@ async function createParadasRuta(paradasRuta) {
 
 /**
  * Obtiene ParadasRuta de la colección database.
- *
- * @returns {Promise<Array<object>>} - Array de ParadasRuta.
+ * @param {string} id - Id de la ParadasRuta a actualizar
+ * @returns {Promise<Array<string>>} - Array de ParadasRuta.
  */
-async function getParadasRuta(filter){
+async function getParadasRuta(id){
     const client = new MongoClient(URI);
     const creadorDB = client.db('CreadorRutas');
     const paradasRutaCollection = creadorDB.collection('ParadasRuta');
-    const result = await paradasRutaCollection.find(filter).toArray();
-    if (result.length === 0) {
-        throw new Error('No se encontraron paradas de la ruta personalizada');
-    }
-    return result;
+    const paradas = await paradasRutaCollection.find({ rutaPersonalizada_id: new ObjectId(id) }).toArray();
+    return paradas;
 }
 
 
@@ -345,4 +345,86 @@ async function deleteParadasRuta(id) {
     const returnValue = await paradasRutaCollection.deleteOne({ _id: new ObjectId(id) });
     console.log('db deleteParadasRuta', returnValue, id)
     return id
+}
+
+
+
+
+//--------------MÉTODOS PARA rutaConParadas-------------------//
+
+/**
+ * Obtains a customized route with its associated stops and city details from the database.
+ * @param {string} rutaId - The ID of the customized route to retrieve.
+ * @returns {Promise<Array<object>>} - A promise that resolves to an array of objects,
+ */
+
+async function getRutaConParadas(rutaId) {
+    const client = new MongoClient(URI);
+    try {
+        await client.connect();
+        const db = client.db('CreadorRutas');
+
+        let pipeline = [
+            { $match: { _id: new ObjectId(rutaId) } },
+            {
+                $lookup: {
+                    from: 'Ciudades',
+                    let: { ciudadId: '$ciudad_id' },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $eq: ['$_id', { $toObjectId: '$$ciudadId' }] }
+                            }
+                        },
+                        {
+                            $project: {
+                                _id: 0,
+                                name: 1,
+                                country: 1
+                            }
+                        }
+                    ],
+                    as: 'ciudad'
+                }
+            },
+            { $unwind: '$ciudad' },
+            {
+                $lookup: {
+                    from: 'ParadasRuta',
+                    let: { rutaId: '$_id' },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $eq: ['$rutaPersonalizada_id', '$$rutaId'] }
+                            }
+                        },
+                        { // <-- Nuevo $lookup anidado para Paradas
+                            $lookup: {
+                                from: 'Paradas',
+                                let: { paradaId: '$parada_id' },
+                                pipeline: [
+                                    {
+                                        $match: {
+                                            $expr: { $eq: ['$_id', { $toObjectId: '$$paradaId' }] }
+                                        }
+                                    }
+                                ],
+                                as: 'parada'
+                            }
+                        },
+                        { $unwind: '$parada' } // <-- Unwind para tener un objeto parada y no un array
+                    ],
+                    as: 'paradasRuta'
+                }
+            }
+        ];
+
+        let result = await db.collection('RutaPersonalizada').aggregate(pipeline).toArray();
+        console.log("Resultados del pipeline:", result);
+
+        return result;
+
+    } finally {
+        await client.close();
+    }
 }

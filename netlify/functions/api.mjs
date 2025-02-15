@@ -178,6 +178,12 @@ router.delete('/delete/paradasRuta/:id', requireAuth, async (req, res) => {
   res.json(await db.paradasRuta.delete(req.params.id))
 })
 
+//------------------rutasConParadas------------------//
+
+router.get('/api/read/rutasConParadas/:id', async (req, res) => {
+  res.json(await db.rutaConParadas.get(req.params.id))
+})
+
 //-------------------MIDLEWERE----------------//
 function requireAuth(req, res, next) {
   // Simulation of authentication (OAuth2)
@@ -229,6 +235,9 @@ export const db = {
         count: countParadasRuta,
         update: updateParadasRuta,
         delete: deleteParadasRuta
+      },
+      rutaConParadas: {
+        get: getRutaConParadas
       }
   }
 
@@ -542,4 +551,83 @@ async function deleteParadasRuta(id) {
     const returnValue = await paradasRutaCollection.deleteOne({ _id: new ObjectId(id) });
     console.log('db deleteParadasRuta', returnValue, id)
     return id
+}
+
+//--------------MÉTODOS PARA rutaConParadas-------------------//
+
+/**
+ * Obtains a customized route with its associated stops and city details from the database.
+ * @param {string} rutaId - The ID of the customized route to retrieve.
+ * @returns {Promise<Array<object>>} - A promise that resolves to an array of objects,
+ */
+
+async function getRutaConParadas(rutaId) {
+    const client = new MongoClient(URI);
+    try {
+        await client.connect();
+        const db = client.db('CreadorRutas');
+
+        let pipeline = [
+            { $match: { _id: new ObjectId(rutaId) } },
+            {
+                $lookup: {
+                    from: 'Ciudades',
+                    let: { ciudadId: '$ciudad_id' },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $eq: ['$_id', { $toObjectId: '$$ciudadId' }] }
+                            }
+                        },
+                        {
+                            $project: {
+                                _id: 0,
+                                name: 1,
+                                country: 1
+                            }
+                        }
+                    ],
+                    as: 'ciudad'
+                }
+            },
+            { $unwind: '$ciudad' },
+            {
+                $lookup: {
+                    from: 'ParadasRuta',
+                    let: { rutaId: '$_id' },
+                    pipeline: [
+                        {
+                            $match: {
+                                $expr: { $eq: ['$rutaPersonalizada_id', '$$rutaId'] }
+                            }
+                        },
+                        { // <-- Nuevo $lookup anidado para Paradas
+                            $lookup: {
+                                from: 'Paradas',
+                                let: { paradaId: '$parada_id' },
+                                pipeline: [
+                                    {
+                                        $match: {
+                                            $expr: { $eq: ['$_id', { $toObjectId: '$$paradaId' }] }
+                                        }
+                                    }
+                                ],
+                                as: 'parada'
+                            }
+                        },
+                        { $unwind: '$parada' } // <-- Unwind para tener un objeto parada y no un array
+                    ],
+                    as: 'paradasRuta'
+                }
+            }
+        ];
+
+        let result = await db.collection('RutaPersonalizada').aggregate(pipeline).toArray();
+        console.log("Resultados del pipeline:", result);
+
+        return result;
+
+    } finally {
+        await client.close();
+    }
 }

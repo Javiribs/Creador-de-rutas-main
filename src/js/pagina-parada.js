@@ -176,7 +176,7 @@ async function recuperarSessionStorage() {
           console.error("Error al parsear datos de usuario:", error);
           // Si hay un error al parsear, elimina los datos de sessionStorage y redirige al login
           sessionStorage.removeItem('usuario');
-          window.location.href = 'inicio.html';
+          window.location.href = 'index.html';
       }
   } else {
       // El usuario no ha iniciado sesión

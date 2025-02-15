@@ -31,7 +31,8 @@ async function obtenerRuta() {
     const rutaId = urlParams.get('id');
     // Send fetch to API, create new ruta
     if (rutaId !== null) {
-    const response = await getRutaPersonalizadaData(`${location.protocol}//${location.hostname}${API_PORT}/api/read/rutasPersonalizadas/${rutaId}`)
+    //const response = await getRutaPersonalizadaData(`${location.protocol}//${location.hostname}${API_PORT}/api/read/rutasPersonalizadas/${rutaId}`)
+        const response = await getRutaPersonalizadaData(`${location.protocol}//${location.hostname}${API_PORT}/api/read/rutasConParadas/${rutaId}`)
         return response 
     } else {
        return {}
@@ -94,61 +95,106 @@ async function getRutaPersonalizadaData (apiURL, method = 'GET', data) {
 
 
 /**
- * @param {Object} rutaConParadas
- * @param {Paradas[]} rutaConParadas.paradas
- * @param {string} rutaConParadas.nombre
- * @param {string} rutaConParadas.ciudad_id
+ * @typedef {Object} RutaConParadas
+ * @property {string} _id - ID de la ruta
+ * @property {string} nombre - Nombre de la ruta
+ * @property {string} ciudad_id - ID de la ciudad
+ * @property {Object[]} paradasRuta - Array de paradas de la ruta
+ * @property {string} paradasRuta._id - ID de la parada
+ * @property {string} paradasRuta.parada_id - ID de la parada
+ * @property {string} paradasRuta.rutaPersonalizada_id - ID de la ruta personalizada
+ */
+
+/**
+ * @typedef {Object} Parada
+ * @property {string} _id - ID de la parada
+ * @property {string} nombre_parada - Nombre de la parada
+ * @property {string} categoria - Categoría de la parada
+ * @property {string} imagen - Imagen de la parada
+ */
+
+/**
+ * @typedef {Object} Ciudad
+ * @property {string} _id - ID de la ciudad
+ * @property {string} name - Nombre de la ciudad
+ */
+
+/**
+ * @typedef {Object} RutaConParadasResponse
+ * @property {RutaConParadas} rutaConParadas - Ruta con paradas
+ * @property {Parada[]} paradas - Array de paradas
+ * @property {Ciudad} ciudad - Ciudad
+ */
+
+/**
+ * @function addRuta
+ * @param {RutaConParadasResponse} rutaConParadas - Ruta con paradas
  */
 async function addRuta(rutaConParadas) {
-    
-    console.log(rutaConParadas);
-    
-    const LISTADO = document.getElementsByClassName('ruta-info')[0];
-    LISTADO.innerHTML = '';
-    
-    const nombreRutaSpan = document.getElementById('nombre-ruta');
-    if (nombreRutaSpan) {
-        nombreRutaSpan.innerText = rutaConParadas.nombre;
-    } else {
-        console.error('Elemento con ID "nombre-ruta" no encontrado.');
-    }
+  console.log('Toda la info de rutaConParadas creada:', rutaConParadas);
 
-    const tituloCiudadSpan = document.getElementById('tituloCiudad');
-    if (tituloCiudadSpan) {
-        tituloCiudadSpan.innerText = rutaConParadas.ciudad_id; // Mostrar el ID de la ciudad
-    } else {
-        console.error('Elemento con ID "tituloCiudad" no encontrado.');
-    }
+  const LISTADO = document.getElementsByClassName('ruta-info')[0];
+  LISTADO.innerHTML = '';
 
-    rutaConParadas.paradas.forEach(parada => { // Usar ruta.selectedParadas
-        const newParadasItem = document.createElement('li');
-        const newArticleParadas = document.createElement('article');
-        const newFigureParadas = document.createElement('figure');
-        const newImgParadas = document.createElement('img');
-        const newCardParadas = document.createElement('section');
-        const newNameParadas = document.createElement('h2');
-        const newCategoriaParadas = document.createElement('h3');
-        const newBotonParadas = document.createElement('button');
+  // Verifica si rutaConParadas tiene al menos un elemento
+  // @ts-ignore
+  if (rutaConParadas && rutaConParadas.length > 0) {
+    //corregir ts no le gusta def al no contener any de rutaConParadas  
+    // @ts-ignore
+    const ruta = rutaConParadas[0]; // Obtener el primer objeto del array
+      
+      const nombreRutaSpan = document.getElementById('nombre-ruta');
+      if (nombreRutaSpan) {
+          nombreRutaSpan.innerText = ruta.nombre; // Acceder al nombre de la ruta
+      } else {
+          console.error('Elemento con ID "nombre-ruta" no encontrado.');
+      }
 
-        newParadasItem.appendChild(newArticleParadas);
-        newArticleParadas.appendChild(newFigureParadas);
-        newImgParadas.src = parada.imagen; // Asegúrate de que parada.imagen exista
-        newFigureParadas.appendChild(newImgParadas);
-        newArticleParadas.appendChild(newCardParadas);
-        newNameParadas.innerText = parada.nombre_parada;
-        newCardParadas.appendChild(newNameParadas);
-        newCategoriaParadas.innerText = 'Categoría: ' + parada.categoria; // Asegúrate de que parada.categoria exista
-        newCardParadas.appendChild(newCategoriaParadas);
-        newBotonParadas.textContent = '+ Info';
+      const tituloCiudadSpan = document.getElementById('tituloCiudad');
+      if (tituloCiudadSpan) {
+          tituloCiudadSpan.innerText = ruta.ciudad.name; // Acceder al nombre de la ciudad
+      } else {
+          console.error('Elemento con ID "tituloCiudad" no encontrado.');
+      }
 
-        newBotonParadas.addEventListener('click', () => {
-            localStorage.setItem('paradasRecomendadas', JSON.stringify(rutaConParadas.paradas)); // Usar ruta.selectedParadas
-            window.location.href = `info-parada.html?nombre_parada=${parada.nombre_parada}`;
+      
+        ruta.paradasRuta.forEach((/** @type {{ parada: any; nombre_parada: any; }} */ paradaRuta) => {
+          
+          const parada = paradaRuta.parada;
+
+          const newParadasItem = document.createElement('li');
+          const newArticleParadas = document.createElement('article');
+          const newFigureParadas = document.createElement('figure');
+          const newImgParadas = document.createElement('img');
+          const newCardParadas = document.createElement('section');
+          const newNameParadas = document.createElement('h2');
+          const newCategoriaParadas = document.createElement('h3');
+          const newBotonParadas = document.createElement('button');
+
+          newParadasItem.appendChild(newArticleParadas);
+          newArticleParadas.appendChild(newFigureParadas);
+          newImgParadas.src = parada.imagen; // Acceder a la imagen de la parada
+          newFigureParadas.appendChild(newImgParadas);
+          newArticleParadas.appendChild(newCardParadas);
+          newNameParadas.innerText = parada.nombre_parada; // Acceder al nombre de la parada
+          newCardParadas.appendChild(newNameParadas);
+          newCategoriaParadas.innerText = 'Categoría: ' + parada.categoria; // Acceder a la categoría de la parada
+          newCardParadas.appendChild(newCategoriaParadas);
+          newBotonParadas.textContent = '+ Info';
+
+          newBotonParadas.addEventListener('click', () => {
+              localStorage.setItem('paradasRecomendadas', JSON.stringify(ruta.paradasRuta)); // Usar ruta.paradasRuta
+              window.location.href = `info-parada.html?nombre_parada=${paradaRuta.nombre_parada}`; // Acceder al nombre de la parada
+          });
+          newCardParadas.appendChild(newBotonParadas);
+
+          LISTADO.appendChild(newParadasItem);
+
         });
-        newCardParadas.appendChild(newBotonParadas);
-
-        LISTADO.appendChild(newParadasItem);
-    });
+     
+  } else {
+      console.error('No se encontraron datos de la ruta.');
+  }
 }
 
 async function recuperarSessionStorage() {
@@ -171,11 +217,11 @@ async function recuperarSessionStorage() {
             console.error("Error al parsear datos de usuario:", error);
             // Si hay un error al parsear, elimina los datos de sessionStorage y redirige al login
             sessionStorage.removeItem('usuario');
-            window.location.href = 'inicio.html';
+            window.location.href = 'index.html';
         }
     } else {
         // El usuario no ha iniciado sesión
-        window.location.href = 'inicio.html';
+        window.location.href = 'index.html';
       }
   }
 
