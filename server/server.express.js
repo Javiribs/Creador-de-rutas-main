@@ -105,8 +105,8 @@ app.get('/api/check/:nombre', async (req, res) => {
 
 //CRUD PARADAS
 
-app.get('/api/read/paradas', async (req, res) => {
-  res.json(await db.paradas.get())
+app.get('/api/read/paradas/:id', requireAuth, async (req, res) => {
+  res.json(await db.paradas.get(req.params.id))
 })
 
 

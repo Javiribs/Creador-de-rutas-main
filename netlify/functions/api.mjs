@@ -105,8 +105,8 @@ router.get('/check/:nombre', async (req, res) => {
 
 //CRUD PARADAS
 
-router.get('/read/paradas', async (req, res) => {
-  res.json(await db.paradas.get())
+router.get('/read/paradas/:id', requireAuth, async (req, res) => {
+  res.json(await db.paradas.get(req.params.id))
 })
 
 
@@ -382,15 +382,15 @@ async function countParadas() {
 
 /**
  * Obtiene ciudad de la colección database.
- *
- * @returns {Promise<Array<object>>} - Array de paradas.
+ * @param {string} id
+ * @returns {Promise<Array<object>>}  - Array de paradas.
  */
-async function getParadas(filter){
-    console.log(filter)
+async function getParadas(id){
     const client = new MongoClient(URI);
     const creadorDB = client.db('CreadorRutas');
     const paradasCollection = creadorDB.collection('Paradas');
-    return await paradasCollection.find(filter).toArray()
+    const infoParada = await paradasCollection.findOne( {_id: new ObjectId(id)} );
+    return infoParada
 }
 
 
