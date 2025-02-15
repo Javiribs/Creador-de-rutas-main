@@ -134,7 +134,8 @@ app.post('/api/create/rutasPersonalizadas', requireAuth, async (req, res) => {
 
 app.get('/api/read/rutasPersonalizadas/:id', requireAuth, async (req, res) => {
   const rutaPersonalizada = await db.rutasPersonalizadas.get(req.params.id);
-  const paradasRuta = await db.paradasRuta.get({rutaPersonalizada_id: req.params.id});
+  const paradasRuta = await db.paradasRuta.get(req.params.id);
+  console.log(paradasRuta)
   const rutaConParadas = {
     ...rutaPersonalizada, // Incluye los datos de la ruta
     paradas: paradasRuta // Incluye las paradas
@@ -179,6 +180,12 @@ app.delete('/api/delete/paradasRuta/:id', requireAuth, async (req, res) => {
   res.json(await db.paradasRuta.delete(req.params.id))
 })
 
+
+//------------------rutasConParadas------------------//
+
+app.get('/api/read/rutasConParadas/:id', async (req, res) => {
+  res.json(await db.rutaConParadas.get(req.params.id))
+})
 
 
 //-------------------MIDLEWERE----------------//

@@ -355,7 +355,7 @@ function notFound(nameBuscado) {
         }
     } else {
         // El usuario no ha iniciado sesión
-        window.location.href = 'inicio.html';
+        window.location.href = 'index.html';
       }
   }
 
