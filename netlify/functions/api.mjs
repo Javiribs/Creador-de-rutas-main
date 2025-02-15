@@ -180,7 +180,7 @@ router.delete('/delete/paradasRuta/:id', requireAuth, async (req, res) => {
 
 //------------------rutasConParadas------------------//
 
-router.get('/api/read/rutasConParadas/:id', async (req, res) => {
+router.get('/read/rutasConParadas/:id', async (req, res) => {
   res.json(await db.rutaConParadas.get(req.params.id))
 })
 
