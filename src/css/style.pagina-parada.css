@@ -1,44 +1,100 @@
 
-/* General styles */
+/* Estilos generales */
 body {
-    font-family: sans-serif;
-    margin: 0;
-    padding: 0;
-  }
-  
-  header {
-    background-color: #f0f0f0;
-    padding: 20px;
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  h1 {
-    font-size: 2em;
-    margin-bottom: 0;
-  }
-  
-  nav {
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  nav ol {
-    list-style: none;
-    padding-top: 10px;
-    margin: 0;
-  }
-  
-  nav li {
-    display: inline-block;
-    margin-right: 20px;
-  }
-  
-  a {
-    text-decoration: none;
-    color: #333;
-  }
-  
-  .active {
-    font-weight: bold;
-  }
+  font-family: sans-serif;
+  background-color: #f8f8f8; /* Un gris claro de fondo */
+  color: #333; /* Color de texto principal */
+  display: flex; /* Para centrar el contenido verticalmente */
+  flex-direction: column; /* Contenido en columna */
+  min-height: 100vh; /* Asegura que el body ocupa toda la altura de la pantalla */
+  margin: 0; /* Elimina márgenes predeterminados */
+}
+
+/* Estilos para la cabecera */
+header {
+  background-color: #fff; /* Fondo blanco */
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 4px #0000001a; /* Sombra ligera */
+}
+
+header h1 {
+  font-size: 1.5em;
+  margin: 0;
+}
+
+.back { /* Estilos para el botón "Atrás" */
+  background-color: #007bff; /* Azul */
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.back:hover {
+  background-color: #0056b3; /* Azul más oscuro al pasar el ratón */
+}
+
+/* Estilos para el contenido principal */
+main.ficha-parada {
+  padding: 20px;
+  flex-grow: 1; /* El main ocupa el espacio restante */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centrar horizontalmente */
+}
+
+/* Estilos para los elementos creados dinámicamente */
+main.ficha-parada h1 {
+  font-size: 2em;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+main.ficha-parada picture {
+  display: flex;
+  flex-direction: column; /* Imagen y texto debajo */
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+main.ficha-parada img {
+  max-width: 80%; /* Ajustar el tamaño máximo de la imagen */
+  border-radius: 8px; /* Bordes redondeados */
+  box-shadow: 0 4px 8px #0000001a; /* Sombra */
+}
+
+main.ficha-parada span { /* Para el texto debajo de la imagen */
+  margin-top: 10px;
+  font-style: italic;
+  color: #777;
+}
+
+main.ficha-parada article {
+  max-width: 80%;
+}
+
+main.ficha-parada p {
+  margin-bottom: 15px;
+  line-height: 1.6;
+}
+
+main.ficha-parada a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+main.ficha-parada a:hover {
+  text-decoration: underline;
+}
+
+main.ficha-parada span.categoria { /* Estilos específicos para la categoría */
+  font-weight: bold;
+  color: #555;
+  display: block; /* Para que la categoría aparezca en una línea separada */
+  margin-top: 10px;
+}

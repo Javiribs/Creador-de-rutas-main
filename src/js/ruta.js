@@ -183,9 +183,15 @@ async function addRuta(rutaConParadas) {
           newBotonParadas.textContent = '+ Info';
 
           newBotonParadas.addEventListener('click', () => {
-              localStorage.setItem('paradasRecomendadas', JSON.stringify(ruta.paradasRuta)); // Usar ruta.paradasRuta
-              window.location.href = `info-parada.html?nombre_parada=${paradaRuta.nombre_parada}`; // Acceder al nombre de la parada
-          });
+            // Obtener el ID de la parada
+            const paradaId = paradaRuta.parada._id; // Acceder al _id de la parada
+        
+            // Guardar el ID en localStorage (opcional, pero recomendado para usar en la página de destino)
+            localStorage.setItem('paradaId', paradaId);
+        
+            // Redireccionar a la página de info-parada.html con el ID
+            window.location.href = `info-parada.html?id=${paradaId}`; // Usar el ID en la URL
+        });
           newCardParadas.appendChild(newBotonParadas);
 
           LISTADO.appendChild(newParadasItem);

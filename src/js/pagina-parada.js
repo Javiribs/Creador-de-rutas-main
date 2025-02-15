@@ -1,22 +1,16 @@
 // @ts-check
 
+import { simpleFetch } from './simpleFetch.js'
 import { HttpError } from './class/HttpError.js'
-//crear const amb id de la ciutat i aquesta es la que m'extreu la info 
-//fer el mateix que l'altre js
 
-//Importo datos del json
-import { apiConfig } from './data/singleton.js'
+const API_PORT = location.port ? `:${location.port}` : ''
+
 /** @import {Ciudad, Paradas} from './class/ciudades.js' */
+/** @import {RutaPersonalizada, ParadasRutas} from './class/rutaPersonalizada.js' */
+/** @import {Usuario} from './class/usuario.js' */
 
-//variable vacia a rellenar con datos de json/api fetch
-/** @type {Ciudad[]} */
-let ciudades = []
-console.log(ciudades)
 
-//variable vacia a rellenar con datos de json/api fetch
-/** @type {Paradas[]} */
-let paradas = []
-console.log(paradas)
+
 // Asigno en el DOM los eventos cargados 
 document.addEventListener('DOMContentLoaded', onDomContentLoaded)
 
@@ -25,16 +19,13 @@ async function onDomContentLoaded() {
 
     //recuperar datos sessionStorage
     recuperarSessionStorage()
-    //Procesar datos de json/API
-    ciudades = await getCiudadesData()
-    //Procesar datos de json/API
-    paradas = await getParadasData()
     //boton de volver al inicio (resetear toda la info)
     const backButton = document.getElementById('back')
     //resetear el buscador y volver inicio
     backButton?.addEventListener('click', backButtonClick)
     //Imprime ficha de la parada
-    printParada()
+    // @ts-ignore
+    printParada(await obtenerParadasInfo())
 }
 
 
@@ -65,96 +56,127 @@ function backButtonClick() {
 }
 
 //Mtetodos
+/**
+ * Get data from API
+//corregir el ignore de ts no le gusta def
+ * @returns {Promise<Object>}
+ */
+async function obtenerParadasInfo() {
+    // Obtener el ID de la URL usando URLSearchParams
+    const urlParams = new URLSearchParams(location.search);
+    const rutaId = urlParams.get('id');
+    console.log(rutaId)
+    // Send fetch to API, create new ruta
+    if (rutaId !== null) {
+    //const response = await getRutaPersonalizadaData(`${location.protocol}//${location.hostname}${API_PORT}/api/read/rutasPersonalizadas/${rutaId}`)
+        const response = await getParadasData(`${location.protocol}//${location.hostname}${API_PORT}/api/read/paradas/${rutaId}`)
+        return response 
+    } else {
+       return {}
+       //corregir, me está devolviendo undefined!!!!!!!!!!!!!!!!!!!!!!!!
+        //console.error('No se proporcionó un ID válido');
+    }
+}
+
 
 /**
- * @param {string | URL | Request} url
+ * Get data from API
+ * @param {string} apiURL
+ * @param {string} method
+ * @param {Object} [data]
+ * @returns {Promise<Object>}
  */
-async function fetchData(url) {
+async function getParadasData (apiURL, method = 'GET', data) {
+    let paradas
+
     try {
-      const response = await fetch(url, {
-        signal: AbortSignal.timeout(3000),
-        headers: {
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-        },
-      });
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+      let headers = new Headers()
+  
+      headers.append('Content-Type', 'application/json')
+      headers.append('Access-Control-Allow-Origin', '*')
+      if (data) {
+        headers.append('Content-Length', String(JSON.stringify(data).length))
       }
-      return response.json();
+      // Set Bearer authorization if user is logged in
+      const loggedUser = getLoggedUserData();
+      if (loggedUser) {
+      headers.append('Authorization', `Bearer ${loggedUser?.token}`)
+      }   
+      paradas  = await simpleFetch (apiURL, { 
+        // Si la petición tarda demasiado, la abortamos
+        signal: AbortSignal.timeout(3000),
+        method: method,
+        body: data ?? undefined,
+        headers: headers
+      });
+      if (!paradas) {
+        console.error('La respuesta del servidor no tiene la estructura correcta.');
+      }
     } catch (/** @type {any | HttpError} */err) {
-      if (err.name === 'AbortError') {
-        console.error('Fetch abortado');
-      } else if (err instanceof HttpError) {
-        if (err.response.status === 404) {
-          console.error('Not found');
-        } else if (err.response.status === 500) {
-          console.error('Internal server error');
-        } else {
-          console.error('Error desconocido:', err);
+        if (err.name === 'AbortError') {
+          console.error('Fetch abortado');
+        }
+        if (err instanceof HttpError) {
+          if (err.response.status === 404) {
+            console.error('Not found');
+          }
+          if (err.response.status === 500) {
+            console.error('Internal server error');
+          }
         }
       }
-      throw err; // Re-lanzar el error para que pueda ser manejado en el nivel superior
-    }
-  }
-  
-  async function getCiudadesData() {
-    return await fetchData(apiConfig.API_CIUDADES_URL);
-  }
-  
-  async function getParadasData() {
-    const ciudadesData = await fetchData(apiConfig.API_CIUDADES_URL);
-    const paradasData = ciudadesData.map((/** @type {{ paradas: any; }} */ ciudad) => ciudad.paradas).flat();
-    return paradasData;
-  }
-
-//Funcion para imprimir ficha de la parada
-function printParada () {
-    const urlParams = new URLSearchParams(window.location.search)
-    const nombreParada = urlParams.get('nombre_parada');
-    let decodedNombreParada;
-    if (nombreParada !== null) {
-        decodedNombreParada = decodeURIComponent(nombreParada);
-    } else {
-        // handle the case when nombreParada is null
-        console.error("No parada selected");
-        return;
-    }
-    const paradaSeleccionada = paradas.find(parada => parada.nombre_parada === decodedNombreParada)
-    console.log()
-    const LISTA = document.getElementsByClassName('ficha-parada')[0]
-    //Crear elemntos en DOM para almacenar la info
-    const newH1Parada = document.createElement('h1')
-    const newPResumenParada = document.createElement('p')
-    const newPictureParada = document.createElement('picture')
-    const newImagenParada = document.createElement('img')
-    const newSpanNombreFotoParada = document.createElement('span')
-    const newArticleParada = document.createElement('article')
-    const newInfoParada = document.createElement('p')
-    const newEnlaceParada = document.createElement('a')
-    const newSpanCategoriaParada = document.createElement('span')
-    
-    //Asociar cada elemento DOM con info de json
-    //Asociar cada elemento hijo con su padre
-    newH1Parada.innerText = paradaSeleccionada?.nombre_parada ?? ""
-    newPResumenParada.innerText = paradaSeleccionada?.descripcion ?? ""
-    newPictureParada.appendChild(newImagenParada)
-    newImagenParada.src = paradaSeleccionada?.imagen ?? ""
-    newPictureParada.appendChild(newSpanNombreFotoParada)
-    newSpanNombreFotoParada.innerText = paradaSeleccionada?.nombre_parada ?? ""
-    newArticleParada.appendChild(newInfoParada)
-    newInfoParada.innerText = paradaSeleccionada?.info ?? ""
-    newArticleParada.appendChild(newEnlaceParada)
-    newEnlaceParada.href = paradaSeleccionada?.enlace ?? ""
-    newEnlaceParada.textContent = 'Visita sitio web'
-    newArticleParada.appendChild(newSpanCategoriaParada)
-    newSpanCategoriaParada.innerText = paradaSeleccionada?.categoria ?? ""
-
-    LISTA.appendChild(newH1Parada)
-    LISTA.appendChild(newPResumenParada)
-    LISTA.appendChild(newPictureParada)
-    LISTA.appendChild(newArticleParada)
+    return paradas
 }
+
+
+/**
+ * @function printParada
+ * @param {Paradas} parada - Ruta con paradas
+ */
+//Funcion para imprimir ficha de la parada
+function printParada(parada) { // <-- Recibir un solo objeto parada como argumento
+  console.log('Información de la parada por su id:', parada);
+
+  if (!parada) { // <-- Manejar el caso en que no se encuentra la parada
+      console.error("Parada no encontrada");
+      const LISTA = document.getElementsByClassName('ficha-parada')[0];
+      LISTA.innerHTML = "<p>Parada no encontrada</p>"; // Mostrar mensaje en el DOM
+      return;
+  }
+
+  const LISTA = document.getElementsByClassName('ficha-parada')[0];
+  LISTA.innerHTML = ""; // Limpiar contenido anterior
+
+  // Crear elementos en el DOM para almacenar la información
+  const newH1Parada = document.createElement('h1');
+  const newPictureParada = document.createElement('picture');
+  const newImagenParada = document.createElement('img');
+  const newSpanNombreFotoParada = document.createElement('span');
+  const newArticleParada = document.createElement('article');
+  const newInfoParada = document.createElement('p');
+  const newEnlaceParada = document.createElement('a');
+  const newSpanCategoriaParada = document.createElement('span');
+
+  // Asociar cada elemento DOM con información del JSON
+  newH1Parada.innerText = parada.nombre_parada ?? "";
+  newPictureParada.appendChild(newImagenParada);
+  newImagenParada.src = parada.imagen ?? "";
+  newPictureParada.appendChild(newSpanNombreFotoParada);
+  newSpanNombreFotoParada.innerText = parada.nombre_parada ?? "";
+  newArticleParada.appendChild(newInfoParada);
+  newInfoParada.innerText = parada.info ?? "";
+  newArticleParada.appendChild(newEnlaceParada);
+  newEnlaceParada.href = parada.enlace ?? "";
+  newEnlaceParada.textContent = 'Visita sitio web';
+  newArticleParada.appendChild(newSpanCategoriaParada);
+  newSpanCategoriaParada.innerText = parada.categoria ?? "";
+
+  LISTA.appendChild(newH1Parada);
+  LISTA.appendChild(newPictureParada);
+  LISTA.appendChild(newArticleParada);
+}
+
+
 
 async function recuperarSessionStorage() {
   // Recuperar datos de sessionStorage al cargar la página
@@ -180,6 +202,16 @@ async function recuperarSessionStorage() {
       }
   } else {
       // El usuario no ha iniciado sesión
-      window.location.href = 'inicio.html';
+      window.location.href = 'index.html';
     }
+}
+
+/**
+* Checks if there is a user logged in by verifying the presence of a token
+* in the local storage.
+* @returns {Usuario | null}
+*/
+function getLoggedUserData() {
+  const storedUser = sessionStorage.getItem('usuario');
+  return storedUser ? JSON.parse(storedUser) : null
 }
