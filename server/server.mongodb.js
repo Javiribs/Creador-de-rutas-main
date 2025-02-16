@@ -117,7 +117,7 @@ async function logInUser({email, password}) {
   }
 
 /**
- * Elimina usuarios de la database creadorRutas
+ * Elimina Usuario de la database creadorRutas
  *
  * @param {string} id - Id del usuario a eliminar
  * @returns {Promise<string>} Id del usuario eliminado
@@ -125,11 +125,12 @@ async function logInUser({email, password}) {
 async function deleteUsuario(id) {
     const client = new MongoClient(URI);
     const creadorDB = client.db('CreadorRutas');
-    const usersCollection = creadorDB.collection('Usuario');
+    const usersCollection = creadorDB.collection('Usuarios');
     const returnValue = await usersCollection.deleteOne({ _id: new ObjectId(id) });
     console.log('db deleteUsuario', returnValue, id)
     return id
 }
+
 
 
 //--------------MÉTODOS PARA CIUDADES-------------------//

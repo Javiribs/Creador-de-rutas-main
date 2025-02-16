@@ -1,8 +1,10 @@
 // @ts-check
-
 import { simpleFetch } from './simpleFetch.js'
+import { HttpError } from './class/HttpError.js'
 
 const API_PORT = location.port ? `:${location.port}` : ''
+
+/** @import {Usuario} from './class/usuario.js' */
 
 document.addEventListener('DOMContentLoaded', onDomContentLoaded);
 
@@ -36,6 +38,58 @@ function onDomContentLoaded() {
     }
 }
 
+//-------------CRUD---------------//
+/**
+ * Get data from API
+ * @param {string} apiURL
+ * @param {string} method
+ * @param {Object} [data]
+ * @returns {Promise<Object>}
+ */
+async function getUsuarioData (apiURL, method = 'GET', data) {
+    let usuarioInfo
+
+    try {
+      let headers = new Headers()
+  
+      headers.append('Content-Type', 'application/json')
+      headers.append('Access-Control-Allow-Origin', '*')
+      if (data) {
+        headers.append('Content-Length', String(JSON.stringify(data).length))
+      }
+      // Set Bearer authorization if user is logged in
+      const loggedUser = getLoggedUserData();
+      if (loggedUser) {
+      headers.append('Authorization', `Bearer ${loggedUser?.token}`)
+      }   
+      usuarioInfo  = await simpleFetch (apiURL, { 
+        // Si la petición tarda demasiado, la abortamos
+        signal: AbortSignal.timeout(3000),
+        method: method,
+        body: data ?? undefined,
+        headers: headers
+      });
+      if (!usuarioInfo) {
+        console.error('La respuesta del servidor no tiene la estructura correcta.');
+      }
+    } catch (/** @type {any | HttpError} */err) {
+        if (err.name === 'AbortError') {
+          console.error('Fetch abortado');
+        }
+        if (err instanceof HttpError) {
+          if (err.response.status === 404) {
+            console.error('Not found');
+          }
+          if (err.response.status === 500) {
+            console.error('Internal server error');
+          }
+        }
+      }
+    return usuarioInfo
+}
+
+
+
 // Función para cerrar sesión
 function cerrarSesion() {
     sessionStorage.removeItem('usuario');
@@ -47,17 +101,14 @@ async function eliminarUsuario() {
 
     if (confirmacion) {
         try {
-            const usuarioGuardado = sessionStorage.getItem('usuario');
-            if (usuarioGuardado) {
-                const usuario = JSON.parse(usuarioGuardado);
-                const response = await simpleFetch(`${location.protocol}//${location.hostname}${API_PORT}/api/delete/usuarios/${usuario._id}`, 'DELETE');
-                
+            const usuarioGuardado = getLoggedUserData();
+            const response = await getUsuarioData(`${location.protocol}//${location.hostname}${API_PORT}/api/delete/usuarios/${usuarioGuardado?._id}`, 'DELETE');
+            console.log("Respuesta del servidor:", response);
+            if (response) {
+                console.log("Usuario eliminado con exito");
                 sessionStorage.removeItem('usuario');
-                window.location.href = 'inicio.html';
-                console.log("Respuesta del servidor:", response);
-                if (!response) {
-                    throw new Error(`Error al eliminar usuario: ${response.status}`);
-                }
+                window.location.href = 'index.html';
+               
             } else {
                 throw new Error("No se encontró información del usuario en sessionStorage.");
             }
@@ -94,4 +145,14 @@ async function recuperarSessionStorage() {
         // El usuario no ha iniciado sesión
         window.location.href = 'index.html';
       }
+  }
+
+  /**
+ * Checks if there is a user logged in by verifying the presence of a token
+ * in the local storage.
+  * @returns {Usuario | null}
+ */
+  function getLoggedUserData() {
+    const storedUser = sessionStorage.getItem('usuario');
+    return storedUser ? JSON.parse(storedUser) : null
   }

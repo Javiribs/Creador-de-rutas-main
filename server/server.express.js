@@ -57,9 +57,27 @@ app.post('/api/login', async (req, res) => {
   }
 })
 
+import { ObjectId } from 'mongodb';
 app.delete('/api/delete/usuarios/:id', requireAuth, async (req, res) => {
-  res.json(await db.usuario.delete(req.params.id))
-})
+  try {
+    let userId;
+    console.log("ID recibido en la ruta (string):", req.params.id);
+    try {
+      userId = new ObjectId(req.params.id);
+      console.log("ID convertido a ObjectId:", userId);
+      } catch (error) {
+          console.error("Error en el id:", error);
+          return res.status(400).json({ error: "ID de usuario inválido" }); // Manejar ID inválido
+      }
+      console.log("Tipo de userId antes de eliminar:", typeof userId);
+      console.log("ID que se va a usar para eliminar:", userId); // Log 3
+      const result = await db.usuario.delete(userId);
+      res.status(result.error ? 404 : 200).json(result);
+  } catch (error) {
+      console.error("Error en la ruta delete:", error);
+      res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
 
 
 
