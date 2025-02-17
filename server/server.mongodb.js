@@ -172,8 +172,8 @@ async function getCiudades(filter, projection){
 async function countParadas() {
     const client = new MongoClient(URI);
     const creadorDB = client.db('CreadorRutas');
-    const ciudadesCollection = creadorDB.collection('Usuarios');
-    return await ciudadesCollection.countDocuments()
+    const paradasCollection = creadorDB.collection('Paradas');
+    return await paradasCollection.countDocuments()
 }
 
 //-------------------CRUD--------------------//
@@ -187,10 +187,19 @@ async function getParadas(id) {
     const client = new MongoClient(URI);
     const creadorDB = client.db('CreadorRutas');
     const paradasCollection = creadorDB.collection('Paradas');
-    const resultadosConFiltro = await paradasCollection.find({ ciudad_id: id.ciudad_id }).toArray();
-    console.log('Resultados con filtro: ', resultadosConFiltro);
-  
-    return resultadosConFiltro;
+    let resultados;
+
+    if (typeof id === 'string') {
+        const objectId = new ObjectId(id);
+        resultados = await paradasCollection.find({ _id: objectId }).toArray();
+        console.log('Resultados por id de parada: ', resultados);
+
+    } else if (typeof id === 'object' && 'ciudad_id' in id) {
+        resultados = await paradasCollection.find({ ciudad_id: id.ciudad_id }).toArray();
+        console.log('Resultados con filtro por ciudad_id: ', resultados);
+    }
+    
+    return resultados;
   }
 
 
