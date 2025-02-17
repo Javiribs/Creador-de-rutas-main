@@ -218,11 +218,12 @@ async function countRutaPersonalizada() {
  * @returns {Promise<object>} - RutaPersonalizada creada
  */
 async function createRutaPersonalizada(rutaPersonalizada) {
+    console.log('rutaPersonalizada:', rutaPersonalizada);
     const client = new MongoClient(URI);
     const creadorDB = client.db('CreadorRutas');
     const rutaPersonalizadaCollection = creadorDB.collection('RutaPersonalizada');
     const returnValue = await rutaPersonalizadaCollection.insertOne(rutaPersonalizada);
-    console.log('db createRutaPersonalizada', returnValue, rutaPersonalizada._id)
+    console.log('db createRutaPersonalizada', returnValue, returnValue.insertedId)
     return rutaPersonalizada
 }
 
