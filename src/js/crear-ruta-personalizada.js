@@ -57,7 +57,9 @@ export async function inicializarCreacionRuta(botonCrearRuta, paradasSeleccionad
           
           const payload = JSON.stringify(rutaPersonalizadaData)
           // Send fetch to API, create new ruta
+          console.log("Datos que se enviarán al servidor:", rutaPersonalizadaData);
           const response = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/create/rutasPersonalizadas`, 'POST', payload) // Ruta al archivo JSON 
+          console.log("Respuesta del servidor:", response);
           if (!response) {
             throw new Error('Error al crear la ruta') // Muestra el error del servidor o un mensaje genérico
           }
