@@ -16,7 +16,7 @@ function onDomContentLoaded() {
     const botonInicio = document.getElementById('boton-inicio');
     if (botonInicio) {
         botonInicio.addEventListener('click', () => {
-            window.location.href = 'index.html';
+            window.location.href = 'inicio.html';
         });
     }
 

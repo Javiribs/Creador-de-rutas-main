@@ -179,17 +179,19 @@ async function countParadas() {
 //-------------------CRUD--------------------//
 
 /**
- * Obtiene ciudad de la colección database.
+ * Obtiene paradas de la colección database.
  * @param {string} id
  * @returns {Promise<Array<object>>}  - Array de paradas.
  */
-async function getParadas(id){
+async function getParadas(id) {
     const client = new MongoClient(URI);
     const creadorDB = client.db('CreadorRutas');
     const paradasCollection = creadorDB.collection('Paradas');
-    const infoParada = await paradasCollection.findOne( {_id: new ObjectId(id)} );
-    return infoParada
-}
+    const resultadosConFiltro = await paradasCollection.find({ ciudad_id: id.ciudad_id }).toArray();
+    console.log('Resultados con filtro: ', resultadosConFiltro);
+  
+    return resultadosConFiltro;
+  }
 
 
 //--------------MÉTODOS PARA Rutas Personalizadas-------------------//

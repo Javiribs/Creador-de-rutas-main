@@ -97,6 +97,7 @@ app.get('/api/read/ciudades', requireAuth, async (req, res) => {
 
 app.get('/api/filter/ciudades/:name', requireAuth, async (req, res) => {
   const ciudades = await db.ciudades.get({ $text: { $search: req.params.name } })
+  console.log('ciudad recibida:', ciudades)
   const ciudadesConParadas = await Promise.all(
     ciudades.map(async (ciudad) => {
       return {
@@ -108,6 +109,7 @@ app.get('/api/filter/ciudades/:name', requireAuth, async (req, res) => {
   res.json(ciudadesConParadas)
 })
 
+//funcion de busqueda por nombre para el searchProposal!
 app.get('/api/filter/ciudadesName/:name', async (req, res) => {
   const ciudades = await db.ciudades.get({}, {_id: 0, name: 1, country: 1})
   res.json(ciudades) 
