@@ -126,7 +126,9 @@ app.get('/api/check/:nombre', async (req, res) => {
 //CRUD PARADAS
 
 app.get('/api/read/paradas/:id', requireAuth, async (req, res) => {
+  console.log(req.params.id)
   res.json(await db.paradas.get(req.params.id))
+  console.log('paradas recibidas:', await db.paradas.get(req.params.id))
 })
 
 

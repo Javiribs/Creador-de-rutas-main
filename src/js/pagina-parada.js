@@ -68,13 +68,10 @@ async function obtenerParadasInfo() {
     console.log(rutaId)
     // Send fetch to API, create new ruta
     if (rutaId !== null) {
-    //const response = await getRutaPersonalizadaData(`${location.protocol}//${location.hostname}${API_PORT}/api/read/rutasPersonalizadas/${rutaId}`)
         const response = await getParadasData(`${location.protocol}//${location.hostname}${API_PORT}/api/read/paradas/${rutaId}`)
         return response 
     } else {
        return {}
-       //corregir, me está devolviendo undefined!!!!!!!!!!!!!!!!!!!!!!!!
-        //console.error('No se proporcionó un ID válido');
     }
 }
 
@@ -131,7 +128,7 @@ async function getParadasData (apiURL, method = 'GET', data) {
 
 /**
  * @function printParada
- * @param {Paradas} parada - Ruta con paradas
+ * @param {Array<Paradas>} parada - Ruta con paradas
  */
 //Funcion para imprimir ficha de la parada
 function printParada(parada) { // <-- Recibir un solo objeto parada como argumento
@@ -158,18 +155,18 @@ function printParada(parada) { // <-- Recibir un solo objeto parada como argumen
   const newSpanCategoriaParada = document.createElement('span');
 
   // Asociar cada elemento DOM con información del JSON
-  newH1Parada.innerText = parada.nombre_parada ?? "";
+  newH1Parada.innerText = parada[0].nombre_parada ?? "";
   newPictureParada.appendChild(newImagenParada);
-  newImagenParada.src = parada.imagen ?? "";
+  newImagenParada.src = parada[0].imagen ?? "";
   newPictureParada.appendChild(newSpanNombreFotoParada);
-  newSpanNombreFotoParada.innerText = parada.nombre_parada ?? "";
+  newSpanNombreFotoParada.innerText = parada[0].nombre_parada ?? "";
   newArticleParada.appendChild(newInfoParada);
-  newInfoParada.innerText = parada.info ?? "";
+  newInfoParada.innerText = parada[0].info ?? "";
   newArticleParada.appendChild(newEnlaceParada);
-  newEnlaceParada.href = parada.enlace ?? "";
+  newEnlaceParada.href = parada[0].enlace ?? "";
   newEnlaceParada.textContent = 'Visita sitio web';
   newArticleParada.appendChild(newSpanCategoriaParada);
-  newSpanCategoriaParada.innerText = parada.categoria ?? "";
+  newSpanCategoriaParada.innerText = parada[0].categoria ?? "";
 
   LISTA.appendChild(newH1Parada);
   LISTA.appendChild(newPictureParada);
