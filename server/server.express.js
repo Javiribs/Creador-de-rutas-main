@@ -97,7 +97,7 @@ app.get('/api/read/ciudades', requireAuth, async (req, res) => {
 
 app.get('/api/filter/ciudades/:name', requireAuth, async (req, res) => {
   const ciudades = await db.ciudades.get({ $text: { $search: req.params.name } })
-  console.log('ciudad recibida:',ciudades)
+  console.log('ciudad recibida:', ciudades)
   const ciudadesConParadas = await Promise.all(
     ciudades.map(async (ciudad) => {
       return {
@@ -145,10 +145,10 @@ app.post('/api/create/rutasPersonalizadas', requireAuth, async (req, res) => {
   const selectedParadas = [...rutaPersonalizada.selectedParadas]
   delete rutaPersonalizada.selectedParadas
   const nuevaRuta = await db.rutasPersonalizadas.create(rutaPersonalizada)
-  console.log('rutaPersonalizada creada:', nuevaRuta)
   await Promise.all(selectedParadas.map(parada =>  
     db.paradasRuta.create({...parada, rutaPersonalizada_id: nuevaRuta._id})
   ));
+  
   res.json(nuevaRuta)
 })
 
