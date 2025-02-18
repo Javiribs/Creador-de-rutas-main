@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Práctica WebComponents</title>
+</head>
+<body>
+    <app-eventos>
+        <buscador-eventos emit="buscarEvento">
+        <ficha-evento emit="favorito, comprar, editar" props="evento">
+        <creador-usuarios emit="crearUsuario, cerrar">
+        <ficha-usuario emit="editar, crear, buscar, cerrar" props="usuario, evento">
+        <logIn-usuarios emit="iniciarSesion, cerrar">
+    </app-eventos>    
+</body>
+</html>

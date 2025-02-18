@@ -154,6 +154,7 @@ app.post('/api/create/rutasPersonalizadas', requireAuth, async (req, res) => {
   res.json(nuevaRuta)
 })
 
+//obtener ruta personalizada a partir del id de la rutapersonalizada
 app.get('/api/read/rutasPersonalizadas/:id', requireAuth, async (req, res) => {
   const rutaPersonalizada = await db.rutasPersonalizadas.get(req.params.id);
   const paradasRuta = await db.paradasRuta.get(req.params.id);
@@ -166,6 +167,12 @@ app.get('/api/read/rutasPersonalizadas/:id', requireAuth, async (req, res) => {
   res.json(rutaConParadas);
 });
 
+//obtener ruta personalizada a partir del id del usuario
+app.get('/api/read/rutasPersonalizadas/usuario/:id', requireAuth, async (req, res) => {
+  const rutasPersonalizadas = await db.rutasPersonalizadas.getPorUsuario(req.params.id);
+  console.log('he creado', rutasPersonalizadas);
+  res.json(rutasPersonalizadas)
+})
 
 app.put('/api/update/rutasPersonalizadas/:id', requireAuth, async (req, res) => {
   res.json(await db.rutasPersonalizadas.update(req.params.id, req.body))

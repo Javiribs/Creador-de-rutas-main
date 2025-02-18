@@ -1,0 +1,160 @@
+[{
+  "_id": {
+    "$oid": "67b375666aef8043bfe0c76e"
+  },
+  "ciudad_id": "67b373256aef8043bfe0c765",
+  "nombre_parada": "Coliseo",
+  "coordenadas": [
+    41.8925,
+    12.4922
+  ],
+  "descripcion": "Anfiteatro Flavio, símbolo de la antigua Roma.",
+  "imagen": "\"https://placehold.co/200x200\"",
+  "horario": "De 08:30 a 19:30",
+  "categoria": "Monumento",
+  "info": "El Coliseo es el anfiteatro más grande del mundo y uno de los monumentos más visitados de Roma."
+},
+{
+  "_id": {
+    "$oid": "67b375666aef8043bfe0c76f"
+  },
+  "ciudad_id": "67b373256aef8043bfe0c765",
+  "nombre_parada": "Fontana di Trevi",
+  "coordenadas": [
+    41.9033,
+    12.4822
+  ],
+  "descripcion": "Fuente barroca famosa por su belleza y la tradición de lanzar monedas.",
+  "imagen": "\"https://placehold.co/200x200\"",
+  "horario": "Abierto 24 horas",
+  "categoria": "Fuente",
+  "info": "La Fontana di Trevi es una de las fuentes más grandes y famosas de Roma. La tradición dice que si lanzas una moneda, regresarás a Roma."
+},
+{
+  "_id": {
+    "$oid": "67b375666aef8043bfe0c770"
+  },
+  "ciudad_id": "67b373256aef8043bfe0c765",
+  "nombre_parada": "Foro Romano",
+  "coordenadas": [
+    41.8918,
+    12.4869
+  ],
+  "descripcion": "Conjunto de ruinas antiguas que fueron el centro de la vida política y social de Roma.",
+  "imagen": "\"https://placehold.co/200x200\"",
+  "horario": "De 08:30 a 19:30",
+  "categoria": "Sitio histórico",
+  "info": "El Foro Romano era el corazón de la antigua Roma, donde se encontraban los principales edificios gubernamentales y religiosos."
+},
+{
+  "_id": {
+    "$oid": "67b375666aef8043bfe0c771"
+  },
+  "ciudad_id": "67b373256aef8043bfe0c765",
+  "nombre_parada": "Panteón",
+  "coordenadas": [
+    41.8986,
+    12.4769
+  ],
+  "descripcion": "Antiguo templo romano convertido en iglesia, famoso por su cúpula y su óculo.",
+  "imagen": "\"https://placehold.co/200x200\"",
+  "horario": "De 09:00 a 19:00",
+  "categoria": "Edificio religioso",
+  "info": "El Panteón es uno de los edificios mejor conservados de la antigua Roma y un ejemplo de la genialidad de la arquitectura romana."
+},
+{
+  "_id": {
+    "$oid": "67b375666aef8043bfe0c772"
+  },
+  "ciudad_id": "67b373256aef8043bfe0c765",
+  "nombre_parada": "Plaza Navona",
+  "coordenadas": [
+    41.8993,
+    12.4733
+  ],
+  "descripcion": "Plaza barroca con la famosa Fuente de los Cuatro Ríos de Bernini.",
+  "imagen": "\"https://placehold.co/200x200\"",
+  "horario": "Abierto 24 horas",
+  "categoria": "Plaza",
+  "info": "La Plaza Navona es una de las plazas más animadas de Roma, conocida por sus fuentes y su ambiente festivo."
+},
+{
+  "_id": {
+    "$oid": "67b375666aef8043bfe0c773"
+  },
+  "ciudad_id": "67b373256aef8043bfe0c765",
+  "nombre_parada": "Ciudad del Vaticano",
+  "coordenadas": [
+    41.9029,
+    12.4534
+  ],
+  "descripcion": "Estado independiente dentro de Roma, hogar de la Basílica de San Pedro y los Museos Vaticanos.",
+  "imagen": "\"https://placehold.co/200x200\"",
+  "horario": "Varía según la atracción",
+  "categoria": "Ciudad",
+  "info": "La Ciudad del Vaticano es el centro de la Iglesia Católica y alberga importantes obras de arte y arquitectura."
+},
+{
+  "_id": {
+    "$oid": "67b375666aef8043bfe0c774"
+  },
+  "ciudad_id": "67b373256aef8043bfe0c765",
+  "nombre_parada": "Castillo de Sant'Angelo",
+  "coordenadas": [
+    41.9038,
+    12.4672
+  ],
+  "descripcion": "Mausoleo convertido en fortaleza y residencia papal, con vistas panorámicas de la ciudad.",
+  "imagen": "\"https://placehold.co/200x200\"",
+  "horario": "De 09:00 a 19:30",
+  "categoria": "Castillo",
+  "info": "El Castillo de Sant'Angelo es un edificio histórico con una rica historia, desde mausoleo imperial hasta residencia papal."
+},
+{
+  "_id": {
+    "$oid": "67b375666aef8043bfe0c775"
+  },
+  "ciudad_id": "67b373256aef8043bfe0c765",
+  "nombre_parada": "Plaza de España",
+  "coordenadas": [
+    41.9058,
+    12.4828
+  ],
+  "descripcion": "Plaza famosa por su escalinata barroca y la Fontana della Barcaccia.",
+  "imagen": "\"https://placehold.co/200x200\"",
+  "horario": "Abierto 24 horas",
+  "categoria": "Plaza",
+  "info": "La Plaza de España es una de las plazas más elegantes de Roma, conocida por su escalinata y su ambiente cosmopolita."
+},
+{
+  "_id": {
+    "$oid": "67b375666aef8043bfe0c776"
+  },
+  "ciudad_id": "67b373256aef8043bfe0c765",
+  "nombre_parada": "Trastevere",
+  "coordenadas": [
+    41.8872,
+    12.4741
+  ],
+  "descripcion": "Barrio bohemio con calles empedradas, restaurantes y ambiente nocturno.",
+  "imagen": "\"https://placehold.co/200x200\"",
+  "horario": "Abierto 24 horas",
+  "categoria": "Barrio",
+  "info": "Trastevere es un barrio pintoresco con una gran variedad de restaurantes y bares, ideal para disfrutar de la vida nocturna romana."
+},
+{
+  "_id": {
+    "$oid": "67b375666aef8043bfe0c777"
+  },
+  "ciudad_id": "67b373256aef8043bfe0c765",
+  "nombre_parada": "Galería Borghese",
+  "coordenadas": [
+    41.9041,
+    12.4941
+  ],
+  "descripcion": "Museo con una impresionante colección de esculturas de Bernini y pinturas de Caravaggio.",
+  "imagen": "\"https://placehold.co/200x200\"",
+  "horario": "De 09:00 a 19:00 (reserva obligatoria)",
+  "categoria": "Museo",
+  "info": "La Galería Borghese alberga obras maestras de Bernini, Caravaggio, Rafael y otros artistas importantes."
+}]
