@@ -15,12 +15,13 @@ export const db = {
         get: getCiudades,
         count: countCiudades
     },
-    paradas: {
+        paradas: {
         get: getParadas,
         count: countParadas,
     },
     rutasPersonalizadas: {
-        get: getRutaPersonalizada,
+        get: getRutaPersonalizada,        
+        getPorUsuario: getRutaPersonalizadaDelUsuario,
         create: createRutaPersonalizada,
         count: countRutaPersonalizada,
         update: updateRutaPersonalizada,
@@ -232,6 +233,7 @@ async function createRutaPersonalizada(rutaPersonalizada) {
     const rutaPersonalizadaCollection = creadorDB.collection('RutaPersonalizada');
     const returnValue = await rutaPersonalizadaCollection.insertOne(rutaPersonalizada);
     console.log('db createRutaPersonalizada', returnValue, rutaPersonalizada._id)
+    console.log(rutaPersonalizada)
     return rutaPersonalizada
 }
 
@@ -247,6 +249,99 @@ async function getRutaPersonalizada(id){
     const rutaPersonalizadaCollection = creadorDB.collection('RutaPersonalizada');
     const ruta = await rutaPersonalizadaCollection.findOne({ _id: new ObjectId(id) }); 
     return ruta;
+}
+
+/**
+ * Obtiene RutaPersonalizada de la colección database.
+ * @param {string} id
+ * @returns {Promise<Array<object>>} - Array de RutaPersonalizada.
+ */
+async function getRutaPersonalizadaDelUsuario(id){
+    const client = new MongoClient(URI);
+    try {
+        await client.connect();
+        const db = client.db('CreadorRutas');
+        const rutaPersonalizadaCollection = db.collection('RutaPersonalizada');
+
+        // 1. Consulta inicial para obtener las rutas del usuario
+        const rutas = await rutaPersonalizadaCollection.find({ usuario_id: id }).toArray();
+
+        if (!rutas || rutas.length === 0) {
+            return []; // Devuelve un array vacío si no se encuentran rutas
+        }
+
+        // 2. Construir el pipeline de agregación
+        let pipeline = [];
+
+        // 3. $match para las rutas encontradas (usando $in)
+        pipeline.push({ $match: { _id: { $in: rutas.map(ruta => ruta._id) } } });
+
+        // 4. $lookup para Ciudad
+        pipeline.push({
+            $lookup: {
+                from: 'Ciudades',
+                let: { ciudadId: '$ciudad_id' },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: { $eq: ['$_id', { $toObjectId: '$$ciudadId' }] }
+                        }
+                    },
+                    {
+                        $project: {
+                            _id: 0,
+                            name: 1,
+                            country: 1
+                        }
+                    }
+                ],
+                as: 'ciudad'
+            }
+        });
+
+        pipeline.push({ $unwind: '$ciudad' });
+
+        // 5. $lookup para ParadasRuta (con $lookup anidado para Paradas)
+        pipeline.push({
+            $lookup: {
+                from: 'ParadasRuta',
+                let: { rutaId: '$_id' },
+                pipeline: [
+                    {
+                        $match: {
+                            $expr: { $eq: ['$rutaPersonalizada_id', '$$rutaId'] }
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from: 'Paradas',
+                            let: { paradaId: '$parada_id' },
+                            pipeline: [
+                                {
+                                    $match: {
+                                        $expr: { $eq: ['$_id', { $toObjectId: '$$paradaId' }] }
+                                    }
+                                }
+                            ],
+                            as: 'parada'
+                        }
+                    },
+                    { $unwind: '$parada' }
+                ],
+                as: 'paradasRuta'
+            }
+        });
+
+        // 6. Ejecutar el pipeline de agregación
+        let result = await db.collection('RutaPersonalizada').aggregate(pipeline).toArray();
+
+        console.log("Resultados del pipeline:", result);
+
+        return result;
+
+    } finally {
+        await client.close();
+    }
 }
 
 /**

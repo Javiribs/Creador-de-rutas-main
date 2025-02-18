@@ -4,14 +4,19 @@ import { HttpError } from './class/HttpError.js'
 
 const API_PORT = location.port ? `:${location.port}` : ''
 
+/** @import {Ciudad, Paradas} from './class/ciudades.js' */
+/** @import {RutaPersonalizada, ParadasRutas} from './class/rutaPersonalizada.js' */
 /** @import {Usuario} from './class/usuario.js' */
 
 document.addEventListener('DOMContentLoaded', onDomContentLoaded);
 
-function onDomContentLoaded() {
+async function onDomContentLoaded() {
     // Recuperar datos de sessionStorage
-    recuperarSessionStorage()
+    await recuperarSessionStorage()
 
+    // Pintar elemntos del DOM
+    // paintRutasUsuario(await obtenerRutasUsuario())
+    paintRutasUsuario(await obtenerRutasUsuario())
     // Eventos para los botones
     const botonInicio = document.getElementById('boton-inicio');
     if (botonInicio) {
@@ -46,8 +51,8 @@ function onDomContentLoaded() {
  * @param {Object} [data]
  * @returns {Promise<Object>}
  */
-async function getUsuarioData (apiURL, method = 'GET', data) {
-    let usuarioInfo
+async function getApiData (apiURL, method = 'GET', data) {
+    let apiData
 
     try {
       let headers = new Headers()
@@ -62,14 +67,14 @@ async function getUsuarioData (apiURL, method = 'GET', data) {
       if (loggedUser) {
       headers.append('Authorization', `Bearer ${loggedUser?.token}`)
       }   
-      usuarioInfo  = await simpleFetch (apiURL, { 
+      apiData  = await simpleFetch (apiURL, { 
         // Si la petición tarda demasiado, la abortamos
         signal: AbortSignal.timeout(3000),
         method: method,
         body: data ?? undefined,
         headers: headers
       });
-      if (!usuarioInfo) {
+      if (!apiData) {
         console.error('La respuesta del servidor no tiene la estructura correcta.');
       }
     } catch (/** @type {any | HttpError} */err) {
@@ -85,9 +90,87 @@ async function getUsuarioData (apiURL, method = 'GET', data) {
           }
         }
       }
-    return usuarioInfo
+    return apiData
 }
 
+/**
+ * Get data from API
+ * //corregir el ignore de ts no le gusta def
+ * @returns {Promise<Array<Object>>}
+ */
+async function obtenerRutasUsuario() {
+  const usuarioGuardado = getLoggedUserData();
+  const usuarioId = usuarioGuardado?._id;
+  try {
+    console.log("ID del usuario:", usuarioId)
+      const response = await getApiData(`${location.protocol}//${location.hostname}${API_PORT}/api/read/rutasPersonalizadas/usuario/${usuarioId}`, 'GET');
+
+      if (!response) {
+          throw new Error('Error al obtener las rutas del usuario');
+      }
+      
+      // Verificar si la respuesta es un array
+      if (!Array.isArray(response)) {
+          console.error('La respuesta de la API no es un array:', response);
+          throw new Error('La respuesta de la API no tiene el formato esperado');
+      }
+
+      return response; // Devuelve el array de objetos RutaPersonalizada
+
+  } catch (error) {
+      console.error('Error al obtener rutas:', error);
+      return []; // Devuelve un array vacío en caso de error
+  }
+}
+
+/**
+ * @function paintRutasUsuario
+ * @param {RutaPersonalizada[]} rutasPersonalizadas - Rutas con paradas
+ */
+async function paintRutasUsuario(rutasPersonalizadas) {
+  console.log('Toda la info de rutasPersonalizadas creada:', rutasPersonalizadas);
+  const misRutasElement = document.getElementById('mis-rutas');
+  if (!misRutasElement) {
+    console.error('Elemento "mis-rutas" no encontrado');
+    return;
+  }
+
+  if (!Array.isArray(rutasPersonalizadas)) {
+    console.error('La respuesta de la API no es un array:', rutasPersonalizadas);
+    return;
+  }
+
+  misRutasElement.innerHTML = '';
+
+  rutasPersonalizadas.forEach((ruta) => {
+    try {
+        const rutaElement = document.createElement('li');
+        rutaElement.classList.add('ruta-personalizada');
+
+        // Crear elementos para la información de la ruta
+        const nombreRuta = document.createElement('h2');
+        nombreRuta.textContent = ruta.nombre;
+
+        const fechaCreacion = document.createElement('p');
+        const fecha = new Date(ruta.fechaCreacion); 
+        fechaCreacion.textContent = `Fecha de creación: ${fecha.toLocaleDateString()}`;
+
+       
+        // Agregar los elementos a la lista
+        rutaElement.appendChild(nombreRuta);
+        rutaElement.appendChild(fechaCreacion);
+        // rutaElement.appendChild(ciudadNombre);
+
+        rutaElement.addEventListener('click', () => {
+            // Agrega el comportamiento deseado aquí
+        });
+
+        misRutasElement.appendChild(rutaElement);
+    } catch (error) {
+        console.error('Error al crear elemento:', error);
+    }
+});
+}
 
 
 // Función para cerrar sesión
@@ -102,7 +185,7 @@ async function eliminarUsuario() {
     if (confirmacion) {
         try {
             const usuarioGuardado = getLoggedUserData();
-            const response = await getUsuarioData(`${location.protocol}//${location.hostname}${API_PORT}/api/delete/usuarios/${usuarioGuardado?._id}`, 'DELETE');
+            const response = await getApiData(`${location.protocol}//${location.hostname}${API_PORT}/api/delete/usuarios/${usuarioGuardado?._id}`, 'DELETE');
             console.log("Respuesta del servidor:", response);
             if (response) {
                 console.log("Usuario eliminado con exito");
@@ -119,6 +202,7 @@ async function eliminarUsuario() {
     }
 }
 
+
 async function recuperarSessionStorage() {
     // Recuperar datos de sessionStorage al cargar la página
     const usuarioGuardado = sessionStorage.getItem('usuario');
@@ -127,10 +211,8 @@ async function recuperarSessionStorage() {
         try { // Intenta parsear los datos, maneja posibles errores
             const usuario = JSON.parse(usuarioGuardado);
             // El usuario ha iniciado sesión
-
             // Mostrar información del usuario en la página, etc.
-            console.log("Usuario logueado:", usuario);
-
+            console.log("Usuario logueado:", usuario);           
             const botonPerfil = document.getElementById('boton-perfil');
             if (botonPerfil) {
                 botonPerfil.textContent = usuario.name;

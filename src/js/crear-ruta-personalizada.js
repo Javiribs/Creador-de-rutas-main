@@ -31,7 +31,7 @@ export async function inicializarCreacionRuta(botonCrearRuta, paradasSeleccionad
        //Obtener usuarioId desde sessionStorage
         const usuarioGuardado = sessionStorage.getItem('usuario');
         const usuario = JSON.parse(usuarioGuardado || '{}');
-        const usuarioId = usuario?.id;
+        const usuarioId = usuario?._id;
 
         let i = 0
         const selectedParadas = paradasSeleccionadas.map((parada) => {
