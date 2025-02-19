@@ -5,16 +5,22 @@ import { HttpError } from './class/HttpError.js'
 // Asigno en el DOM los eventos cargados 
 document.addEventListener('DOMContentLoaded', onDomContentLoaded)
 
-const API_PORT = location.port ? `:${location.port}` : ''
+export const API_PORT = location.port ? `:${location.port}` : ''
 
 //EVENTOS
 function onDomContentLoaded() {
     //obtengo elemento del DOM por su ID
     const registerForm = document.getElementById('register-form')
-    const loginForm = document.getElementById('login-form')
     //activo evento mediante boton submit
     registerForm?.addEventListener('submit', registerUser)
-    loginForm?.addEventListener('submit', logInButton)
+    //Login component
+    window.addEventListener('stateChanged', (event) => {
+      console.log('stateChanged', /** @type {CustomEvent} */(event).detail)
+    })
+    window.addEventListener('login-form-submit', (event) => {
+      console.log('login-form-submit', /** @type {CustomEvent} */(event).detail)
+      onLoginComponentSubmit(/** @type {CustomEvent} */(event).detail)
+    })
 }
 
 
@@ -73,44 +79,31 @@ async function registerUser(e) {
 
 
 /**
- * @param {SubmitEvent} e
+ * Handles a successful login from the login component
+ * @param {Object} apiData - The user data returned from the API
+ * @returns void
  */
-//Funciones que se activan al apretar el loginbutton
-//busca coincidencias entre email y password
-    async function logInButton(e) {
-        
-        const loginData = {
-          email: getElementValue('login-email'),
-          password: getElementValue('login-password')
-        }
-
-        e.preventDefault()
-
-        if (loginData.email !== '' && loginData.password !== '') {
-          const payload = JSON.stringify(loginData)
-          const apiData = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/login`, 'POST', payload)
-          if (!apiData) {
-            // Show error
-            alert('El usuario no existe')
-          } else {
-            if ('_id' in apiData
-              && 'name' in apiData
-              && 'lastname' in apiData
-              && 'birthdate' in apiData
-              && 'country' in apiData
-              && 'email' in apiData
-              && 'token' in apiData) {
-              // @ts-ignore
-              const userData = /** @type {Usuario} */(apiData)
-              sessionStorage.setItem('usuario', JSON.stringify(userData)) // Guardar datos en sessionStorage
-              window.location.href = 'inicio.html'
-            } else {
-              alert('Invalid user data')
-            }
-          }
-        }
-    }
-
+function onLoginComponentSubmit(apiData) {
+  console.log(`DESDE FUERA DEL COMPONENTE:`, apiData);
+  if (!apiData) {
+    alert('Usuario no encontrado.');
+    return
+  }
+  if ('_id' in apiData
+    && 'name' in apiData
+    && 'lastname' in apiData
+    && 'birthdate' in apiData
+    && 'country' in apiData
+    && 'email' in apiData
+    && 'token' in apiData) {
+    // @ts-ignore
+    const userData = /** @type {Usuario} */(apiData)
+    sessionStorage.setItem('usuario', JSON.stringify(userData)) // Guardar datos en sessionStorage
+    window.location.href = 'inicio.html'
+  } else {
+    alert('Invalid user data')
+  }
+}
 
 
 //C.R.U.D
@@ -122,7 +115,7 @@ async function registerUser(e) {
  * @param {Object} [data]
  * @returns {Promise<Array<Usuario>>}
  */
-async function getAPIData(apiURL, method = 'GET', data) {
+export async function getAPIData(apiURL, method = 'GET', data) {
     let apiData
 
     try {
@@ -137,10 +130,14 @@ async function getAPIData(apiURL, method = 'GET', data) {
         // Si la petición tarda demasiado, la abortamos
       signal: AbortSignal.timeout(3000),
       method: method,      
+      // @ts-ignore
       body: data ?? undefined,
       headers: headers
       });
-      
+      if (!apiData) {
+        throw new Error('No se obtuvo respuesta del servidor');
+      }
+      console.log('Respuesta del servidor:', apiData);
     } catch (/** @type {any | HttpError} */err) {
       if (err.name === 'AbortError') {
         console.error('Fetch abortado');
@@ -155,15 +152,16 @@ async function getAPIData(apiURL, method = 'GET', data) {
       }
     }
   
-    return apiData
+    return apiData;
+   
   }
 
 
-//Obtener el value de los inputs del usuario
+//Obtener el value de los inputs del usuario por el ID
   /**
  * @param {string} id
  */
-  function getElementValue(id) {
+  export function getElementValue(id) {
     const element = document.querySelector(`#${id}`);
     if (element instanceof HTMLInputElement) {
       return element.value;
@@ -171,4 +169,17 @@ async function getAPIData(apiURL, method = 'GET', data) {
       return '';
     }
   }
+
+  /**
+ * Recibe el valor de un input por el propio valor
+ * @param {HTMLElement | null} inputElement - The input element from which to get the value.
+ * @returns {string} The value of the input element, or an empty string if the element is null.
+ */
+export function getInputValue(inputElement) {
+  if (inputElement) {
+    return /** @type {HTMLInputElement} */(inputElement).value
+  } else {
+    return ''
+  }
+}
 

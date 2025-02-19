@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./css/reset.css" />
-    <link rel="stylesheet" href="./css/style.inicio.css" />
+    <script type="module" src="./js/components/bundle.js"></script>
     <script type="module" src="./js/userUtils.js"></script>
+    <link rel="stylesheet" href="./css/reset.css" />
+    <link rel="stylesheet" href="./css/app.css" />
     <title>Inicio</title>
 </head>
 <body>
@@ -24,12 +25,8 @@
         <button type="submit">Registrarse</button>
     </form>
 
-    <form id="login-form">
-        <h3>Iniciar sesión</h3>
-        <input type="email" id="login-email" placeholder="Correo electrónico" required>
-        <input type="password" id="login-password" placeholder="Contraseña" required>
-        <button type="submit">Iniciar sesión</button>
-        <a href="#" id="forgot-password">¿Olvidaste tu contraseña?</a>
-    </form>
+    <main id="login-form">
+        <login-form></login-form>
+    </main>
 </body>
 </html>
