@@ -41,6 +41,7 @@ app.put('/api/update/usuarios/:id', requireAuth, async (req, res) => {
 })
 
 app.post('/api/login', async (req, res) => {
+  console.log('Llegó a la función de login')
   const user = await db.usuario.logIn(req.body)
   console.log(user)
   if (user) {
