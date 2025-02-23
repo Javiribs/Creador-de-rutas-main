@@ -32,7 +32,7 @@ async function onDomContentLoaded() {
     botonPerfil?.addEventListener('click', perfilButtonClick)
 
     //boton editar ruta añadiendo paradas
-    const botonAñadirParadas = document.getElementById('boton-añadir-paradas');
+    const botonAñadirParadas = document.getElementById('boton-anadir-paradas');
     if (botonAñadirParadas) {
       botonAñadirParadas.addEventListener('click', mostrarParadasDisponibles);
     }
@@ -242,7 +242,6 @@ async function addRuta(rutaConParadas) {
           newBotonParadas.addEventListener('click', () => {
             // Obtener el ID de la parada
             const paradaRuta = paradasDeLaRuta[index]; // Acceder al _id de la parada
-            console.log(paradaRuta);
             // @ts-ignore
             const paradaId = paradaRuta.parada_id;
             // Guardar el ID en localStorage (opcional, pero recomendado para usar en la página de destino)
@@ -320,35 +319,79 @@ async function actualizarNombreRuta(rutaId) {
 }
 
 
-
-
 //funcion para mostrar las paradas no seleccionadas en la ruta
+// Función para mostrar las paradas no seleccionadas en la ruta
 async function mostrarParadasDisponibles() {
-  //no se como implmentar router 
-  // navigateTo('/paradas-disponibles'); // Navegar a la ruta /paradas-disponibles
   const rutaConParadas = await obtenerRuta();
-  
+
   // Obtener las paradas de la ciudad que no están en la ruta
   const paradasDisponibles = await obtenerParadasDisponibles(rutaConParadas[0].ciudad_id);
   const listaParadasDisponibles = document.getElementById('lista-paradas-disponibles');
-    if (listaParadasDisponibles) {
-       listaParadasDisponibles.innerHTML = ''; // Limpiar la lista
+  if (listaParadasDisponibles) {
+      listaParadasDisponibles.innerHTML = ''; // Limpiar la lista
 
-       paradasDisponibles.forEach((parada) => {
-           const paradaItem = document.createElement('li');
-           // @ts-ignore
-           paradaItem.textContent = parada.nombre_parada;
+      paradasDisponibles.forEach((parada) => {
+          const paradaItem = document.createElement('li');
+          // @ts-ignore
+          paradaItem.textContent = parada.nombre_parada;
 
-           // Añadir botón para agregar la parada a la ruta
-           const botonAgregarParada = document.createElement('button');
-           botonAgregarParada.textContent = 'Agregar';
-           botonAgregarParada.addEventListener('click', () => agregarParadaARuta(rutaConParadas[0]._id, parada._id));
+          // Añadir botón para ver más info
+          const botonInfoParada = document.createElement('button');
+          botonInfoParada.textContent = '+ Info';
+          botonInfoParada.id = 'mi-boton-info-parada';
+          botonInfoParada.classList.add('boton-info-parada');
+          botonInfoParada.addEventListener('click', () => {
+            localStorage.setItem('paradaId', parada._id);
+            window.location.href = `info-parada.html?id=${parada._id}`;
+          });
+          paradaItem.appendChild(botonInfoParada);
 
-           paradaItem.appendChild(botonAgregarParada);
-           listaParadasDisponibles.appendChild(paradaItem);
-        });
+          // Añadir botón para agregar la parada a la ruta
+          const botonAgregarParada = document.createElement('button');
+          botonAgregarParada.textContent = 'Agregar';
+          botonAgregarParada.id = 'mi-boton-agregar-parada';
+          botonAgregarParada.classList.add('boton-agregar-parada');
+          botonAgregarParada.addEventListener('click', () => agregarParadaARuta(rutaConParadas[0]._id, parada._id));
 
-    }
+          paradaItem.appendChild(botonAgregarParada);
+          listaParadasDisponibles.appendChild(paradaItem);
+      });
+
+      // Cambiar el texto y la funcionalidad del botón
+      const botonAnadirParadas = document.getElementById('boton-anadir-paradas');
+      const botonOcultarParadas = document.getElementById('boton-ocultar-paradas');
+      if (botonAnadirParadas && botonOcultarParadas) {
+          botonAnadirParadas.textContent = 'Ocultar paradas disponibles';
+          botonAnadirParadas.style.display = 'none';
+          botonOcultarParadas.style.display = 'block';
+
+          // Mostrar la lista de paradas disponibles
+          const paradasDisponiblesSection = document.getElementById('paradas-disponibles');
+          if (paradasDisponiblesSection) {
+              paradasDisponiblesSection.style.display = 'block';
+          }
+      }
+  }
+}
+
+// Asociar la funcionalidad al botón "Ocultar paradas disponibles"
+const botonOcultarParadas = document.getElementById('boton-ocultar-paradas');
+if (botonOcultarParadas) {
+  botonOcultarParadas.addEventListener('click', () => {
+      const botonAnadirParadas = document.getElementById('boton-anadir-paradas');
+      const botonOcultarParadas = document.getElementById('boton-ocultar-paradas');
+      if (botonAnadirParadas && botonOcultarParadas) {
+          botonAnadirParadas.textContent = 'Añadir Puntos de Interés';
+          botonAnadirParadas.style.display = 'block';
+          botonOcultarParadas.style.display = 'none';
+
+          // Ocultar la lista de paradas disponibles
+          const paradasDisponiblesSection = document.getElementById('paradas-disponibles');
+          if (paradasDisponiblesSection) {
+              paradasDisponiblesSection.style.display = 'none';
+          }
+      }
+  });
 }
 
 

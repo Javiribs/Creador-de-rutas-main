@@ -152,5 +152,95 @@ figcaption {
     background-color: #0056b3;
 }
 
+#boton-anadir-paradas {
+    background-color: #4CAF50; /* Color verde */
+    color: white;
+    border: none;
+    padding: 12px 25px; /* Aumenta el padding para hacer el botón más grande */
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 20px auto; /* Centra el botón horizontalmente y añade margen vertical */
+    display: block; /* Asegura que el margen auto funcione */
+    transition: background-color 0.3s ease;
+    font-size: 1.1em; /* Aumenta el tamaño de la fuente */
+}
+
+#boton-anadir-paradas:hover {
+    background-color: #45a049; /* Verde más oscuro al pasar el ratón */
+}
+
+#lista-paradas-disponibles {
+    list-style: none; /* Elimina los estilos de lista predeterminados */
+    padding: 0;
+    margin: 20px auto; /* Centra la lista y añade margen vertical */
+    width: 80%; /* Ocupa el 80% del ancho del contenedor padre */
+    max-width: 600px; /* Ancho máximo para evitar que se vea demasiado ancho en pantallas grandes */
+}
+
+#lista-paradas-disponibles li {
+    display: flex; /* Utiliza flexbox para alinear los elementos */
+    justify-content: space-between; /* Distribuye el espacio entre el texto y el botón */
+    align-items: center; /* Alinea los elementos verticalmente en el centro */
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.boton-agregar-parada {
+    background-color: #28a745; /* Verde */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.boton-agregar-parada:hover {
+    background-color: #218838; /* Verde más oscuro al pasar el ratón */
+}
+
+.boton-agregar-parada:active {
+    background-color: #1e7e34; /* Verde aún más oscuro al hacer clic */
+}
+
+.boton-info-parada {
+    background-color: #007bff; /* Azul */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.boton-info-parada:hover {
+    background-color: #0056b3; /* Azul más oscuro al pasar el ratón */
+}
+
+.boton-info-parada:active {
+    background-color: #004085; /* Azul aún más oscuro al hacer clic */
+}
+
+#boton-ocultar-paradas {
+    background-color: #007bff; /* Color azul */
+    color: white;
+    border: none;
+    padding: 12px 25px; /* Aumenta el padding para hacer el botón más grande */
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 20px auto; /* Centra el botón horizontalmente y añade margen vertical */
+    display: block; /* Asegura que el margen auto funcione */
+    transition: background-color 0.3s ease;
+    font-size: 1.1em; /* Aumenta el tamaño de la fuente */
+}
+
+#boton-ocultar-paradas:hover {
+    background-color: #0056b3; /* Azul más oscuro al pasar el ratón */
+}
+
+
 
 
