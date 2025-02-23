@@ -1,0 +1,70 @@
+
+/* Estilos para el contenedor principal */
+#ficha-parada {
+    padding: 20px;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Centrar horizontalmente */
+    max-width: 960px; /* Ancho máximo del contenedor */
+    margin: 0 auto; /* Centrar horizontalmente en pantallas grandes */
+}
+
+/* Estilos para el título de la parada */
+#nombre-parada {
+    font-size: 3em;
+    margin-bottom: 20px; /* Reducido el margen inferior */
+    text-align: center;
+    color: #121212;
+}
+
+/* Estilos para la imagen y el pie de foto */
+picture {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 20px;
+    max-width: 100%; /* La imagen ocupa el ancho del contenedor picture */
+}
+
+#imagen-parada {
+    max-width: 100%; /* La imagen se ajusta al ancho del contenedor picture */
+    border-radius: 8px;
+    box-shadow: 0 4px 8px #0000001a;
+}
+
+#pie-foto-parada {
+    margin-top: 10px;
+    font-style: italic;
+    color: #777;
+    text-align: center; /* Centrar el texto del pie de foto */
+}
+
+/* Estilos para el artículo y su contenido */
+article {
+    max-width: 100%; /* El artículo ocupa el ancho del contenedor .ficha-parada */
+}
+
+#info-parada {
+    margin-bottom: 15px;
+    line-height: 1.6;
+    text-align: justify; /* Justificar el texto */
+}
+
+#enlace-parada {
+    color: #007bff;
+    text-decoration: none;
+    display: inline-block; /* Para que el enlace se comporte como un elemento en línea */
+    margin-bottom: 15px; /* Espacio inferior para el enlace */
+}
+
+#enlace-parada:hover {
+    text-decoration: underline;
+}
+
+#categoria-parada {
+    font-weight: bold;
+    color: #555;
+    display: block;
+    margin-top: 10px;
+}

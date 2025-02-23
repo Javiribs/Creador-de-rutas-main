@@ -18,19 +18,30 @@
         <h1>LOGO</h1>
         <nav>
           <ol>
-            <li><button type="reset" id="boton-inicio" class="boton-inicio">Buscador</button></li>
+            <li><button type="button" id="boton-inicio" class="boton-inicio">Buscador</button></li>
             <li><button id="boton-perfil">Perfil</button></li>
             <li><a href="#">Ajustes</a></li>
           </ol>
         </nav>
       </header>
-    
-    <h1> <span id="nombre-ruta"></span> de <span id="tituloCiudad"></span></h1>
-    <figure>
-        <img src="https://placehold.co/500x300" alt="mapa de la ruta">
-        <figcaption>Mapa de la Ruta</figcaption>
-    </figure>
-    <ul class="ruta-info"></ul>
-   
+    <main>
+      <section id="ruta-info" class="hidden">
+        <h1><span id="nombre-ruta"></span> de <span id="tituloCiudad"></span></h1>
+        <button id="boton-editar-nombre-ruta">Editar nombre de la Ruta</button>
+        <figure>
+            <img src="https://placehold.co/400x200" alt="mapa de la ruta">
+            <figcaption>Mapa de la Ruta</figcaption>
+        </figure>
+        <ul class="ruta-info"></ul>
+
+        <button id="boton-añadir-paradas">Añadir Puntos de Interés</button>
+      </section>
+
+      <section id="paradas-disponibles" class="hidden">
+        <h2>Paradas Disponibles</h2>
+        <ul id="lista-paradas-disponibles"></ul>
+        <button id="boton-volver-ruta">Volver a la Ruta</button>
+      </section>
+    </main> 
 </body>
 </html>

@@ -28,26 +28,22 @@ export class LoginForm extends HTMLElement {
 
     constructor() {
         super()
-        console.log('Elemento login-form creado');
     }
 
 // ======================= Lifecycle Methods ======================= //
 
     async connectedCallback() {
-      console.log('Elemento login-form conectado al DOM');
       this.attachShadow({ mode: "open" });
-      console.log('Contenido del shadow root:', this.shadowRoot.innerHTML);
       this.shadowRoot.adoptedStyleSheets.push(ResetCSS, AppCSS, LoginFormCSS);
 
       this._setUpContent();
       this._checkSmallScreenBehaviors();
     // Add event listeners to form elements
       const form = this.shadowRoot.getElementById("login-form");
-      console.log('Formulario:', form);
-     // Get updates when content is updated in the slot
-      this.shadowRoot.addEventListener('slotchange', this._handleSlotChanged.bind(this), { passive: true });
-     // Global store state listener
-      window.addEventListener('stateChanged', this._handleStateChanged.bind(this), { passive: true });
+    //  // Get updates when content is updated in the slot
+    //   this.shadowRoot.addEventListener('slotchange', this._handleSlotChanged.bind(this), { passive: true });
+    //  // Global store state listener
+    //   window.addEventListener('stateChanged', this._handleStateChanged.bind(this), { passive: true });
 
       form.addEventListener("submit", this._onFormSubmit.bind(this));
     }
@@ -77,35 +73,12 @@ export class LoginForm extends HTMLElement {
    * @private
    */
   _setUpContent() {
-    console.log('Función _setUpContent llamada');
     // Prevent render when disconnected or the template is not loaded
     if (this.shadowRoot && this.template) {
       // Replace previous content
       this.shadowRoot.innerHTML = '';
-      console.log('Contenido agregado al shadow root:', this.shadowRoot.innerHTML);
       this.shadowRoot.appendChild(this.template.content.cloneNode(true));
     }
-  }
-
-  /**
-   * Handles a slot change event from the shadow root
-   * @param {Event} e - The slot change event
-   * @private
-   */
-  _handleSlotChanged(e) {
-    // Notify the slot change event
-    console.log(['Slot changed', e])
-  }
-
-  /**
-   * Handles a state change event from the store
-   * @param {import('../../store/redux').State} state - The new state
-   * @private
-   */
-  _handleStateChanged(state) {
-    // Do whatever is needed in this component after a particular state value changes
-    // Filter by the states needed in this component
-    console.log('stateChanged observed from component', state?.detail?.type);
   }
 
   /**
@@ -136,11 +109,9 @@ export class LoginForm extends HTMLElement {
     }
     
     let onFormSubmitEvent
-    console.log(loginData);
 
     if (loginData.email !== '' && loginData.password !== '') {
       const payload = JSON.stringify(loginData)
-      console.log(payload)
       const apiData = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/login`, 'POST', payload)
         
       onFormSubmitEvent = new CustomEvent("login-form-submit", {
@@ -159,4 +130,3 @@ export class LoginForm extends HTMLElement {
 }
 
 customElements.define('login-form', LoginForm)
-console.log(document.querySelector('login-form')); // Debería imprimir el objeto que representa el elemento

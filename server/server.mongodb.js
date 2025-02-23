@@ -19,6 +19,9 @@ export const db = {
         get: getParadas,
         count: countParadas,
     },
+    paradasPorCiudad: {
+        get: getParadasPorCiudad
+    },
     rutasPersonalizadas: {
         get: getRutaPersonalizada,        
         getPorUsuario: getRutaPersonalizadaDelUsuario,
@@ -29,6 +32,7 @@ export const db = {
       },
       paradasRuta: {
         get: getParadasRuta,
+        getParadasRutaPersonalizada: getParadasRutaPersonalizada,
         create: createParadasRuta,
         count: countParadasRuta,
         update: updateParadasRuta,
@@ -180,7 +184,7 @@ async function countParadas() {
 //-------------------CRUD--------------------//
 
 /**
- * Obtiene paradas de la colección database.
+ * Obtiene la parada de la colección database buscado por su id
  * @param {string} id
  * @returns {Promise<Array<object>>}  - Array de paradas.
  */
@@ -192,17 +196,36 @@ async function getParadas(id) {
 
     if (typeof id === 'string') {
         const objectId = new ObjectId(id);
-        resultados = await paradasCollection.find({ _id: objectId }).toArray();
+        resultados = await paradasCollection.findOne({ _id: objectId });
         console.log('Resultados por id de parada: ', resultados);
-
-    } else if (typeof id === 'object' && 'ciudad_id' in id) {
-        resultados = await paradasCollection.find({ ciudad_id: id.ciudad_id }).toArray();
-        console.log('Resultados con filtro por ciudad_id: ', resultados);
-    }
     
-    return resultados;
-  }
-
+        return resultados;
+    }
+}
+  
+/**
+ * Obtiene paradas de la colección database filtrado por el id de la ciudad.
+ * @param {string} id
+ * @returns {Promise<Array<object>>}  - Array de paradas.
+ */
+async function getParadasPorCiudad(id) {
+    const client = new MongoClient(URI);
+    try {
+        await client.connect();
+        const creadorDB = client.db('CreadorRutas');
+        const paradasCollection = creadorDB.collection('Paradas');
+        let resultados;
+        console.log('prueba de id:', id);
+        resultados = await paradasCollection.find({ ciudad_id: id }).toArray();
+        console.log('Resultados con filtro por ciudad_id: ', resultados);
+        return resultados;
+    } catch (error) {
+        console.error('Error en getParadasPorCiudad:', error);
+        return []; // Devuelve un array vacío en caso de error
+    } finally {
+        await client.close();
+    }
+}
 
 //--------------MÉTODOS PARA Rutas Personalizadas-------------------//
 
@@ -335,8 +358,6 @@ async function getRutaPersonalizadaDelUsuario(id){
         // 6. Ejecutar el pipeline de agregación
         let result = await db.collection('RutaPersonalizada').aggregate(pipeline).toArray();
 
-        console.log("Resultados del pipeline:", result);
-
         return result;
 
     } finally {
@@ -421,6 +442,20 @@ async function getParadasRuta(id){
     const paradas = await paradasRutaCollection.find({ rutaPersonalizada_id: new ObjectId(id) }).toArray();
     return paradas;
 }
+
+/**
+ * Obtiene ParadasRuta de la colección database buscado por id de la ruta personalizada.
+ * @param {string} id - Id de la RutaPersonalizada
+ * @returns {Promise<Array<string>>} - Array de ParadasRuta.
+ */
+async function getParadasRutaPersonalizada(id){
+    const client = new MongoClient(URI);
+    const creadorDB = client.db('CreadorRutas');
+    const paradasRutaCollection = creadorDB.collection('ParadasRuta');
+    const paradas = await paradasRutaCollection.find({ rutaPersonalizada_id: id }).toArray();
+    return paradas;
+}
+
 
 
 /**
@@ -527,7 +562,6 @@ async function getRutaConParadas(rutaId) {
         ];
 
         let result = await db.collection('RutaPersonalizada').aggregate(pipeline).toArray();
-        console.log("Resultados del pipeline:", result);
 
         return result;
 

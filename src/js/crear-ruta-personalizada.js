@@ -48,9 +48,9 @@ export async function inicializarCreacionRuta(botonCrearRuta, paradasSeleccionad
           nombre: 'Mi ruta',
           usuario_id: usuarioId,
           fechaCreacion: new Date(),
-          selectedParadas
+          // selectedParadas
         }
-
+        
         console.log(selectedParadas)
 
         try {
@@ -63,6 +63,26 @@ export async function inicializarCreacionRuta(botonCrearRuta, paradasSeleccionad
           }
 
           const rutaId = response._id;
+
+           // Almacenar el ID de la ruta
+           localStorage.setItem('rutaId', rutaId);
+
+          // Actualizar rutaPersonalizada_id en selectedParadas
+          selectedParadas.forEach(parada => {
+            parada.rutaPersonalizada_id = rutaId; // Almacenar como string
+        });
+
+        // Actualizar las ParadasRuta en la base de datos
+        await Promise.all(selectedParadas.map(async parada => {
+            const paradaRutaData = {
+                parada_id: parada.parada_id,
+                orden: parada.orden,
+                rutaPersonalizada_id: rutaId // Usar el ID como string
+            };
+            const paradaRutaPayload = JSON.stringify(paradaRutaData);
+            await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/create/ParadasRuta`, 'POST', paradaRutaPayload);
+        }));
+
           window.location.href = `ruta.html?id=${rutaId}`;
         } catch (error) {
           console.error('Error al crear la ruta:', error)
@@ -100,6 +120,7 @@ async function getAPIData(apiURL, method = 'GET', data) {
         // Si la petición tarda demasiado, la abortamos
       signal: AbortSignal.timeout(3000),
       method: method,      
+      // @ts-ignore
       body: data ?? undefined,
       headers: headers
       });
