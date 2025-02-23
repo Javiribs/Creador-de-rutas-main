@@ -1,0 +1,79 @@
+section {
+    margin-bottom: 20px;
+    width: 80%;
+    max-width: 600px;
+}
+
+section ul {
+    list-style: none;
+    padding: 0;
+}
+
+section li {
+    margin-bottom: 5px;
+}
+
+/* Estilos para las fichas de rutas personalizadas */
+.mis-rutas li.ruta-personalizada {
+    border: 1px solid #ddd;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 5px #0000001a;
+    background-color: #fff;
+    display: flex; /* Flexbox para alinear elementos */
+    flex-direction: column; /* Columna para que los elementos se apilen */
+    align-items: flex-start; /* Alinea los elementos al inicio */
+    min-width: 250px;
+}
+
+.mis-rutas li.ruta-personalizada h3 {
+    font-size: 1.2em;
+    margin-bottom: 5px;
+    color: #333;
+}
+
+.mis-rutas li.ruta-personalizada h4 {
+    font-size: 1em;
+    color: #777;
+    margin-bottom: 5px;
+}
+
+.mis-rutas li.ruta-personalizada p {
+    font-size: 0.9em;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.mis-rutas li.ruta-personalizada div.botones-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 10px;
+    width: 100%; /* Asegúrate de que el contenedor de botones ocupe todo el ancho disponible */
+    justify-content: flex-start;
+}
+
+.mis-rutas li.ruta-personalizada button {
+    background-color: #aab122;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: background-color 0.3s ease;
+    flex-shrink: 0;
+}
+
+.mis-rutas li.ruta-personalizada button:hover {
+    background-color: #0056b3;
+}
+
+.mis-rutas li.ruta-personalizada .boton-eliminar {
+    background-color: #dc3545;
+}
+
+.mis-rutas li.ruta-personalizada .boton-eliminar:hover {
+    background-color: #c82333;
+}

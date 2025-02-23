@@ -97,18 +97,18 @@ app.get('/api/read/ciudades', requireAuth, async (req, res) => {
 })
 
 app.get('/api/filter/ciudades/:name', requireAuth, async (req, res) => {
-  const ciudades = await db.ciudades.get({ $text: { $search: req.params.name } })
-  console.log('ciudad recibida:', ciudades)
+  const ciudades = await db.ciudades.get({ $text: { $search: req.params.name } });
+  console.log('ciudad recibida:', ciudades);
   const ciudadesConParadas = await Promise.all(
-    ciudades.map(async (ciudad) => {
-      return {
-        ...ciudad,
-        paradas: await db.paradas.get({ciudad_id: ciudad._id.toString()})
-        }
-    })
-  )
-  res.json(ciudadesConParadas)
-})
+      ciudades.map(async (ciudad) => {
+          return {
+              ...ciudad,
+              paradas: await db.paradasPorCiudad.get(ciudad._id.toString()), // Cambiado aquí
+          };
+      })
+  );
+  res.json(ciudadesConParadas);
+});
 
 //funcion de busqueda por nombre para el searchProposal!
 app.get('/api/filter/ciudadesName/:name', async (req, res) => {
@@ -125,11 +125,18 @@ app.get('/api/check/:nombre', async (req, res) => {
 })
 
 //CRUD PARADAS
-
+//busca paradas por su id
 app.get('/api/read/paradas/:id', requireAuth, async (req, res) => {
   console.log(req.params.id)
   res.json(await db.paradas.get(req.params.id))
   console.log('paradas recibidas:', await db.paradas.get(req.params.id))
+})
+
+//busca paradas por id de la ciudad
+app.get('/api/read/paradasPorCiudad/:id', requireAuth, async (req, res) => {
+  console.log(req.params.id)
+  res.json(await db.paradasPorCiudad.get(req.params.id))
+  console.log('paradas recibidas:', await db.paradasPorCiudad.get(req.params.id))
 })
 
 
@@ -144,15 +151,16 @@ app.get('/api/check/:nombre', async (req, res) => {
 //CRUD rutasPersonalizadas
 app.post('/api/create/rutasPersonalizadas', requireAuth, async (req, res) => {
   //console.log('selectedParadas:', req.body.selectedParadas);
-  const rutaPersonalizada = req.body
-  const selectedParadas = [...rutaPersonalizada.selectedParadas]
-  delete rutaPersonalizada.selectedParadas
-  const nuevaRuta = await db.rutasPersonalizadas.create(rutaPersonalizada)
-  await Promise.all(selectedParadas.map(parada =>  
-    db.paradasRuta.create({...parada, rutaPersonalizada_id: nuevaRuta._id})
-  ));
+  res.json(await db.rutasPersonalizadas.create(req.body))
+  // const rutaPersonalizada = req.body
+  // const selectedParadas = [...rutaPersonalizada.selectedParadas]
+  // delete rutaPersonalizada.selectedParadas
+  // const nuevaRuta = await db.rutasPersonalizadas.create(rutaPersonalizada)
+  // await Promise.all(selectedParadas.map(parada =>  
+  //   db.paradasRuta.create({...parada, rutaPersonalizada_id: nuevaRuta._id})
+  // ));
   
-  res.json(nuevaRuta)
+  // res.json(nuevaRuta)
 })
 
 //obtener ruta personalizada a partir del id de la rutapersonalizada
@@ -201,6 +209,10 @@ app.get('/api/read/paradasRuta', requireAuth, async (req, res) => {
   res.json(await db.paradasRuta.get())
 })
 
+//read paradas de la ruta por el id de la ruta personalizada
+app.get('/api/read/paradasRuta/rutaPersonalizada/:id', requireAuth, async (req, res) => {
+  res.json(await db.paradasRuta.getParadasRutaPersonalizada(req.params.id))
+})
 
 app.put('/api/update/paradasRuta/:id', requireAuth, async (req, res) => {
   res.json(await db.paradasRuta.update(req.params.id, req.body))

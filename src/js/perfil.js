@@ -2,7 +2,7 @@
 import { simpleFetch } from './simpleFetch.js'
 import { HttpError } from './class/HttpError.js'
 
-const API_PORT = location.port ? `:${location.port}` : ''
+export const API_PORT = location.port ? `:${location.port}` : ''
 
 /** @import {Ciudad, Paradas} from './class/ciudades.js' */
 /** @import {RutaPersonalizada, ParadasRutas} from './class/rutaPersonalizada.js' */
@@ -11,28 +11,21 @@ const API_PORT = location.port ? `:${location.port}` : ''
 document.addEventListener('DOMContentLoaded', onDomContentLoaded);
 
 async function onDomContentLoaded() {
-    // Recuperar datos de sessionStorage
-    await recuperarSessionStorage()
+  //boton de volver al inicio (resetear toda la info)
+  const volverInicioButton = document.getElementById('boton-inicio')
+ 
+  // Recuperar datos de sessionStorage
+  await recuperarSessionStorage()
 
-    // Pintar elemntos del DOM
-    // paintRutasUsuario(await obtenerRutasUsuario())
-    paintRutasUsuario(await obtenerRutasUsuario())
-    // Eventos para los botones
-    const botonInicio = document.getElementById('boton-inicio');
-    if (botonInicio) {
-        botonInicio.addEventListener('click', () => {
-            window.location.href = 'inicio.html';
-        });
-    }
+  // Pintar elemntos del DOM
+  // paintRutasUsuario(await obtenerRutasUsuario())
+  // paintRutasUsuario(await obtenerRutasUsuario())
 
-    const botonPerfil = document.getElementById('boton-perfil');
-    if (botonPerfil) {
-        botonPerfil.addEventListener('click', () => {
-            window.location.href = 'perfil.html';
-        });
-    }
+  // Eventos para los botones
+  //resetear el buscador y volver inicio
+  volverInicioButton?.addEventListener('click', inicioButtonClick)
 
-    const logoutButton = document.getElementById('logout-button');
+  const logoutButton = document.getElementById('logout-button');
     if (logoutButton) {
         logoutButton.addEventListener('click', cerrarSesion); // Corrección: No se llama a la función aquí
     }
@@ -43,6 +36,15 @@ async function onDomContentLoaded() {
     }
 }
 
+
+//-----------------EVENTOS-----------------//
+//funcion para resetear toda la busqueda
+function inicioButtonClick() {
+  window.location.href = 'inicio.html'
+}
+
+
+
 //-------------CRUD---------------//
 /**
  * Get data from API
@@ -51,7 +53,7 @@ async function onDomContentLoaded() {
  * @param {Object} [data]
  * @returns {Promise<Object>}
  */
-async function getApiData (apiURL, method = 'GET', data) {
+export async function getApiData (apiURL, method = 'GET', data) {
     let apiData
 
     try {
@@ -71,6 +73,7 @@ async function getApiData (apiURL, method = 'GET', data) {
         // Si la petición tarda demasiado, la abortamos
         signal: AbortSignal.timeout(3000),
         method: method,
+        // @ts-ignore
         body: data ?? undefined,
         headers: headers
       });
@@ -98,11 +101,10 @@ async function getApiData (apiURL, method = 'GET', data) {
  * //corregir el ignore de ts no le gusta def
  * @returns {Promise<Array<Object>>}
  */
-async function obtenerRutasUsuario() {
+export async function obtenerRutasUsuario() {
   const usuarioGuardado = getLoggedUserData();
   const usuarioId = usuarioGuardado?._id;
   try {
-    console.log("ID del usuario:", usuarioId)
       const response = await getApiData(`${location.protocol}//${location.hostname}${API_PORT}/api/read/rutasPersonalizadas/usuario/${usuarioId}`, 'GET');
 
       if (!response) {
@@ -123,55 +125,111 @@ async function obtenerRutasUsuario() {
   }
 }
 
+// /**
+//  * @typedef {Object} ExtraInfoRutasPersonalizadas
+//  * @property {string} _id - ID de la ruta personalizada
+//  * @property {string} nombre - Nombre de la ruta
+//  * @property {string} ciudad_id - ID de la ciudad
+//  * @property {Object[]} paradasRuta - Array de paradas de la ruta
+//  * @property {string} fechaCreacion - fecha en que se crea la ruta
+//  * @property {object} ciudad - objeto completo ciudad
+//  * @property {string} paradasRuta.parada_id - ID de la parada
+//  */
+
+// /**
+//  * @function paintRutasUsuario
+//  * @param {ExtraInfoRutasPersonalizadas} ExtraInfoRutasPersonalizadas - Rutas con paradas
+//  */
+// async function paintRutasUsuario(ExtraInfoRutasPersonalizadas) {
+//   console.log('Toda la info de rutasPersonalizadas creada:', ExtraInfoRutasPersonalizadas);
+//   const misRutasElement = document.getElementById('mis-rutas');
+//   if (!misRutasElement) {
+//     console.error('Elemento "mis-rutas" no encontrado');
+//     return;
+//   }
+
+//   if (!Array.isArray(ExtraInfoRutasPersonalizadas)) {
+//     console.error('La respuesta de la API no es un array:', ExtraInfoRutasPersonalizadas);
+//     return;
+//   }
+
+//   misRutasElement.innerHTML = '';
+
+//   ExtraInfoRutasPersonalizadas.forEach((ruta) => {
+//     try {
+//         const rutaElement = document.createElement('li');
+//         rutaElement.classList.add('ruta-personalizada');
+
+//         // Crear elementos para la información de la ruta
+//         const nombreRuta = document.createElement('h3');
+//         nombreRuta.textContent = ruta.nombre;
+
+//         const nombreCiudadRuta = document.createElement('h4');
+//         nombreCiudadRuta.textContent = ruta.ciudad.name
+
+//         const fechaCreacion = document.createElement('p');
+//         const fecha = new Date(ruta.fechaCreacion); 
+//         fechaCreacion.textContent = `Fecha de creación: ${fecha.toLocaleDateString()}`;
+
+//         // Crear botón para editar nombre de ruta
+//         const botonEditar = document.createElement('button');
+//         botonEditar.textContent = 'Editar';
+//         botonEditar.classList.add('boton-editar');
+//         botonEditar.addEventListener('click', () => {
+//           // Redirigir a ruta.html con el ID de la ruta
+//           window.location.href = `ruta.html?id=${ruta._id}`;
+//       });
+
+//         // Crear botón para eliminar ruta
+//         const botonEliminar = document.createElement('button');
+//         botonEliminar.textContent = 'Eliminar';
+//         botonEliminar.classList.add('boton-eliminar');
+//         botonEliminar.addEventListener('click', async () => {
+//           const confirmacion = confirm('¿Estás seguro de que deseas eliminar esta ruta?');
+//           if (confirmacion) {
+//               await eliminarRuta(ruta._id); // Llama a la función para eliminar la ruta de la API
+//               rutaElement.remove(); // Elimina el elemento de la ruta de la lista
+//             }
+//         });
+        
+//         // Agregar los elementos a la lista
+//         rutaElement.appendChild(nombreRuta);
+//         rutaElement.appendChild(nombreCiudadRuta);
+//         rutaElement.appendChild(fechaCreacion);
+//         rutaElement.appendChild(botonEditar);
+//         rutaElement.appendChild(botonEliminar);
+      
+
+//         misRutasElement.appendChild(rutaElement);
+
+//     } catch (error) {
+//         console.error('Error al crear elemento:', error);
+//     }
+// });
+// }
+
 /**
- * @function paintRutasUsuario
- * @param {RutaPersonalizada[]} rutasPersonalizadas - Rutas con paradas
+ * @function eliminarRuta
+ * @param {string} rutaId - ID de la ruta a eliminar
  */
-async function paintRutasUsuario(rutasPersonalizadas) {
-  console.log('Toda la info de rutasPersonalizadas creada:', rutasPersonalizadas);
-  const misRutasElement = document.getElementById('mis-rutas');
-  if (!misRutasElement) {
-    console.error('Elemento "mis-rutas" no encontrado');
-    return;
+export async function eliminarRuta(rutaId) {
+  try {
+      const usuarioGuardado = getLoggedUserData();
+      if (!usuarioGuardado) {
+          throw new Error("Usuario no logueado");
+      }
+      const response = await getApiData(`${location.protocol}//${location.hostname}${API_PORT}/api/delete/rutasPersonalizadas/${rutaId}`, 'DELETE');
+
+      if (!response) {
+          throw new Error('Error al eliminar la ruta');
+      }
+
+      console.log('Ruta eliminada:', response);
+  } catch (error) {
+      console.error('Error al eliminar ruta:', error);
+      alert('Error al eliminar la ruta. Por favor, inténtalo de nuevo más tarde.');
   }
-
-  if (!Array.isArray(rutasPersonalizadas)) {
-    console.error('La respuesta de la API no es un array:', rutasPersonalizadas);
-    return;
-  }
-
-  misRutasElement.innerHTML = '';
-
-  rutasPersonalizadas.forEach((ruta) => {
-    try {
-        const rutaElement = document.createElement('li');
-        rutaElement.classList.add('ruta-personalizada');
-
-        // Crear elementos para la información de la ruta
-        const nombreRuta = document.createElement('h2');
-        nombreRuta.textContent = ruta.nombre;
-
-        const fechaCreacion = document.createElement('p');
-        const fecha = new Date(ruta.fechaCreacion); 
-        fechaCreacion.textContent = `Fecha de creación: ${fecha.toLocaleDateString()}`;
-
-       
-        // Agregar los elementos a la lista
-        rutaElement.appendChild(nombreRuta);
-        rutaElement.appendChild(fechaCreacion);
-        // rutaElement.appendChild(ciudadNombre);
-
-        rutaElement.addEventListener('click', () => {
-            // Agrega el comportamiento deseado aquí
-        });
-
-        misRutasElement.appendChild(rutaElement);
-    } catch (error) {
-        console.error('Error al crear elemento:', error);
-    }
-});
 }
-
 
 // Función para cerrar sesión
 function cerrarSesion() {

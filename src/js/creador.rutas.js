@@ -171,6 +171,7 @@ async function getCiudadesData (apiURL, method = 'GET', data) {
         // Si la petición tarda demasiado, la abortamos
         signal: AbortSignal.timeout(3000),
         method: method,
+        // @ts-ignore
         body: data ?? undefined,
         headers: headers
       });
