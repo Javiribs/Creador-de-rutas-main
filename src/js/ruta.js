@@ -216,7 +216,6 @@ async function addRuta(rutaConParadas) {
         * @param {Parada} parada
         */
         paradasCompletas.forEach((parada, index) => {
-          console.log(parada);
           const newParadasItem = document.createElement('li');
           const newArticleParadas = document.createElement('article');
           const newFigureParadas = document.createElement('figure');
@@ -246,7 +245,6 @@ async function addRuta(rutaConParadas) {
             console.log(paradaRuta);
             // @ts-ignore
             const paradaId = paradaRuta.parada_id;
-            console.log(paradaId);
             // Guardar el ID en localStorage (opcional, pero recomendado para usar en la página de destino)
             localStorage.setItem('paradaId', paradaId);
         
