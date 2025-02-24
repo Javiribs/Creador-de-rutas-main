@@ -116,3 +116,33 @@ section ul {
 section li {
     margin-bottom: 5px;
 }
+
+
+#logout-button,
+#delete-usuario {
+    color: white;
+    border: none;
+    padding: 12px 25px; /* Aumenta el padding para hacer el botón más grande */
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 20px 10px; /* Añade márgenes para separarlos */
+    transition: background-color 0.3s ease;
+    font-size: 1.1em; /* Aumenta el tamaño de la fuente */
+    display: inline-block; /* Permite aplicar márgenes y padding */
+}
+
+#logout-button {
+    background-color: #007bff; /* Azul por defecto */
+}
+
+#logout-button:hover {
+    background-color: #0056b3; /* Azul más oscuro al pasar el ratón */
+}
+
+#delete-usuario {
+    background-color: #dc3545; /* Rojo para el botón de eliminar */
+}
+
+#delete-usuario:hover {
+    background-color: #c82333; /* Rojo más oscuro al pasar el ratón */
+}
