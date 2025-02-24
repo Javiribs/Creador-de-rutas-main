@@ -35,7 +35,7 @@ export class LitInfoMisRutas extends LitElement {
                             <h4>${ruta.ciudad.name}</h4>
                             <p>Fecha de creación: ${new Date(ruta.fechaCreacion).toLocaleDateString()}</p>
                             <button class="boton-editar" @click="${() => this._editarRuta(ruta._id)}">Editar</button>
-                            <button class="boton-eliminar">Eliminar</button>
+                            <button class="boton-eliminar" @click="${() => this._eliminarRuta(ruta._id)}">Eliminar</button>
                         </li>
                     `)}
                 </ul>
