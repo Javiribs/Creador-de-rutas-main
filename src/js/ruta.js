@@ -23,7 +23,6 @@ async function onDomContentLoaded() {
     //corregir el ignore de ts no le gusta def
     // @ts-ignore
     addRuta(await obtenerRuta()) //marcar que es un objeto
-
     // Eventos para los botones
     //resetear el buscador y volver inicio
     volverInicioButton?.addEventListener('click', inicioButtonClick)
@@ -65,7 +64,7 @@ async function obtenerRuta() {
     // Send fetch to API, create new ruta
     if (rutaId !== null) {
       const response = await getRutaPersonalizadaData(`${location.protocol}//${location.hostname}${API_PORT}/api/read/rutasConParadas/${rutaId}`)
-        return response 
+      return response 
     } else {
        return []
     }
@@ -211,6 +210,9 @@ async function addRuta(rutaConParadas) {
           const paradaCompleta = await getRutaPersonalizadaData(`${location.protocol}//${location.hostname}${API_PORT}/api/read/paradas/${paradaId}`);
           return paradaCompleta;
         }));
+
+        // @ts-ignore
+        initMap(paradasCompletas);
 
         /**
         * @param {Parada} parada
@@ -483,3 +485,58 @@ async function actualizarRutaPersonalizada() {
   }
 }
 
+
+
+
+
+
+/**
+ * Inicializa el mapa con las paradas especificadas.
+ * 
+ * @param {Parada[]} paradasCompletas - Arreglo de objetos que contienen la información de
+ *                                      las paradas que se desean mostrar en el mapa.
+ * 
+ * @throws {Error} Si no se pueden obtener las paradas o no se puede
+ *                 inicializar el mapa.
+ */
+async function initMap(paradasCompletas) {
+  try {
+      if (!paradasCompletas || paradasCompletas.length === 0) {
+          console.error("No hay paradas para mostrar.");
+          return;
+      }
+
+      // Obtener las coordenadas del primer punto para centrar el mapa
+      const primerPunto = paradasCompletas[0];
+      // @ts-ignore
+      const latInicial = primerPunto.coordenadas[0];
+      // @ts-ignore
+      const lngInicial = primerPunto.coordenadas[1];
+
+      // @ts-ignore
+      // eslint-disable-next-line no-undef
+      const map = new google.maps.Map(document.getElementById("map"), {
+          center: { lat: latInicial, lng: lngInicial },
+          zoom: 13, // Ajusta el zoom según sea necesario
+      });
+
+      // Añadir marcadores para cada parada
+      paradasCompletas.forEach(parada => {
+          // @ts-ignore
+          const lat = parada.coordenadas[0];
+          // @ts-ignore
+          const lng = parada.coordenadas[1];
+
+          // @ts-ignore
+          // eslint-disable-next-line no-undef
+          const marker = new google.maps.Marker({
+              position: { lat: lat, lng: lng },
+              map: map,
+              title: parada.nombre_parada,
+          });
+          console.log(marker);
+      });
+  } catch (error) {
+      console.error("Error al mostrar las paradas en el mapa:", error);
+  }
+}

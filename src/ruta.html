@@ -10,6 +10,7 @@
         <link rel="stylesheet" href="./css/style.ruta.css" />
         <script type="module" src="./js/crear-ruta-personalizada.js"></script>
         <script type="module" src="./js/ruta.js"></script>
+        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB21PeYApWeiOvMbWJKoLB41j554bpR3WU&callback=initMap"></script>
         <title>Ruta</title>
     </head>
 </head>
@@ -29,7 +30,7 @@
         <h1><span id="nombre-ruta"></span> de <span id="tituloCiudad"></span></h1>
         <button id="boton-editar-nombre-ruta">Editar nombre de la Ruta</button>
         <figure>
-            <img src="https://placehold.co/400x200" alt="mapa de la ruta">
+            <div id="map" style="height: 400px; width: 100%;"></div>
             <figcaption>Mapa de la Ruta</figcaption>
         </figure>
         <ul class="ruta-info"></ul>

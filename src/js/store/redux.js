@@ -1,7 +1,7 @@
 // @ts-check
 //Importo las clases de ciudades.js
-/** @import {Ciudad, Paradas} from 'src/js/class/ciudades.js' */
-/** @import { Usuario } from 'src/js/class/usuario.js' */ // Importa la clase Usuario
+/** @import {Ciudad, Paradas} from '../class/ciudades.js' */
+/** @import { Usuario } from '../class/usuario.js' */
 
 
 //Aciones que se pueden ejecutar en la app
