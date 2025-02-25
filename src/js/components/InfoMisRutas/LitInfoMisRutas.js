@@ -3,10 +3,10 @@ import { obtenerRutasUsuario, eliminarRuta } from '../../perfil.js';
 //añadir los CSS
 import ResetCSS from '../../../css/reset.css' with { type: 'css' }
 import AppCSS from '../../../css/app.css' with { type: 'css' }
-import PerfilUsuarioCSS from './InfoMisRutas.css' with { type: 'css' }
+import InfoMisRutasCSS from './InfoMisRutas.css' with { type: 'css' }
 
 export class LitInfoMisRutas extends LitElement {
-    static styles = [ResetCSS, AppCSS, PerfilUsuarioCSS];
+    static styles = [ResetCSS, AppCSS, InfoMisRutasCSS];
     static properties = {
         listaRutasPersonalizadas: { type: Array }
     }

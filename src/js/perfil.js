@@ -93,8 +93,29 @@ export async function getApiData (apiURL, method = 'GET', data) {
 }
 
 /**
+ * Get usuario data from API
+ * @returns {Promise<Object>}
+ */
+export async function obtenerInfoUsuario() {
+  const usuarioGuardado = getLoggedUserData();
+  const usuarioId = usuarioGuardado?._id;
+  try {
+      const response = await getApiData(`${location.protocol}//${location.hostname}${API_PORT}/api/read/usuarios/${usuarioId}`, 'GET');
+
+      if (!response) {
+          throw new Error('Error al obtener las rutas del usuario');
+      }
+      
+      return response; 
+
+  } catch (error) {
+      console.error('Error al obtener rutas:', error);
+      return {};
+  }
+}
+
+/**
  * Get data from API
- * //corregir el ignore de ts no le gusta def
  * @returns {Promise<Array<Object>>}
  */
 export async function obtenerRutasUsuario() {
@@ -174,7 +195,7 @@ async function eliminarUsuario() {
 }
 
 
-async function recuperarSessionStorage() {
+export async function recuperarSessionStorage() {
     // Recuperar datos de sessionStorage al cargar la página
     const usuarioGuardado = sessionStorage.getItem('usuario');
 

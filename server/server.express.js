@@ -31,8 +31,9 @@ app.post('/api/create/usuarios', async (req, res) => {
   res.json(await db.usuario.create(req.body))
 })
 
-app.get('/api/read/usuarios', async (req, res) => {
-  res.json(await db.usuario.get())
+//pide y devuelve info usuario por su id
+app.get('/api/read/usuarios/:id', async (req, res) => {
+  res.json(await db.usuario.get(req.params.id))
 })
 
 
