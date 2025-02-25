@@ -31,6 +31,7 @@
     categoria
     enlace
     info
+    visitada = false
     /**
      * @param {string} ciudad_id
      * @param {string} _id
