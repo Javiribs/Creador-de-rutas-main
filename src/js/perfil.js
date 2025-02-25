@@ -17,10 +17,6 @@ async function onDomContentLoaded() {
   // Recuperar datos de sessionStorage
   await recuperarSessionStorage()
 
-  // Pintar elemntos del DOM
-  // paintRutasUsuario(await obtenerRutasUsuario())
-  // paintRutasUsuario(await obtenerRutasUsuario())
-
   // Eventos para los botones
   //resetear el buscador y volver inicio
   volverInicioButton?.addEventListener('click', inicioButtonClick)
@@ -124,89 +120,6 @@ export async function obtenerRutasUsuario() {
       return []; // Devuelve un array vacío en caso de error
   }
 }
-
-// /**
-//  * @typedef {Object} ExtraInfoRutasPersonalizadas
-//  * @property {string} _id - ID de la ruta personalizada
-//  * @property {string} nombre - Nombre de la ruta
-//  * @property {string} ciudad_id - ID de la ciudad
-//  * @property {Object[]} paradasRuta - Array de paradas de la ruta
-//  * @property {string} fechaCreacion - fecha en que se crea la ruta
-//  * @property {object} ciudad - objeto completo ciudad
-//  * @property {string} paradasRuta.parada_id - ID de la parada
-//  */
-
-// /**
-//  * @function paintRutasUsuario
-//  * @param {ExtraInfoRutasPersonalizadas} ExtraInfoRutasPersonalizadas - Rutas con paradas
-//  */
-// async function paintRutasUsuario(ExtraInfoRutasPersonalizadas) {
-//   console.log('Toda la info de rutasPersonalizadas creada:', ExtraInfoRutasPersonalizadas);
-//   const misRutasElement = document.getElementById('mis-rutas');
-//   if (!misRutasElement) {
-//     console.error('Elemento "mis-rutas" no encontrado');
-//     return;
-//   }
-
-//   if (!Array.isArray(ExtraInfoRutasPersonalizadas)) {
-//     console.error('La respuesta de la API no es un array:', ExtraInfoRutasPersonalizadas);
-//     return;
-//   }
-
-//   misRutasElement.innerHTML = '';
-
-//   ExtraInfoRutasPersonalizadas.forEach((ruta) => {
-//     try {
-//         const rutaElement = document.createElement('li');
-//         rutaElement.classList.add('ruta-personalizada');
-
-//         // Crear elementos para la información de la ruta
-//         const nombreRuta = document.createElement('h3');
-//         nombreRuta.textContent = ruta.nombre;
-
-//         const nombreCiudadRuta = document.createElement('h4');
-//         nombreCiudadRuta.textContent = ruta.ciudad.name
-
-//         const fechaCreacion = document.createElement('p');
-//         const fecha = new Date(ruta.fechaCreacion); 
-//         fechaCreacion.textContent = `Fecha de creación: ${fecha.toLocaleDateString()}`;
-
-//         // Crear botón para editar nombre de ruta
-//         const botonEditar = document.createElement('button');
-//         botonEditar.textContent = 'Editar';
-//         botonEditar.classList.add('boton-editar');
-//         botonEditar.addEventListener('click', () => {
-//           // Redirigir a ruta.html con el ID de la ruta
-//           window.location.href = `ruta.html?id=${ruta._id}`;
-//       });
-
-//         // Crear botón para eliminar ruta
-//         const botonEliminar = document.createElement('button');
-//         botonEliminar.textContent = 'Eliminar';
-//         botonEliminar.classList.add('boton-eliminar');
-//         botonEliminar.addEventListener('click', async () => {
-//           const confirmacion = confirm('¿Estás seguro de que deseas eliminar esta ruta?');
-//           if (confirmacion) {
-//               await eliminarRuta(ruta._id); // Llama a la función para eliminar la ruta de la API
-//               rutaElement.remove(); // Elimina el elemento de la ruta de la lista
-//             }
-//         });
-        
-//         // Agregar los elementos a la lista
-//         rutaElement.appendChild(nombreRuta);
-//         rutaElement.appendChild(nombreCiudadRuta);
-//         rutaElement.appendChild(fechaCreacion);
-//         rutaElement.appendChild(botonEditar);
-//         rutaElement.appendChild(botonEliminar);
-      
-
-//         misRutasElement.appendChild(rutaElement);
-
-//     } catch (error) {
-//         console.error('Error al crear elemento:', error);
-//     }
-// });
-// }
 
 /**
  * @function eliminarRuta

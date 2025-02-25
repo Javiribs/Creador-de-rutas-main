@@ -541,26 +541,30 @@ async function initMap(paradasCompletas) {
 
       // Calcular la ruta
       directionsService.route(
-          {
-              // @ts-ignore
-              origin: { lat: paradasCompletas[0].coordenadas[0], lng: paradasCompletas[0].coordenadas[1] },
-              // @ts-ignore
-              destination: { lat: paradasCompletas[paradasCompletas.length - 1].coordenadas[0], lng: paradasCompletas[paradasCompletas.length - 1].coordenadas[1] },
-              waypoints: waypoints,
-              // @ts-ignore
-              // eslint-disable-next-line no-undef
-              travelMode: google.maps.TravelMode.DRIVING, // Cambiar el modo de viaje (DRIVING, WALKING, TRANSIT, BICYCLING)
-          },
+        {
           // @ts-ignore
-          (response, status) => {
-              if (status === "OK") {
-                  // Mostrar la ruta en el mapa
-                  directionsRenderer.setDirections(response);
-              } else {
-                  console.error("Error al calcular la ruta:", status);
-              }
+          origin: { lat: paradasCompletas[0].coordenadas[0], lng: paradasCompletas[0].coordenadas[1] },
+          // @ts-ignore
+          destination: { lat: paradasCompletas[paradasCompletas.length - 1].coordenadas[0], lng: paradasCompletas[paradasCompletas.length - 1].coordenadas[1] },
+          waypoints: waypoints,
+          optimizeWaypoints: true, // Habilita la optimización de los waypoints
+          // @ts-ignore
+          // eslint-disable-next-line no-undef
+          travelMode: google.maps.TravelMode.WALKING,
+        },
+        // @ts-ignore
+        (response, status) => {
+          if (status === "OK") {
+              directionsRenderer.setDirections(response);
+  
+              // Obtener el orden optimizado de los waypoints
+              const optimizedWaypoints = response.routes[0].waypoint_order;
+              console.log("Orden optimizado de los waypoints:", optimizedWaypoints);
+          } else {
+              console.error("Error al calcular la ruta:", status);
           }
-      );
+      }
+  );
 
       // Añadir marcadores para cada parada (opcional)
       paradasCompletas.forEach(parada => {
