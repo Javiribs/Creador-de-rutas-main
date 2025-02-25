@@ -80,14 +80,14 @@ async function createUsuario(usuario) {
 
 /**
  * Obtiene usuario de la colección database.
- *
- * @returns {Promise<Array<object>>} - Array de usuarios.
+ * @param {string} id
+ * @returns {Promise<object>} - Array de usuarios.
  */
-async function getUsuario(filter){
+async function getUsuario(id){
     const client = new MongoClient(URI);
     const creadorDB = client.db('CreadorRutas');
     const usersCollection = creadorDB.collection('Usuarios');
-    return await usersCollection.find(filter).toArray()
+    return await usersCollection.findOne({ _id: new ObjectId(id) })
 }
 
 

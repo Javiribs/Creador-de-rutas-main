@@ -1,0 +1,11 @@
+#info-usuario h2 {
+    font-size: 1.8em; 
+    color: #333; 
+    margin-bottom: 5px; 
+}
+
+#info-usuario h3 {
+    font-size: 1.2em; 
+    color: #777; 
+    font-style: italic; 
+}
