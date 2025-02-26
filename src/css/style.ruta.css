@@ -89,6 +89,27 @@ figcaption {
     margin-top: 10px;
 }
 
+#enlace-google-maps {
+    visibility: hidden;
+}
+
+#boton-google-maps {
+    background-color: #4285F4; /* Color azul de Google Maps */
+    color: white;
+    border: none;
+    padding: 12px 25px; /* Aumenta el padding para hacer el botón más grande */
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 20px auto; /* Centra el botón horizontalmente y añade margen vertical */
+    display: block; /* Asegura que el margen auto funcione */
+    transition: background-color 0.3s ease;
+    font-size: 1.1em; /* Aumenta el tamaño de la fuente */
+}
+
+#boton-google-maps:hover {
+    background-color: #357AE8; /* Azul más oscuro al pasar el ratón */
+}
+
 /* Estilos para la lista de paradas */
 .ruta-info {
     padding: 0;

@@ -5,11 +5,7 @@ import { HttpError } from './class/HttpError.js'
 
 const API_PORT = location.port ? `:${location.port}` : ''
 
-/** @import {Ciudad, Paradas} from './class/ciudades.js' */
-/** @import {RutaPersonalizada, ParadasRutas} from './class/rutaPersonalizada.js' */
 /** @import {Usuario} from './class/usuario.js' */
-
-
 
 // Asigno en el DOM los eventos cargados 
 document.addEventListener('DOMContentLoaded', onDomContentLoaded)
@@ -127,55 +123,6 @@ export async function getParadasData (apiURL, method = 'GET', data) {
       }
     return paradas
 }
-
-
-// /**
-//  * @function printParada
-//  * @param {Array<Paradas>} parada - Ruta con paradas
-//  */
-// //Funcion para imprimir ficha de la parada
-// function printParada(parada) { // <-- Recibir un solo objeto parada como argumento
-//   console.log('Información de la parada por su id:', parada);
-
-//   if (!parada) { // <-- Manejar el caso en que no se encuentra la parada
-//       console.error("Parada no encontrada");
-//       const LISTA = document.getElementsByClassName('ficha-parada')[0];
-//       LISTA.innerHTML = "<p>Parada no encontrada</p>"; // Mostrar mensaje en el DOM
-//       return;
-//   }
-
-//   const LISTA = document.getElementsByClassName('ficha-parada')[0];
-//   LISTA.innerHTML = ""; // Limpiar contenido anterior
-
-//   // Crear elementos en el DOM para almacenar la información
-//   const newH1Parada = document.createElement('h1');
-//   const newPictureParada = document.createElement('picture');
-//   const newImagenParada = document.createElement('img');
-//   const newSpanNombreFotoParada = document.createElement('span');
-//   const newArticleParada = document.createElement('article');
-//   const newInfoParada = document.createElement('p');
-//   const newEnlaceParada = document.createElement('a');
-//   const newSpanCategoriaParada = document.createElement('span');
-
-//   // Asociar cada elemento DOM con información del JSON
-//   newH1Parada.innerText = parada[0].nombre_parada ?? "";
-//   newPictureParada.appendChild(newImagenParada);
-//   newImagenParada.src = parada[0].imagen ?? "";
-//   newPictureParada.appendChild(newSpanNombreFotoParada);
-//   newSpanNombreFotoParada.innerText = parada[0].nombre_parada ?? "";
-//   newArticleParada.appendChild(newInfoParada);
-//   newInfoParada.innerText = parada[0].info ?? "";
-//   newArticleParada.appendChild(newEnlaceParada);
-//   newEnlaceParada.href = parada[0].enlace ?? "";
-//   newEnlaceParada.textContent = 'Visita sitio web';
-//   newArticleParada.appendChild(newSpanCategoriaParada);
-//   newSpanCategoriaParada.innerText = parada[0].categoria ?? "";
-
-//   LISTA.appendChild(newH1Parada);
-//   LISTA.appendChild(newPictureParada);
-//   LISTA.appendChild(newArticleParada);
-// }
-
 
 
 async function recuperarSessionStorage() {
