@@ -1,3 +1,4 @@
+
 // @ts-check
 import { simpleFetch } from './simpleFetch.js'
 import { HttpError } from './class/HttpError.js'
@@ -18,6 +19,10 @@ async function onDomContentLoaded() {
     const volverInicioButton = document.getElementById('boton-inicio')
     //boton perfil
     const botonPerfil = document.getElementById('boton-perfil')
+    //boton mostrar más paradas para añadir
+    const botonAñadirParadas = document.getElementById('boton-anadir-paradas')
+    //boton reenviar a google.maps
+    const botonGoogleMaps = document.getElementById("boton-google-maps");
     //recuperar datos sessionStorage
     recuperarSessionStorage()
     //corregir el ignore de ts no le gusta def
@@ -30,11 +35,15 @@ async function onDomContentLoaded() {
     //boton accede al perfil
     botonPerfil?.addEventListener('click', perfilButtonClick)
 
-    //boton editar ruta añadiendo paradas
-    const botonAñadirParadas = document.getElementById('boton-anadir-paradas');
-    if (botonAñadirParadas) {
-      botonAñadirParadas.addEventListener('click', mostrarParadasDisponibles);
-    }
+    //boton mostrar más paradas que añadir
+    botonAñadirParadas?.addEventListener('click', añadirParadas);
+  
+    //boton reenviar a google.maps
+    botonGoogleMaps?.addEventListener("click", () => {
+    // Obtiene la URL del atributo data-url del botón
+    const url = botonGoogleMaps.dataset.url;
+    abrirGoogleMaps(url);
+    });
   }
 
 
@@ -49,21 +58,72 @@ function perfilButtonClick() {
   window.location.href = 'perfil.html' // Redirige a perfil.html
 }
 
+//funcion para mostrar paradas que añadir
+function añadirParadas() {
+  mostrarParadasDisponibles()
+}
 
 //-------------CRUD---------------//
 
 /**
  * Get data from API
-//corregir el ignore de ts no le gusta def
- * @returns {Promise<Array<RutaConParadas>>}
+ * @param {string} apiURL
+ * @param {string} method
+ * @param {Object} [data]
+ * @returns {Promise<Object>}
  */
+async function getApiData (apiURL, method = 'GET', data) {
+  let apiData
+
+  try {
+    let headers = new Headers()
+
+    headers.append('Content-Type', 'application/json')
+    headers.append('Access-Control-Allow-Origin', '*')
+    if (data) {
+      headers.append('Content-Length', String(JSON.stringify(data).length))
+    }
+    // Set Bearer authorization if user is logged in
+    const loggedUser = getLoggedUserData();
+    if (loggedUser) {
+    headers.append('Authorization', `Bearer ${loggedUser?.token}`)
+    }   
+    apiData  = await simpleFetch (apiURL, { 
+      // Si la petición tarda demasiado, la abortamos
+      signal: AbortSignal.timeout(3000),
+      method: method,
+      // @ts-ignore
+      body: data ?? undefined,
+      headers: headers
+    });
+    if (!apiData) {
+      console.error('La respuesta del servidor no tiene la estructura correcta.');
+    }
+  } catch (/** @type {any | HttpError} */err) {
+      if (err.name === 'AbortError') {
+        console.error('Fetch abortado');
+      }
+      if (err instanceof HttpError) {
+        if (err.response.status === 404) {
+          console.error('Not found');
+        }
+        if (err.response.status === 500) {
+          console.error('Internal server error');
+        }
+      }
+    }
+  console.log('info de la api:', apiData)  
+  return apiData
+}
+
+
 async function obtenerRuta() {
     // Obtener el ID de la URL usando URLSearchParams
     const urlParams = new URLSearchParams(location.search);
     const rutaId = urlParams.get('id');
     // Send fetch to API, create new ruta
     if (rutaId !== null) {
-      const response = await getRutaPersonalizadaData(`${location.protocol}//${location.hostname}${API_PORT}/api/read/rutasConParadas/${rutaId}`)
+      const response = await getApiData(`${location.protocol}//${location.hostname}${API_PORT}/api/read/rutasConParadas/${rutaId}`)
       return response 
     } else {
        return []
@@ -71,113 +131,72 @@ async function obtenerRuta() {
 }
 
 /**
- * Get data from API
- * @param {string} apiURL
- * @param {string} method
- * @param {Object} [data]
- * @returns {Promise<Array<RutaConParadas>>}
- */
-async function getRutaPersonalizadaData (apiURL, method = 'GET', data) {
-    let rutaConParadas
-
-    try {
-      let headers = new Headers()
-  
-      headers.append('Content-Type', 'application/json')
-      headers.append('Access-Control-Allow-Origin', '*')
-      if (data) {
-        headers.append('Content-Length', String(JSON.stringify(data).length))
-      }
-      // Set Bearer authorization if user is logged in
-      const loggedUser = getLoggedUserData();
-      if (loggedUser) {
-      headers.append('Authorization', `Bearer ${loggedUser?.token}`)
-      }   
-    rutaConParadas  = await simpleFetch (apiURL, { 
-        // Si la petición tarda demasiado, la abortamos
-        signal: AbortSignal.timeout(3000),
-        method: method,
-        // @ts-ignore
-        body: data ?? undefined,
-        headers: headers
-      });
-      if (!rutaConParadas) {
-        console.error('La respuesta del servidor no tiene la estructura correcta.');
-      }
-    } catch (/** @type {any | HttpError} */err) {
-        if (err.name === 'AbortError') {
-          console.error('Fetch abortado');
-        }
-        if (err instanceof HttpError) {
-          if (err.response.status === 404) {
-            console.error('Not found');
-          }
-          if (err.response.status === 500) {
-            console.error('Internal server error');
-          }
-        }
-      }
-    return rutaConParadas
-}
-
-/**
- * @typedef {Object} RutaConParadas
- * @property {string} _id - ID de la ruta
- * @property {string} nombre - Nombre de la ruta
- * @property {string} ciudad_id - ID de la ciudad
- * @property {Object[]} paradasRuta - Array de paradas de la ruta
- * @property {string} paradasRuta._id - ID de la parada
- * @property {string} paradasRuta.parada_id - ID de la parada
- * @property {string} paradasRuta.rutaPersonalizada_id - ID de la ruta personalizada
+ * @typedef {Array<Ruta>} Rutas
  */
 
 /**
- * @typedef {Object} Parada
- * @property {string} _id - ID de la parada
- * @property {string} nombre_parada - Nombre de la parada
- * @property {string} categoria - Categoría de la parada
- * @property {string} imagen - Imagen de la parada
+ * @typedef {object} Ruta
+ * @property {string} _id
+ * @property {string} nombre
+ * @property {Ciudad} ciudad
+ * @property {string} ciudad_id
+ * @property {string} fechaCreacion
+ * @property {ParadaRuta[]} paradasRuta
+ * @property {string} usuario_id
  */
 
 /**
- * @typedef {Object} Ciudad
- * @property {string} _id - ID de la ciudad
- * @property {string} name - Nombre de la ciudad
+ * @typedef {object} Ciudad
+ * @property {string} name
+ * @property {string} country
  */
 
 /**
- * @typedef {Object} RutaConParadasResponse
- * @property {RutaConParadas} rutaConParadas - Ruta con paradas
- * @property {Parada[]} paradas - Array de paradas
- * @property {Ciudad} ciudad - Ciudad
+ * @typedef {object} ParadaRuta
+ * @property {string} _id
+ * @property {string} parada_id
+ * @property {number} orden
+ * @property {string} rutaPersonalizada_id
+ * @property {string} rutaPersonalizada_id_obj
+ * @property {Parada} parada
  */
 
 /**
- * @function addRuta
- * @param {RutaConParadasResponse} rutaConParadas - Ruta con paradas
+ * @typedef {object} Parada
+ * @property {string} _id
+ * @property {string} ciudad_id
+ * @property {string} nombre_parada
+ * @property {number[]} coordenadas
+ * @property {string} descripcion
+ * @property {string} imagen
+ * @property {string} categoria
  */
+
+/**
+ * @param {Rutas} rutaConParadas 
+ */
+
 async function addRuta(rutaConParadas) {
 
   const LISTADO = document.getElementsByClassName('ruta-info')[0];
   LISTADO.innerHTML = '';
 
-  // Verifica si rutaConParadas tiene al menos un elemento
-  // @ts-ignore
+  
   if (rutaConParadas && rutaConParadas.length > 0) {
-    //corregir ts no le gusta def al no contener any de rutaConParadas  
-    // @ts-ignore
-    const ruta = rutaConParadas[0]; // Obtener el primer objeto del array
+    
+    const ruta = rutaConParadas[0];
+    console.log('toda la info de la ruta:', ruta) 
       
       const nombreRutaSpan = document.getElementById('nombre-ruta');
       if (nombreRutaSpan) {
-          nombreRutaSpan.innerText = ruta.nombre; // Acceder al nombre de la ruta
+          nombreRutaSpan.innerText = ruta.nombre; 
       } else {
           console.error('Elemento con ID "nombre-ruta" no encontrado.');
       }
 
       const tituloCiudadSpan = document.getElementById('tituloCiudad');
       if (tituloCiudadSpan) {
-          tituloCiudadSpan.innerText = ruta.ciudad.name; // Acceder al nombre de la ciudad
+          tituloCiudadSpan.innerText = ruta.ciudad.name;
       } else {
           console.error('Elemento con ID "tituloCiudad" no encontrado.');
         }
@@ -197,27 +216,14 @@ async function addRuta(rutaConParadas) {
           actualizarNombreRuta(ruta._id); 
         }
     });
-
-    
-        const urlParams = new URLSearchParams(location.search);
-        const rutaId = urlParams.get('id');
-        const paradasDeLaRuta = await getRutaPersonalizadaData(`${location.protocol}//${location.hostname}${API_PORT}/api/read/paradasRuta/rutaPersonalizada/${rutaId}`)
-
-        // Obtener la información completa de cada parada
-        const paradasCompletas = await Promise.all(paradasDeLaRuta.map(async (paradaRuta) => {
-          // @ts-ignore
-          const paradaId = paradaRuta.parada_id;
-          const paradaCompleta = await getRutaPersonalizadaData(`${location.protocol}//${location.hostname}${API_PORT}/api/read/paradas/${paradaId}`);
-          return paradaCompleta;
-        }));
-
-        // @ts-ignore
+  
+        const paradasCompletas = ruta.paradasRuta
+        console.log('todas las paradas:', paradasCompletas)
+        // Inicializar el mapa
         initMap(paradasCompletas);
 
-        /**
-        * @param {Parada} parada
-        */
-        paradasCompletas.forEach((parada, index) => {
+        //Transformar en componente!!!!
+        paradasCompletas.forEach((paradaRuta) => {
           const newParadasItem = document.createElement('li');
           const newArticleParadas = document.createElement('article');
           const newFigureParadas = document.createElement('figure');
@@ -229,23 +235,20 @@ async function addRuta(rutaConParadas) {
 
           newParadasItem.appendChild(newArticleParadas);
           newArticleParadas.appendChild(newFigureParadas);
-          // @ts-ignore
-          newImgParadas.src = parada.imagen; // Acceder a la imagen de la parada
+          newImgParadas.src = paradaRuta.parada.imagen;
           newFigureParadas.appendChild(newImgParadas);
           newArticleParadas.appendChild(newCardParadas);
-          // @ts-ignore
-          newNameParadas.innerText = parada.nombre_parada; // Acceder al nombre de la parada
+          newNameParadas.innerText = paradaRuta.parada.nombre_parada; 
           newCardParadas.appendChild(newNameParadas);
-          // @ts-ignore
-          newCategoriaParadas.innerText = 'Categoría: ' + parada.categoria; // Acceder a la categoría de la parada
+          newCategoriaParadas.innerText = 'Categoría: ' + paradaRuta.parada.categoria;
           newCardParadas.appendChild(newCategoriaParadas);
           newBotonParadas.textContent = '+ Info';
 
           newBotonParadas.addEventListener('click', () => {
             // Obtener el ID de la parada
-            const paradaRuta = paradasDeLaRuta[index]; // Acceder al _id de la parada
+            const paradaId = paradaRuta.parada._id;
             // @ts-ignore
-            const paradaId = paradaRuta.parada_id;
+            // const paradaId = paradaRuta.parada_id;
             // Guardar el ID en localStorage (opcional, pero recomendado para usar en la página de destino)
             localStorage.setItem('paradaId', paradaId);
         
@@ -308,7 +311,7 @@ async function recuperarSessionStorage() {
  */
 async function actualizarNombreRuta(rutaId) {
   try {
-      const response = await getRutaPersonalizadaData(
+      const response = await getApiData(
           `${location.protocol}//${location.hostname}${API_PORT}/api/update/rutasPersonalizadas/${rutaId}`, 'PUT');
 
       if (!response) {
@@ -321,12 +324,12 @@ async function actualizarNombreRuta(rutaId) {
 }
 
 
-//funcion para mostrar las paradas no seleccionadas en la ruta
 // Función para mostrar las paradas no seleccionadas en la ruta
 async function mostrarParadasDisponibles() {
   const rutaConParadas = await obtenerRuta();
 
   // Obtener las paradas de la ciudad que no están en la ruta
+  // @ts-ignore
   const paradasDisponibles = await obtenerParadasDisponibles(rutaConParadas[0].ciudad_id);
   const listaParadasDisponibles = document.getElementById('lista-paradas-disponibles');
   if (listaParadasDisponibles) {
@@ -353,6 +356,7 @@ async function mostrarParadasDisponibles() {
           botonAgregarParada.textContent = 'Agregar';
           botonAgregarParada.id = 'mi-boton-agregar-parada';
           botonAgregarParada.classList.add('boton-agregar-parada');
+          // @ts-ignore
           botonAgregarParada.addEventListener('click', () => agregarParadaARuta(rutaConParadas[0]._id, parada._id));
 
           paradaItem.appendChild(botonAgregarParada);
@@ -404,10 +408,10 @@ if (botonOcultarParadas) {
 async function obtenerParadasDisponibles(ciudadId) {
   const urlParams = new URLSearchParams(location.search);
     const rutaId = urlParams.get('id');
-  const paradasDeLaRuta = await getRutaPersonalizadaData(`${location.protocol}//${location.hostname}${API_PORT}/api/read/paradasRuta/rutaPersonalizada/${rutaId}`)
+  const paradasDeLaRuta = await getApiData(`${location.protocol}//${location.hostname}${API_PORT}/api/read/paradasRuta/rutaPersonalizada/${rutaId}`)
     try {
       console.log('id ciudad + las paradas ya seleccioandas', ciudadId, paradasDeLaRuta);
-        const response = await getRutaPersonalizadaData(
+        const response = await getApiData(
             `${location.protocol}//${location.hostname}${API_PORT}/api/read/paradasPorCiudad/${ciudadId}`,
             'GET'
         );
@@ -418,6 +422,7 @@ async function obtenerParadasDisponibles(ciudadId) {
 
         // Eliminar las paradas que ya están en la ruta
         const paradasDisponibles = response.filter((ruta) => {
+          // @ts-ignore
           return !paradasDeLaRuta.some((parada) => {
               // @ts-ignore
               return parada.parada_id === ruta._id;
@@ -448,7 +453,7 @@ async function agregarParadaARuta(rutaId, paradaId) {
       rutaPersonalizada_id: rutaId,
     };
     const payload = JSON.stringify(paradaRutaData);
-    const response = await getRutaPersonalizadaData(`${location.protocol}//${location.hostname}${API_PORT}/api/create/ParadasRuta`, 'POST', payload)
+    const response = await getApiData(`${location.protocol}//${location.hostname}${API_PORT}/api/create/ParadasRuta`, 'POST', payload)
     console.log(response);
     if (!response) {
       throw new Error('Error al agregar la parada a la ruta');
@@ -470,7 +475,7 @@ async function actualizarRutaPersonalizada() {
   const rutaIdData = urlParams.get('id');
   try {
       // Lógica para actualizar la ruta personalizada
-      const response = await getRutaPersonalizadaData(`${location.protocol}//${location.hostname}${API_PORT}/api/update/rutasPersonalizadas/${rutaIdData}`, 'PUT');
+      const response = await getApiData(`${location.protocol}//${location.hostname}${API_PORT}/api/update/rutasPersonalizadas/${rutaIdData}`, 'PUT');
 
       if (!response) {
           throw new Error('Error al actualizar la ruta personalizada.');
@@ -488,30 +493,24 @@ async function actualizarRutaPersonalizada() {
 
 
 
+//Paso 1
 
 
 /**
- * Inicializa el mapa con las paradas especificadas.
- * 
- * @param {Parada[]} paradasCompletas - Arreglo de objetos que contienen la información de
- *                                      las paradas que se desean mostrar en el mapa.
- * 
- * @throws {Error} Si no se pueden obtener las paradas o no se puede
- *                 inicializar el mapa.
+ * @param {any[]} paradasCompletas
  */
 async function initMap(paradasCompletas) {
+  console.log('initMap', paradasCompletas);
   try {
       if (!paradasCompletas || paradasCompletas.length === 0) {
           console.error("No hay paradas para mostrar.");
           return;
       }
 
-      // Obtener las coordenadas del primer punto para centrar el mapa
       const primerPunto = paradasCompletas[0];
-      // @ts-ignore
-      const latInicial = primerPunto.coordenadas[0];
-      // @ts-ignore
-      const lngInicial = primerPunto.coordenadas[1];
+      console.log('primerPunto', primerPunto);
+      const latInicial = primerPunto.parada.coordenadas[0];
+      const lngInicial = primerPunto.parada.coordenadas[1];
 
       // @ts-ignore
       // eslint-disable-next-line no-undef
@@ -520,69 +519,105 @@ async function initMap(paradasCompletas) {
           zoom: 13,
       });
 
-      // Crear un objeto DirectionsService para calcular la ruta
       // @ts-ignore
       // eslint-disable-next-line no-undef
       const directionsService = new google.maps.DirectionsService();
 
-      // Crear un objeto DirectionsRenderer para mostrar la ruta en el mapa
       // @ts-ignore
       // eslint-disable-next-line no-undef
       const directionsRenderer = new google.maps.DirectionsRenderer({
           map: map,
       });
 
-      // Crear un array de Waypoints con las coordenadas de las paradas
       const waypoints = paradasCompletas.slice(1, -1).map(parada => ({
-          // @ts-ignore
-          location: { lat: parada.coordenadas[0], lng: parada.coordenadas[1] },
-          stopover: true, // Indica que la parada es un punto intermedio
+          location: { lat: parada.parada.coordenadas[0], lng: parada.parada.coordenadas[1] },
+          stopover: true,
       }));
 
-      // Calcular la ruta
       directionsService.route(
-        {
-          // @ts-ignore
-          origin: { lat: paradasCompletas[0].coordenadas[0], lng: paradasCompletas[0].coordenadas[1] },
-          // @ts-ignore
-          destination: { lat: paradasCompletas[paradasCompletas.length - 1].coordenadas[0], lng: paradasCompletas[paradasCompletas.length - 1].coordenadas[1] },
-          waypoints: waypoints,
-          optimizeWaypoints: true, // Habilita la optimización de los waypoints
-          // @ts-ignore
-          // eslint-disable-next-line no-undef
-          travelMode: google.maps.TravelMode.WALKING,
-        },
-        // @ts-ignore
-        (response, status) => {
-          if (status === "OK") {
-              directionsRenderer.setDirections(response);
-  
-              // Obtener el orden optimizado de los waypoints
-              const optimizedWaypoints = response.routes[0].waypoint_order;
-              console.log("Orden optimizado de los waypoints:", optimizedWaypoints);
-          } else {
-              console.error("Error al calcular la ruta:", status);
-          }
-      }
-  );
+          {
+              origin: { lat: paradasCompletas[0].parada.coordenadas[0], lng: paradasCompletas[0].parada.coordenadas[1] },
+              destination: { lat: paradasCompletas[paradasCompletas.length - 1].parada.coordenadas[0], lng: paradasCompletas[paradasCompletas.length - 1].parada.coordenadas[1] },
+              waypoints: waypoints,
+              optimizeWaypoints: true,
+              // @ts-ignore
+              // eslint-disable-next-line no-undef
+              travelMode: google.maps.TravelMode.WALKING,
+          },
+          (/** @type {{ routes: { waypoint_order: any; }[]; }} */ response, /** @type {string} */ status) => {
+              if (status === "OK") {
+                  directionsRenderer.setDirections(response);
+                  const optimizedWaypoints = response.routes[0].waypoint_order;
+                  console.log("Orden optimizado de los waypoints:", optimizedWaypoints);
 
-      // Añadir marcadores para cada parada (opcional)
+                  const url = generarEnlaceGoogleMaps(paradasCompletas, "walking");
+                    if (url) {
+                        // Almacena la URL en el atributo data-url del botón
+                        const botonGoogleMaps = document.getElementById("boton-google-maps");
+                        // @ts-ignore
+                        botonGoogleMaps.dataset.url = url;
+
+                        // Llama a abrirGoogleMaps con la URL directamente
+                        abrirGoogleMaps(url);
+                    } else {
+                        console.error("Error: generarEnlaceGoogleMaps() devolvió null.");
+                    }
+                } else {
+                    console.error("Error al calcular la ruta:", status);
+                }
+            }
+        );
+
       paradasCompletas.forEach(parada => {
-          // @ts-ignore
-          const lat = parada.coordenadas[0];
-          // @ts-ignore
-          const lng = parada.coordenadas[1];
+          const lat = parada.parada.coordenadas[0];
+          const lng = parada.parada.coordenadas[1];
 
           // @ts-ignore
           // eslint-disable-next-line no-undef
           const marker = new google.maps.Marker({
               position: { lat: lat, lng: lng },
               map: map,
-              title: parada.nombre_parada,
+              title: parada.parada.nombre_parada,
           });
           console.log(marker);
       });
   } catch (error) {
       console.error("Error al mostrar las paradas en el mapa:", error);
+  }
+}
+
+
+/**
+ * @param {any[]} paradasCompletas
+ * @param {string} travelMode
+ */
+function generarEnlaceGoogleMaps(paradasCompletas, travelMode) {
+  if (!paradasCompletas || paradasCompletas.length < 2) {
+      return null;
+  }
+
+  const origin = `${paradasCompletas[0].parada.coordenadas[0]},${paradasCompletas[0].parada.coordenadas[1]}`;
+  const destination = `${paradasCompletas[paradasCompletas.length - 1].parada.coordenadas[0]},${paradasCompletas[paradasCompletas.length - 1].parada.coordenadas[1]}`;
+
+  let waypoints = "";
+  if (paradasCompletas.length > 2) {
+      waypoints = paradasCompletas
+          .slice(1, -1)
+          .map(parada => `${parada.parada.coordenadas[0]},${parada.parada.coordenadas[1]}`)
+          .join("|");
+  }
+
+  const url = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(origin)}&destination=${encodeURIComponent(destination)}&waypoints=${encodeURIComponent(waypoints)}&travelmode=${travelMode}`;
+  return url;
+}
+
+/**
+ * @param {string | URL | undefined} url
+ */
+function abrirGoogleMaps(url) {
+  if (url) {
+      window.open(url, "_blank");
+  } else {
+      console.error("La URL de Google Maps no está definida.");
   }
 }

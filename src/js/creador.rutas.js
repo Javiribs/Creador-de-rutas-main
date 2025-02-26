@@ -252,6 +252,43 @@ function addParadasList(ciudadEncontrada) {
   const newBotonCrearRuta = document.createElement('button');
   newBotonCrearRuta.id = 'crearRuta';
   newBotonCrearRuta.textContent = 'Crear ruta';
+
+  // Añadir botón "Seleccionar Todos"
+  const botonAlternarSeleccion = document.createElement('button');
+  botonAlternarSeleccion.id = 'alternarSeleccion';
+  botonAlternarSeleccion.textContent = 'Seleccionar Todas';
+  LISTADO.appendChild(botonAlternarSeleccion); 
+
+  // Event listener para el botón "Seleccionar/Desmarcar Todos"
+  botonAlternarSeleccion.addEventListener('click', () => {
+  const checkboxesParadas = document.querySelectorAll('.parada-checkbox');
+  const todosSeleccionados = Array.from(checkboxesParadas).every(checkbox => checkbox.checked);
+
+  if (todosSeleccionados) {
+      // Desmarcar todos los checkboxes
+      checkboxesParadas.forEach(checkbox => {
+          checkbox.checked = false;
+      });
+      paradasSeleccionadas = []; // Limpiar el array de paradas seleccionadas
+      botonAlternarSeleccion.textContent = 'Seleccionar Todos'; // Cambiar el texto del botón
+  } else {
+      // Marcar todos los checkboxes
+      checkboxesParadas.forEach(checkbox => {
+          checkbox.checked = true;
+          // Obtener la parada correspondiente y añadirla a paradasSeleccionadas
+          const paradaId = checkbox.id.split('-').slice(1).join('-');
+          // @ts-ignore
+          const parada = ciudadEncontrada.paradas.find(p => p.nombre_parada.replace(/\s+/g, '-').toLowerCase() === paradaId);
+          if (parada && !paradasSeleccionadas.includes(parada)) {
+              paradasSeleccionadas.push(parada);
+          }
+      });
+      botonAlternarSeleccion.textContent = 'Desmarcar Todos'; // Cambiar el texto del botón
+  }
+
+  console.log(paradasSeleccionadas); // Mostrar paradas seleccionadas en la consola
+});
+  
 //error ts en el .paradas
   // @ts-ignore
   if (ciudadEncontrada && ciudadEncontrada.paradas && ciudadEncontrada.paradas.length > 0) { // Verifica que ciudadEncontrada y paradas existan y tengan elementos.
@@ -312,7 +349,7 @@ function addParadasList(ciudadEncontrada) {
   }
   // Almacenar botón crear ruta al final de la OL
   LISTADO.appendChild(newBotonCrearRuta);
-
+  
   // Inicializar creación de rutas
   inicializarCreacionRuta(newBotonCrearRuta, paradasSeleccionadas, ciudadEncontrada);
 }

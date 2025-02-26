@@ -535,12 +535,17 @@ async function getRutaConParadas(rutaId) {
                     from: 'ParadasRuta',
                     let: { rutaId: '$_id' },
                     pipeline: [
-                        {
-                            $match: {
-                                $expr: { $eq: ['$rutaPersonalizada_id', '$$rutaId'] }
+                        { // <-- Nueva etapa $addFields
+                            $addFields: {
+                                rutaPersonalizada_id_obj: { $toObjectId: '$rutaPersonalizada_id' } // Convierte a ObjectId
                             }
                         },
-                        { // <-- Nuevo $lookup anidado para Paradas
+                        {
+                            $match: {
+                                $expr: { $eq: ['$rutaPersonalizada_id_obj', '$$rutaId'] } // Compara ObjectId con ObjectId
+                            }
+                        },
+                        {
                             $lookup: {
                                 from: 'Paradas',
                                 let: { paradaId: '$parada_id' },
@@ -554,7 +559,7 @@ async function getRutaConParadas(rutaId) {
                                 as: 'parada'
                             }
                         },
-                        { $unwind: '$parada' } // <-- Unwind para tener un objeto parada y no un array
+                        { $unwind: '$parada' }
                     ],
                     as: 'paradasRuta'
                 }
@@ -562,7 +567,7 @@ async function getRutaConParadas(rutaId) {
         ];
 
         let result = await db.collection('RutaPersonalizada').aggregate(pipeline).toArray();
-
+        console.log('mongodb devuelve:', result);
         return result;
 
     } finally {
