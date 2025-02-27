@@ -426,7 +426,8 @@ async function createParadasRuta(paradasRuta) {
     const paradasRutaCollection = creadorDB.collection('ParadasRuta');
     const returnValue = await paradasRutaCollection.insertOne(paradasRuta);
     console.log('db createParadasRuta', returnValue, paradasRuta._id)
-    return paradasRuta
+    const paradaInfo = await getParadas(paradasRuta.parada_id);
+    return { parada: paradaInfo }
 }
 
 

@@ -203,7 +203,9 @@ async function addRuta(rutaConParadas) {
     
     // Crear botón para editar el nombre de la ruta
     const botonEditarNombre = document.getElementById('boton-editar-nombre-ruta');
-    botonEditarNombre?.addEventListener('click', () => {
+    botonEditarNombre?.addEventListener('click', async () => {
+        const urlParams = new URLSearchParams(location.search);
+        const rutaIdData = urlParams.get('id');
         const nuevoNombre = prompt('Ingrese el nuevo nombre para la ruta:', ruta.nombre);
         if (nuevoNombre && nuevoNombre !== ruta.nombre) {
           ruta.nombre = nuevoNombre;
@@ -213,7 +215,7 @@ async function addRuta(rutaConParadas) {
           } else {
             console.error('Elemento con ID "nombre-ruta" no encontrado.');
           }
-          actualizarNombreRuta(ruta._id); 
+          await actualizarRutaPersonalizada(rutaIdData, nuevoNombre);
         }
     });
   
@@ -223,47 +225,55 @@ async function addRuta(rutaConParadas) {
         initMap(paradasCompletas);
 
         //Transformar en componente!!!!
-        paradasCompletas.forEach((paradaRuta) => {
-          const newParadasItem = document.createElement('li');
-          const newArticleParadas = document.createElement('article');
-          const newFigureParadas = document.createElement('figure');
-          const newImgParadas = document.createElement('img');
-          const newCardParadas = document.createElement('section');
-          const newNameParadas = document.createElement('h2');
-          const newCategoriaParadas = document.createElement('h3');
-          const newBotonParadas = document.createElement('button');
-
-          newParadasItem.appendChild(newArticleParadas);
-          newArticleParadas.appendChild(newFigureParadas);
-          newImgParadas.src = paradaRuta.parada.imagen;
-          newFigureParadas.appendChild(newImgParadas);
-          newArticleParadas.appendChild(newCardParadas);
-          newNameParadas.innerText = paradaRuta.parada.nombre_parada; 
-          newCardParadas.appendChild(newNameParadas);
-          newCategoriaParadas.innerText = 'Categoría: ' + paradaRuta.parada.categoria;
-          newCardParadas.appendChild(newCategoriaParadas);
-          newBotonParadas.textContent = '+ Info';
-
-          newBotonParadas.addEventListener('click', () => {
-            // Obtener el ID de la parada
-            const paradaId = paradaRuta.parada._id;
-            // @ts-ignore
-            // const paradaId = paradaRuta.parada_id;
-            // Guardar el ID en localStorage (opcional, pero recomendado para usar en la página de destino)
-            localStorage.setItem('paradaId', paradaId);
-        
-            // Redireccionar a la página de info-parada.html con el ID
-            window.location.href = `info-parada.html?id=${paradaId}`; // Usar el ID en la URL
-        });
-          newCardParadas.appendChild(newBotonParadas);
-
-          LISTADO.appendChild(newParadasItem);
-
-        });
+        paradasCompletas.forEach(paintParadaRow)
      
   } else {
       console.error('No se encontraron datos de la ruta.');
   }
+}
+
+/**
+ * Pinta una fila de la lista de paradas con la información de cada parada.
+ * @param {ParadaRuta} paradaRuta - ParadaRuta que quiero pintar
+ */
+function paintParadaRow(paradaRuta) {
+  const LISTADO = document.getElementsByClassName('ruta-info')[0];
+ 
+    const newParadasItem = document.createElement('li');
+    const newArticleParadas = document.createElement('article');
+    const newFigureParadas = document.createElement('figure');
+    const newImgParadas = document.createElement('img');
+    const newCardParadas = document.createElement('section');
+    const newNameParadas = document.createElement('h2');
+    const newCategoriaParadas = document.createElement('h3');
+    const newBotonParadas = document.createElement('button');
+
+    newParadasItem.appendChild(newArticleParadas);
+    newArticleParadas.appendChild(newFigureParadas);
+    newImgParadas.src = paradaRuta.parada.imagen;
+    newFigureParadas.appendChild(newImgParadas);
+    newArticleParadas.appendChild(newCardParadas);
+    newNameParadas.innerText = paradaRuta.parada.nombre_parada; 
+    newCardParadas.appendChild(newNameParadas);
+    newCategoriaParadas.innerText = 'Categoría: ' + paradaRuta.parada.categoria;
+    newCardParadas.appendChild(newCategoriaParadas);
+    newBotonParadas.textContent = '+ Info';
+
+    newBotonParadas.addEventListener('click', () => {
+      // Obtener el ID de la parada
+      const paradaId = paradaRuta.parada._id;
+      // @ts-ignore
+      // Guardar el ID en localStorage (opcional, pero recomendado para usar en la página de destino)
+      localStorage.setItem('paradaId', paradaId);
+  
+      // Redireccionar a la página de info-parada.html con el ID
+      window.location.href = `info-parada.html?id=${paradaId}`; // Usar el ID en la URL
+  });
+    newCardParadas.appendChild(newBotonParadas);
+
+    LISTADO.appendChild(newParadasItem);
+
+  
 }
 
 async function recuperarSessionStorage() {
@@ -303,25 +313,6 @@ async function recuperarSessionStorage() {
     const storedUser = sessionStorage.getItem('usuario');
     return storedUser ? JSON.parse(storedUser) : null
   }
-
-
-// Función para actualizar el nombre de la ruta en la API
-/**
- * @param {string} rutaId
- */
-async function actualizarNombreRuta(rutaId) {
-  try {
-      const response = await getApiData(
-          `${location.protocol}//${location.hostname}${API_PORT}/api/update/rutasPersonalizadas/${rutaId}`, 'PUT');
-
-      if (!response) {
-          throw new Error('Error al actualizar el nombre de la ruta');
-      }
-  } catch (error) {
-      console.error('Error al actualizar el nombre de la ruta:', error);
-      alert('Error al actualizar el nombre de la ruta. Por favor, inténtalo de nuevo más tarde.');
-  }
-}
 
 
 // Función para mostrar las paradas no seleccionadas en la ruta
@@ -438,10 +429,10 @@ async function obtenerParadasDisponibles(ciudadId) {
 
 
 /**
- * Adds a stop to the specified route.
+ * Crear una parada para la ruta personalizada
  * 
- * @param {string} rutaId - The ID of the route to which the stop will be added.
- * @param {string} paradaId - The ID of the stop to be added to the route.
+ * @param {string} rutaId 
+ * @param {string} paradaId 
  */
 
 async function agregarParadaARuta(rutaId, paradaId) {
@@ -459,8 +450,8 @@ async function agregarParadaARuta(rutaId, paradaId) {
       throw new Error('Error al agregar la parada a la ruta');
     }
     alert('Parada agregada a la ruta.');
-      await actualizarRutaPersonalizada()
-      window.location.reload();
+    // @ts-ignore
+    paintParadaRow(response);
     }  catch (error) {
     console.error('Error al agregar parada a la ruta:', error);
     alert('Error al agregar la parada a la ruta. Por favor, inténtalo de nuevo más tarde.');
@@ -468,21 +459,23 @@ async function agregarParadaARuta(rutaId, paradaId) {
  }
 }
 
+/**
+ * 
+ * @param {string | null} rutaIdData 
+ * @param {string} nuevoNombre 
+ */
 // Función para actualizar la ruta personalizada
-async function actualizarRutaPersonalizada() {
-  // Obtener el ID de la URL usando URLSearchParams
-  const urlParams = new URLSearchParams(location.search);
-  const rutaIdData = urlParams.get('id');
+async function actualizarRutaPersonalizada(rutaIdData, nuevoNombre) {
   try {
       // Lógica para actualizar la ruta personalizada
-      const response = await getApiData(`${location.protocol}//${location.hostname}${API_PORT}/api/update/rutasPersonalizadas/${rutaIdData}`, 'PUT');
+      const payload = JSON.stringify({ nombre: nuevoNombre });
+      const response = await getApiData(`${location.protocol}//${location.hostname}${API_PORT}/api/update/rutasPersonalizadas/${rutaIdData}`, 'PUT', payload);
 
       if (!response) {
           throw new Error('Error al actualizar la ruta personalizada.');
       }
 
       console.log('Ruta personalizada actualizada con éxito.');
-      // Puedes agregar aquí lógica adicional después de la actualización
 
   } catch (error) {
       console.error('Error al actualizar la ruta personalizada:', error);
@@ -493,7 +486,7 @@ async function actualizarRutaPersonalizada() {
 
 
 
-//Paso 1
+//Funciones para el mapa de google
 
 
 /**
