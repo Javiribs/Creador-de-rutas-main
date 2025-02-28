@@ -71,6 +71,23 @@ h1 {
     background-color: #0056b3; /* Azul más oscuro al pasar el ratón */
 }
 
+#boton-geolocalizacion {
+    background-color: #007bff; /* Color azul */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 20px auto; /* Centra el botón horizontalmente y añade margen vertical */
+    display: block; /* Asegura que el margen auto funcione */
+    transition: background-color 0.3s ease;
+    font-size: 1em;
+}
+
+#boton-geolocalizacion:hover {
+    background-color: #0056b3; /* Azul más oscuro al pasar el ratón */
+}
+
 /* Estilos para la imagen y el pie de foto */
 figure {
     margin: 30px auto;

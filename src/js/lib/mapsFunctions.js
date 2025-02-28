@@ -10,12 +10,12 @@ export async function initMap(paradasCompletas) {
             console.error("No hay paradas para mostrar.");
             return;
         }
-  
+
         const primerPunto = paradasCompletas[0];
         console.log('primerPunto', primerPunto);
         const latInicial = primerPunto.parada.coordenadas[0];
         const lngInicial = primerPunto.parada.coordenadas[1];
-  
+
         // @ts-ignore
         // eslint-disable-next-line no-undef
         const map = new google.maps.Map(document.getElementById("map"), {
@@ -71,12 +71,43 @@ export async function initMap(paradasCompletas) {
                   }
               }
           );
+          const botonGeolocalizacion = document.getElementById("boton-geolocalizacion");
+            botonGeolocalizacion?.addEventListener("click", () => {
+            obtenerGeolocalizacion(map); // Pasa el objeto map a la función
+            });
+
     } catch (error) {
         console.error("Error al mostrar las paradas en el mapa:", error);
     }
   }
   
-  
+  export function obtenerGeolocalizacion(map) {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                };
+
+                // Añade un marcador en la ubicación del usuario
+                // eslint-disable-next-line no-undef
+                new google.maps.Marker({
+                    position: pos,
+                    map: map,
+                    title: "Tu ubicación",
+                });
+            },
+            () => {
+                console.error("Error: El servicio de geolocalización falló.");
+            }
+        );
+    } else {
+        console.error("Error: Tu navegador no soporta geolocalización.");
+    }
+}
+
+
   /**
    * @param {any[]} paradasCompletas
    * @param {string} travelMode
