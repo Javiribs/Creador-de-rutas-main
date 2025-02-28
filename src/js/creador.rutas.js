@@ -355,7 +355,9 @@ function addParadasList(ciudadEncontrada) {
   LISTADO.appendChild(newBotonCrearRuta);
 
   // Inicializar creación de rutas después de agregar eventos change
-  inicializarCreacionRuta(newBotonCrearRuta, paradasSeleccionadas, ciudadEncontrada);
+  newBotonCrearRuta.addEventListener('click', () => {
+    inicializarCreacionRuta(newBotonCrearRuta, paradasSeleccionadas, ciudadEncontrada);
+});
 }
 
 
