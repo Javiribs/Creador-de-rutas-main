@@ -1,0 +1,83 @@
+#alternar-seleccion {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 20px auto 30px;
+    display: block;
+    transition: background-color 0.3s ease;
+    font-size: 1.1em;
+    min-width: 150px;
+    text-align: center;
+    white-space: nowrap;
+}
+
+#alternar-seleccion:hover {
+    background-color: #0056b3;
+}
+
+#paradas-interesantes {
+    list-style: none;
+    padding: 20px;
+    margin: auto;
+    max-width: 600px;
+}
+
+.info-lista-paradas {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 10px auto;
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+    box-shadow: 0 2px 4px #0000001a;
+}
+
+.info-lista-paradas article {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.info-lista-paradas figure {
+    margin-bottom: 20px;
+}
+
+.info-lista-paradas figure img {
+    max-width: 100%;
+    border-radius: 8px;
+}
+
+.info-lista-paradas section {
+    text-align: center;
+}
+
+.info-lista-paradas h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.info-lista-paradas p {
+    color: #777;
+    margin-bottom: 20px;
+}
+
+.info-lista-paradas h3 {
+    color: #555;
+    margin-bottom: 15px;
+}
+
+.info-lista-paradas input[type="checkbox"] {
+    margin-right: 5px;
+    transform: scale(1.5); 
+    margin-top: 5px; 
+}
+
+.info-lista-paradas label {
+    font-size: 0.9em;
+    color: #888;
+}

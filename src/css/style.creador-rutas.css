@@ -94,9 +94,15 @@ button {
   margin-top: 10px;
 }
 
+.recomendacion {
+  font-size: 1em;
+  color: #888;
+  text-align: center;
+  margin-top: 10px;
+}
+
 .titulo-ciudad {
-  font-size: 2.5em;
-  margin-bottom: 40px;
+  font-size: 3.5em;
   margin-top: 20px;
   text-align: center;
 }
@@ -106,44 +112,3 @@ label {
   color: #888;
   margin-bottom: 20px;
 }
-
-/* stylelint-disable-next-line selector-id-pattern */
-#alternarSeleccion {
-  background-color: #007bff; /* Color azul */
-  color: white;
-  border: none;
-  padding: 12px 25px; /* Aumenta el padding para hacer el botón más grande */
-  border-radius: 5px;
-  cursor: pointer;
-  margin: 20px auto 30px; /* Centra el botón horizontalmente y añade margen vertical (aumenta el margen inferior) */
-  display: block; /* Asegura que el margen auto funcione */
-  transition: background-color 0.3s ease;
-  font-size: 1.1em; /* Aumenta el tamaño de la fuente */
-}
-
-/* stylelint-disable-next-line selector-id-pattern */
-#alternarSeleccion:hover {
-  background-color: #0056b3; /* Azul más oscuro al pasar el ratón */
-}
-
-.paradas-interesantes {
-  list-style: none;
-  padding: 20px; /* Añadido padding para el contenedor de la lista */
-  margin: 20px auto; /* Centrado horizontalmente y margen vertical */
-  max-width: 600px; /* Ancho máximo para el contenedor de la lista */
-}
-
-.paradas-interesantes li {
-  background-color: #fff; /* Fondo blanco para las fichas */
-  border: 1px solid #ddd; /* Borde para las fichas */
-  border-radius: 8px; /* Bordes redondeados */
-  padding: 20px; /* Espacio interno de las fichas */
-  margin: 10px auto; /* Espacio entre las fichas y centrado horizontal */
-  width: 90%; /* Ancho fijo para las fichas */
-  max-width: 500px; /* Ancho máximo para las fichas */
-  text-align: center; /* Centra el texto dentro de las fichas */
-  box-shadow: 0 2px 4px #0000001a; /* Sombra ligera */
-}
-
-
-

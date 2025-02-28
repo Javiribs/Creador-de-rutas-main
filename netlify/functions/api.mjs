@@ -9,6 +9,10 @@ const router = Router();
 
 //-----------------EXPRESS-----------------//
 
+function gooogleOauth2() {
+  return '123456'
+}
+
 //------------------------USUARIO------------------------//
 
 //MÉTODOS USUARIO
@@ -22,8 +26,9 @@ router.post('/create/usuarios', async (req, res) => {
   res.json(await db.usuario.create(req.body))
 })
 
-router.get('/api/read/usuarios', async (req, res) => {
-  res.json(await db.usuario.get())
+//pide y devuelve info usuario por su id
+router.get('/read/usuarios/:id', async (req, res) => {
+  res.json(await db.usuario.get(req.params.id))
 })
 
 
@@ -32,6 +37,7 @@ router.put('/update/usuarios/:id', requireAuth, async (req, res) => {
 })
 
 router.post('/login', async (req, res) => {
+  console.log('Llegó a la función de login')
   const user = await db.usuario.logIn(req.body)
   console.log(user)
   if (user) {
@@ -47,11 +53,6 @@ router.post('/login', async (req, res) => {
     res.status(401).send('Unauthorized')
   }
 })
-
-function gooogleOauth2() {
-  return '123456'
-}
-
 
 router.delete('/delete/usuarios/:id', requireAuth, async (req, res) => {
   try {
@@ -91,18 +92,18 @@ router.get('/read/ciudades', requireAuth, async (req, res) => {
 })
 
 router.get('/filter/ciudades/:name', requireAuth, async (req, res) => {
-  const ciudades = await db.ciudades.get({ $text: { $search: req.params.name } })
-  console.log('ciudad recibida:', ciudades)
+  const ciudades = await db.ciudades.get({ $text: { $search: req.params.name } });
+  console.log('ciudad recibida:', ciudades);
   const ciudadesConParadas = await Promise.all(
-    ciudades.map(async (ciudad) => {
-      return {
-        ...ciudad,
-        paradas: await db.paradas.get({ciudad_id: ciudad._id.toString()})
-        }
-    })
-  )
-  res.json(ciudadesConParadas)
-})
+      ciudades.map(async (ciudad) => {
+          return {
+              ...ciudad,
+              paradas: await db.paradasPorCiudad.get(ciudad._id.toString()),
+          };
+      })
+  );
+  res.json(ciudadesConParadas);
+});
 
 //funcion de busqueda por nombre para el searchProposal!
 router.get('/filter/ciudadesName/:name', async (req, res) => {
@@ -119,12 +120,20 @@ router.get('/check/:nombre', async (req, res) => {
 })
 
 //CRUD PARADAS
-
+//busca paradas por su id
 router.get('/read/paradas/:id', requireAuth, async (req, res) => {
   console.log(req.params.id)
   res.json(await db.paradas.get(req.params.id))
   console.log('paradas recibidas:', await db.paradas.get(req.params.id))
 })
+
+//busca paradas por id de la ciudad
+router.get('/read/paradasPorCiudad/:id', requireAuth, async (req, res) => {
+  console.log(req.params.id)
+  res.json(await db.paradasPorCiudad.get(req.params.id))
+  console.log('paradas recibidas:', await db.paradasPorCiudad.get(req.params.id))
+})
+
 
 //------------------------rutasPersonalizadas------------------------//
 
@@ -136,16 +145,7 @@ router.get('/check/:nombre', async (req, res) => {
 
 //CRUD rutasPersonalizadas
 router.post('/create/rutasPersonalizadas', requireAuth, async (req, res) => {
-  //console.log('selectedParadas:', req.body.selectedParadas);
-  const rutaPersonalizada = req.body
-  const selectedParadas = [...rutaPersonalizada.selectedParadas]
-  delete rutaPersonalizada.selectedParadas
-  const nuevaRuta = await db.rutasPersonalizadas.create(rutaPersonalizada)
-  await Promise.all(selectedParadas.map(parada =>  
-    db.paradasRuta.create({...parada, rutaPersonalizada_id: nuevaRuta._id})
-  ));
-  
-  res.json(nuevaRuta)
+  res.json(await db.rutasPersonalizadas.create(req.body))
 })
 
 //obtener ruta personalizada a partir del id de la rutapersonalizada
@@ -154,8 +154,8 @@ router.get('/read/rutasPersonalizadas/:id', requireAuth, async (req, res) => {
   const paradasRuta = await db.paradasRuta.get(req.params.id);
   console.log(paradasRuta)
   const rutaConParadas = {
-    ...rutaPersonalizada, // Incluye los datos de la ruta
-    paradas: paradasRuta // Incluye las paradas
+    ...rutaPersonalizada, 
+    paradas: paradasRuta 
   };
   console.log('he creado', rutaConParadas);
   res.json(rutaConParadas);
@@ -194,6 +194,10 @@ router.get('/read/paradasRuta', requireAuth, async (req, res) => {
   res.json(await db.paradasRuta.get())
 })
 
+//read paradas de la ruta por el id de la ruta personalizada
+router.get('/read/paradasRuta/rutaPersonalizada/:id', requireAuth, async (req, res) => {
+  res.json(await db.paradasRuta.getParadasRutaPersonalizada(req.params.id))
+})
 
 router.put('/update/paradasRuta/:id', requireAuth, async (req, res) => {
   res.json(await db.paradasRuta.update(req.params.id, req.body))
@@ -209,6 +213,7 @@ router.delete('/delete/paradasRuta/:id', requireAuth, async (req, res) => {
 router.get('/read/rutasConParadas/:id', async (req, res) => {
   res.json(await db.rutaConParadas.get(req.params.id))
 })
+
 
 
 //-------------------MIDLEWERE----------------//
@@ -230,7 +235,10 @@ api.use('/api/', router)
 
 export const handler = serverless(api);
 
+
+
 //------------------MONGODB------------------//
+
 
 export const db = {
     usuario: {
@@ -249,6 +257,9 @@ export const db = {
         get: getParadas,
         count: countParadas,
     },
+    paradasPorCiudad: {
+        get: getParadasPorCiudad
+    },
     rutasPersonalizadas: {
         get: getRutaPersonalizada,        
         getPorUsuario: getRutaPersonalizadaDelUsuario,
@@ -259,6 +270,7 @@ export const db = {
       },
       paradasRuta: {
         get: getParadasRuta,
+        getParadasRutaPersonalizada: getParadasRutaPersonalizada,
         create: createParadasRuta,
         count: countParadasRuta,
         update: updateParadasRuta,
@@ -306,14 +318,14 @@ async function createUsuario(usuario) {
 
 /**
  * Obtiene usuario de la colección database.
- *
- * @returns {Promise<Array<object>>} - Array de usuarios.
+ * @param {string} id
+ * @returns {Promise<object>} - Array de usuarios.
  */
-async function getUsuario(filter){
+async function getUsuario(id){
     const client = new MongoClient(URI);
     const creadorDB = client.db('CreadorRutas');
     const usersCollection = creadorDB.collection('Usuarios');
-    return await usersCollection.find(filter).toArray()
+    return await usersCollection.findOne({ _id: new ObjectId(id) })
 }
 
 
@@ -410,7 +422,7 @@ async function countParadas() {
 //-------------------CRUD--------------------//
 
 /**
- * Obtiene paradas de la colección database.
+ * Obtiene la parada de la colección database buscado por su id
  * @param {string} id
  * @returns {Promise<Array<object>>}  - Array de paradas.
  */
@@ -422,17 +434,36 @@ async function getParadas(id) {
 
     if (typeof id === 'string') {
         const objectId = new ObjectId(id);
-        resultados = await paradasCollection.find({ _id: objectId }).toArray();
+        resultados = await paradasCollection.findOne({ _id: objectId });
         console.log('Resultados por id de parada: ', resultados);
-
-    } else if (typeof id === 'object' && 'ciudad_id' in id) {
-        resultados = await paradasCollection.find({ ciudad_id: id.ciudad_id }).toArray();
-        console.log('Resultados con filtro por ciudad_id: ', resultados);
-    }
     
-    return resultados;
-  }
-
+        return resultados;
+    }
+}
+  
+/**
+ * Obtiene paradas de la colección database filtrado por el id de la ciudad.
+ * @param {string} id
+ * @returns {Promise<Array<object>>}  - Array de paradas.
+ */
+async function getParadasPorCiudad(id) {
+    const client = new MongoClient(URI);
+    try {
+        await client.connect();
+        const creadorDB = client.db('CreadorRutas');
+        const paradasCollection = creadorDB.collection('Paradas');
+        let resultados;
+        console.log('prueba de id:', id);
+        resultados = await paradasCollection.find({ ciudad_id: id }).toArray();
+        console.log('Resultados con filtro por ciudad_id: ', resultados);
+        return resultados;
+    } catch (error) {
+        console.error('Error en getParadasPorCiudad:', error);
+        return []; // Devuelve un array vacío en caso de error
+    } finally {
+        await client.close();
+    }
+}
 
 //--------------MÉTODOS PARA Rutas Personalizadas-------------------//
 
@@ -565,8 +596,6 @@ async function getRutaPersonalizadaDelUsuario(id){
         // 6. Ejecutar el pipeline de agregación
         let result = await db.collection('RutaPersonalizada').aggregate(pipeline).toArray();
 
-        console.log("Resultados del pipeline:", result);
-
         return result;
 
     } finally {
@@ -635,7 +664,8 @@ async function createParadasRuta(paradasRuta) {
     const paradasRutaCollection = creadorDB.collection('ParadasRuta');
     const returnValue = await paradasRutaCollection.insertOne(paradasRuta);
     console.log('db createParadasRuta', returnValue, paradasRuta._id)
-    return paradasRuta
+    const paradaInfo = await getParadas(paradasRuta.parada_id);
+    return { parada: paradaInfo }
 }
 
 
@@ -651,6 +681,20 @@ async function getParadasRuta(id){
     const paradas = await paradasRutaCollection.find({ rutaPersonalizada_id: new ObjectId(id) }).toArray();
     return paradas;
 }
+
+/**
+ * Obtiene ParadasRuta de la colección database buscado por id de la ruta personalizada.
+ * @param {string} id - Id de la RutaPersonalizada
+ * @returns {Promise<Array<string>>} - Array de ParadasRuta.
+ */
+async function getParadasRutaPersonalizada(id){
+    const client = new MongoClient(URI);
+    const creadorDB = client.db('CreadorRutas');
+    const paradasRutaCollection = creadorDB.collection('ParadasRuta');
+    const paradas = await paradasRutaCollection.find({ rutaPersonalizada_id: id }).toArray();
+    return paradas;
+}
+
 
 
 /**
@@ -730,12 +774,17 @@ async function getRutaConParadas(rutaId) {
                     from: 'ParadasRuta',
                     let: { rutaId: '$_id' },
                     pipeline: [
-                        {
-                            $match: {
-                                $expr: { $eq: ['$rutaPersonalizada_id', '$$rutaId'] }
+                        { // <-- Nueva etapa $addFields
+                            $addFields: {
+                                rutaPersonalizada_id_obj: { $toObjectId: '$rutaPersonalizada_id' } // Convierte a ObjectId
                             }
                         },
-                        { // <-- Nuevo $lookup anidado para Paradas
+                        {
+                            $match: {
+                                $expr: { $eq: ['$rutaPersonalizada_id_obj', '$$rutaId'] } // Compara ObjectId con ObjectId
+                            }
+                        },
+                        {
                             $lookup: {
                                 from: 'Paradas',
                                 let: { paradaId: '$parada_id' },
@@ -749,7 +798,7 @@ async function getRutaConParadas(rutaId) {
                                 as: 'parada'
                             }
                         },
-                        { $unwind: '$parada' } // <-- Unwind para tener un objeto parada y no un array
+                        { $unwind: '$parada' }
                     ],
                     as: 'paradasRuta'
                 }
@@ -757,8 +806,7 @@ async function getRutaConParadas(rutaId) {
         ];
 
         let result = await db.collection('RutaPersonalizada').aggregate(pipeline).toArray();
-        console.log("Resultados del pipeline:", result);
-
+        console.log('mongodb devuelve:', result);
         return result;
 
     } finally {
