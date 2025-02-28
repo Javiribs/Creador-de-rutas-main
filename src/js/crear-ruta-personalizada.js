@@ -22,11 +22,11 @@ const API_PORT = location.port ? `:${location.port}` : ''
  * @param {Ciudad} ciudadEncontrada
   */
 export async function inicializarCreacionRuta(botonCrearRuta, paradasSeleccionadas, ciudadEncontrada) {
-    botonCrearRuta?.addEventListener('click', async () => {
-        if (Array.isArray(paradasSeleccionadas) && paradasSeleccionadas.length < 2) {
-            alert("Debes seleccionar al menos dos paradas para crear una ruta.");
-            return;
-        }
+
+  if (Array.isArray(paradasSeleccionadas) && paradasSeleccionadas.length < 2) {
+    alert("Debes seleccionar al menos dos paradas para crear una ruta.");
+    return;
+  }
 
        //Obtener usuarioId desde sessionStorage
         const usuarioGuardado = sessionStorage.getItem('usuario');
@@ -41,7 +41,6 @@ export async function inicializarCreacionRuta(botonCrearRuta, paradasSeleccionad
             rutaPersonalizada_id: ''
           }
         });
-        console.log(selectedParadas)
         const rutaPersonalizadaData = { 
             
           ciudad_id: ciudadEncontrada._id,
@@ -85,8 +84,7 @@ export async function inicializarCreacionRuta(botonCrearRuta, paradasSeleccionad
         } catch (error) {
           console.error('Error al crear la ruta:', error)
           alert('Error al crear la ruta. Por favor, inténtalo de nuevo más tarde.')   
-      } // Pasar solo el ID
-  })
+      } 
 }
 
 //C.R.U.D
