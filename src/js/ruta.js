@@ -2,7 +2,7 @@
 // @ts-check
 import { simpleFetch } from './simpleFetch.js'
 import { HttpError } from './class/HttpError.js'
-import { initMap, abrirGoogleMaps } from './lib/mapsFunctions.js'
+import { initMap, abrirGoogleMaps, obtenerGeolocalizacion } from './lib/mapsFunctions.js'
 
 const API_PORT = location.port ? `:${location.port}` : ''
 
@@ -43,6 +43,12 @@ async function onDomContentLoaded() {
     // Obtiene la URL del atributo data-url del botón
     const url = botonGoogleMaps.dataset.url;
     abrirGoogleMaps(url);
+    });
+    const botonGeolocalizacion = document.getElementById("boton-geolocalizacion");
+    botonGeolocalizacion?.addEventListener("click", () => {
+    // @ts-ignore
+    // eslint-disable-next-line no-undef
+    obtenerGeolocalizacion(map); // Pasa el objeto map a la función
     });
   }
 
