@@ -6,6 +6,7 @@
   <title>Buscador</title>
   <link rel="stylesheet" href="./css/reset.css" />
   <link rel="stylesheet" href="./css/style.creador-rutas.css" />
+  <script type="module" src="./js/components/bundle-inicio.js"></script>
   <script type="module" src="./js/creador.rutas.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 </head>
@@ -17,7 +18,6 @@
       <ol>
         <li><button type="reset" id="boton-inicio" class="boton-inicio">Buscador</button></li>
         <li><button id="boton-perfil">Perfil</button></li>
-        <li><a href="#">Ajustes</a></li>
       </ol>
     </nav>
   </header>
@@ -31,10 +31,10 @@
       </fieldset>
       <button type="button" id="searchButton" title="Buscar">Buscar</button>
     </form>
-    <!-- Componente: Nombre ciudad como título -->
+    <h2 class="recomendacion" id="recomendacion"></h2>
     <h1 class="titulo-ciudad" id="tituloCiudad"></h1>
-    <!-- Componente: lista de paradas a visitar -->
-    <ol class="paradas-interesantes"></ol>
+    <section class="botones-paradas" id="botones-paradas"></section>
+    <info-lista-paradas></info-lista-paradas>
   </main>
 </body>
 </html>

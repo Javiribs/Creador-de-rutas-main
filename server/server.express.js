@@ -151,17 +151,7 @@ app.get('/api/check/:nombre', async (req, res) => {
 
 //CRUD rutasPersonalizadas
 app.post('/api/create/rutasPersonalizadas', requireAuth, async (req, res) => {
-  //console.log('selectedParadas:', req.body.selectedParadas);
   res.json(await db.rutasPersonalizadas.create(req.body))
-  // const rutaPersonalizada = req.body
-  // const selectedParadas = [...rutaPersonalizada.selectedParadas]
-  // delete rutaPersonalizada.selectedParadas
-  // const nuevaRuta = await db.rutasPersonalizadas.create(rutaPersonalizada)
-  // await Promise.all(selectedParadas.map(parada =>  
-  //   db.paradasRuta.create({...parada, rutaPersonalizada_id: nuevaRuta._id})
-  // ));
-  
-  // res.json(nuevaRuta)
 })
 
 //obtener ruta personalizada a partir del id de la rutapersonalizada
@@ -170,8 +160,8 @@ app.get('/api/read/rutasPersonalizadas/:id', requireAuth, async (req, res) => {
   const paradasRuta = await db.paradasRuta.get(req.params.id);
   console.log(paradasRuta)
   const rutaConParadas = {
-    ...rutaPersonalizada, // Incluye los datos de la ruta
-    paradas: paradasRuta // Incluye las paradas
+    ...rutaPersonalizada, 
+    paradas: paradasRuta 
   };
   console.log('he creado', rutaConParadas);
   res.json(rutaConParadas);
