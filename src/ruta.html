@@ -8,6 +8,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="./css/reset.css" />
         <link rel="stylesheet" href="./css/style.ruta.css" />
+        <script type="module" src="./js/components/bundle-ruta.js"></script>
         <script type="module" src="./js/crear-ruta-personalizada.js"></script>
         <script type="module" src="./js/ruta.js"></script>
         <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB21PeYApWeiOvMbWJKoLB41j554bpR3WU&callback=initMap"></script>
@@ -36,6 +37,7 @@
         <a id="enlace-google-maps" href="#" target="_blank" style="display: none;">Abrir en Google Maps</a>
         <button id="boton-google-maps">Abrir con Google Maps</button>
         <ul class="ruta-info"></ul>
+        <info-paradas-ruta></info-paradas-ruta>
 
         <button id="boton-anadir-paradas">Añadir Puntos de Interés</button>
         <button id="boton-ocultar-paradas" style="display: none;">Ocultar paradas disponibles</button>
