@@ -82,9 +82,7 @@ function perfilButtonClick() {
     window.location.href = 'perfil.html' // Redirige a perfil.html
 }
 
-//evento buscadora, main funcion para buscar coincidencias de ciudades
-
-//esta funcion recoge todo lo que sucede al apretar boton buscar
+//funcion para buscar ciudad en la api por nombre de la ciudad
 async function searchButtonOnClick() {
   const resultadosList = document.querySelector('.paradas-interesantes');
   if (resultadosList) {
@@ -144,7 +142,7 @@ function resetBuscador() {
 }
 
 /**
- * Get data from API
+ * Get data de la API
  * @param {string} apiURL
  * @param {string} method
  * @param {Object} [data]
@@ -237,7 +235,7 @@ function addTitle(ciudadEncontrada) {
     }
 }
 
-//Crear la lista con elementos html pintados
+// Pinta la lista de paradas de la ciudad en el DOM
 /**
  * @param {Ciudad} ciudadEncontrada
  */
@@ -248,7 +246,7 @@ function addParadasList(ciudadEncontrada) {
       return; // Salir de la función si no se encuentra el elemento
   }
   LISTADO.innerHTML = ''; // Limpiar la lista antes de añadir nuevas paradas
-  
+
   const newBotonCrearRuta = document.createElement('button');
   newBotonCrearRuta.id = 'crearRuta';
   newBotonCrearRuta.textContent = 'Crear ruta';
@@ -257,41 +255,43 @@ function addParadasList(ciudadEncontrada) {
   const botonAlternarSeleccion = document.createElement('button');
   botonAlternarSeleccion.id = 'alternarSeleccion';
   botonAlternarSeleccion.textContent = 'Seleccionar Todas';
-  LISTADO.appendChild(botonAlternarSeleccion); 
+  LISTADO.appendChild(botonAlternarSeleccion);
 
   // Event listener para el botón "Seleccionar/Desmarcar Todos"
   botonAlternarSeleccion.addEventListener('click', () => {
-  const checkboxesParadas = document.querySelectorAll('.parada-checkbox');
-  const todosSeleccionados = Array.from(checkboxesParadas).every(checkbox => checkbox.checked);
+      const checkboxesParadas = document.querySelectorAll('.parada-checkbox');
+      // @ts-ignore
+      const todosSeleccionados = Array.from(checkboxesParadas).every(checkbox => checkbox.checked);
 
-  if (todosSeleccionados) {
-      // Desmarcar todos los checkboxes
-      checkboxesParadas.forEach(checkbox => {
-          checkbox.checked = false;
-      });
-      paradasSeleccionadas = []; // Limpiar el array de paradas seleccionadas
-      botonAlternarSeleccion.textContent = 'Seleccionar Todos'; // Cambiar el texto del botón
-  } else {
-      // Marcar todos los checkboxes
-      checkboxesParadas.forEach(checkbox => {
-          checkbox.checked = true;
-          // Obtener la parada correspondiente y añadirla a paradasSeleccionadas
-          const paradaId = checkbox.id.split('-').slice(1).join('-');
-          // @ts-ignore
-          const parada = ciudadEncontrada.paradas.find(p => p.nombre_parada.replace(/\s+/g, '-').toLowerCase() === paradaId);
-          if (parada && !paradasSeleccionadas.includes(parada)) {
-              paradasSeleccionadas.push(parada);
-          }
-      });
-      botonAlternarSeleccion.textContent = 'Desmarcar Todos'; // Cambiar el texto del botón
-  }
+      if (todosSeleccionados) {
+          // Desmarcar todos los checkboxes
+          checkboxesParadas.forEach(checkbox => {
+              // @ts-ignore
+              checkbox.checked = false;
+          });
+          paradasSeleccionadas = []; // Limpiar el array de paradas seleccionadas
+          botonAlternarSeleccion.textContent = 'Seleccionar Todos'; // Cambiar el texto del botón
+      } else {
+          // Marcar todos los checkboxes
+          checkboxesParadas.forEach(checkbox => {
+              // @ts-ignore
+              checkbox.checked = true;
+              // Obtener la parada correspondiente y añadirla a paradasSeleccionadas
+              const paradaId = checkbox.id.split('-').slice(1).join('-');
+              // @ts-ignore
+              const parada = ciudadEncontrada.paradas.find(p => p.nombre_parada.replace(/\s+/g, '-').toLowerCase() === paradaId);
+              if (parada && !paradasSeleccionadas.includes(parada)) {
+                  paradasSeleccionadas.push(parada);
+              }
+          });
+          botonAlternarSeleccion.textContent = 'Desmarcar Todos'; // Cambiar el texto del botón
+      }
 
-  console.log(paradasSeleccionadas); // Mostrar paradas seleccionadas en la consola
-});
-  
-//error ts en el .paradas
+      console.log(paradasSeleccionadas); // Mostrar paradas seleccionadas en la consola
+  });
+
   // @ts-ignore
-  if (ciudadEncontrada && ciudadEncontrada.paradas && ciudadEncontrada.paradas.length > 0) { // Verifica que ciudadEncontrada y paradas existan y tengan elementos.
+  if (ciudadEncontrada && ciudadEncontrada.paradas && ciudadEncontrada.paradas.length > 0) {
       // @ts-ignore
       ciudadEncontrada.paradas.forEach((/** @type {Paradas}} */ parada) => {
           // Crear elementos en el DOM para almacenar la info
@@ -329,12 +329,16 @@ function addParadasList(ciudadEncontrada) {
           newCardParadas.appendChild(newLabelCheckbox);
           // evento para seleccionar o no la parada
           newCheckboxParada.addEventListener('change', () => {
+              // Actualizar paradasSeleccionadas basado en el estado actual del checkbox
               if (newCheckboxParada.checked) {
-                  paradasSeleccionadas.push(parada); // Añadir parada al array
+                  if (!paradasSeleccionadas.includes(parada)) {
+                      paradasSeleccionadas.push(parada);
+                  }
               } else {
-                  paradasSeleccionadas = paradasSeleccionadas.filter(p => p.nombre_parada !== parada.nombre_parada); // Eliminar parada del array
+                  // Eliminar parada del array si existe
+                  paradasSeleccionadas = paradasSeleccionadas.filter(p => p._id !== parada._id);
               }
-              console.log(paradasSeleccionadas); // Mostrar paradas seleccionadas en la consola (para depuración)
+              console.log(paradasSeleccionadas);
           });
 
           // Almacenar todo a la OL del html
@@ -349,8 +353,8 @@ function addParadasList(ciudadEncontrada) {
   }
   // Almacenar botón crear ruta al final de la OL
   LISTADO.appendChild(newBotonCrearRuta);
-  
-  // Inicializar creación de rutas
+
+  // Inicializar creación de rutas después de agregar eventos change
   inicializarCreacionRuta(newBotonCrearRuta, paradasSeleccionadas, ciudadEncontrada);
 }
 

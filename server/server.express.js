@@ -104,7 +104,7 @@ app.get('/api/filter/ciudades/:name', requireAuth, async (req, res) => {
       ciudades.map(async (ciudad) => {
           return {
               ...ciudad,
-              paradas: await db.paradasPorCiudad.get(ciudad._id.toString()), // Cambiado aquí
+              paradas: await db.paradasPorCiudad.get(ciudad._id.toString()),
           };
       })
   );

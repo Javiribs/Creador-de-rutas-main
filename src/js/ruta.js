@@ -13,8 +13,7 @@ document.addEventListener('DOMContentLoaded', onDomContentLoaded);
 
 
 async function onDomContentLoaded() {
-  //no se como implmentar router 
-  // navigateTo('/ruta.html');
+  
     // boton de volver al inicio (resetear toda la info)
     const volverInicioButton = document.getElementById('boton-inicio')
     //boton perfil
@@ -66,7 +65,7 @@ function añadirParadas() {
 //-------------CRUD---------------//
 
 /**
- * Get data from API
+ * Get data de la API
  * @param {string} apiURL
  * @param {string} method
  * @param {Object} [data]
@@ -112,12 +111,11 @@ async function getApiData (apiURL, method = 'GET', data) {
         }
       }
     }
-  console.log('info de la api:', apiData)  
   return apiData
 }
 
-
-async function obtenerRuta() {
+//Obtengo toda la info de la ruta (de la Api) con el id como parámetro
+export async function obtenerRuta() {
     // Obtener el ID de la URL usando URLSearchParams
     const urlParams = new URLSearchParams(location.search);
     const rutaId = urlParams.get('id');
@@ -176,6 +174,7 @@ async function obtenerRuta() {
  * @param {Rutas} rutaConParadas 
  */
 
+//Pintar elementos en el DOM
 async function addRuta(rutaConParadas) {
 
   const LISTADO = document.getElementsByClassName('ruta-info')[0];
@@ -185,7 +184,6 @@ async function addRuta(rutaConParadas) {
   if (rutaConParadas && rutaConParadas.length > 0) {
     
     const ruta = rutaConParadas[0];
-    console.log('toda la info de la ruta:', ruta) 
       
       const nombreRutaSpan = document.getElementById('nombre-ruta');
       if (nombreRutaSpan) {
@@ -220,61 +218,17 @@ async function addRuta(rutaConParadas) {
     });
   
         const paradasCompletas = ruta.paradasRuta
-        console.log('todas las paradas:', paradasCompletas)
         // Inicializar el mapa
         initMap(paradasCompletas);
 
         //Transformar en componente!!!!
-        paradasCompletas.forEach(paintParadaRow)
+        // paradasCompletas.forEach(paintParadaRow)
      
   } else {
       console.error('No se encontraron datos de la ruta.');
   }
 }
 
-/**
- * Pinta una fila de la lista de paradas con la información de cada parada.
- * @param {ParadaRuta} paradaRuta - ParadaRuta que quiero pintar
- */
-function paintParadaRow(paradaRuta) {
-  const LISTADO = document.getElementsByClassName('ruta-info')[0];
- 
-    const newParadasItem = document.createElement('li');
-    const newArticleParadas = document.createElement('article');
-    const newFigureParadas = document.createElement('figure');
-    const newImgParadas = document.createElement('img');
-    const newCardParadas = document.createElement('section');
-    const newNameParadas = document.createElement('h2');
-    const newCategoriaParadas = document.createElement('h3');
-    const newBotonParadas = document.createElement('button');
-
-    newParadasItem.appendChild(newArticleParadas);
-    newArticleParadas.appendChild(newFigureParadas);
-    newImgParadas.src = paradaRuta.parada.imagen;
-    newFigureParadas.appendChild(newImgParadas);
-    newArticleParadas.appendChild(newCardParadas);
-    newNameParadas.innerText = paradaRuta.parada.nombre_parada; 
-    newCardParadas.appendChild(newNameParadas);
-    newCategoriaParadas.innerText = 'Categoría: ' + paradaRuta.parada.categoria;
-    newCardParadas.appendChild(newCategoriaParadas);
-    newBotonParadas.textContent = '+ Info';
-
-    newBotonParadas.addEventListener('click', () => {
-      // Obtener el ID de la parada
-      const paradaId = paradaRuta.parada._id;
-      // @ts-ignore
-      // Guardar el ID en localStorage (opcional, pero recomendado para usar en la página de destino)
-      localStorage.setItem('paradaId', paradaId);
-  
-      // Redireccionar a la página de info-parada.html con el ID
-      window.location.href = `info-parada.html?id=${paradaId}`; // Usar el ID en la URL
-  });
-    newCardParadas.appendChild(newBotonParadas);
-
-    LISTADO.appendChild(newParadasItem);
-
-  
-}
 
 async function recuperarSessionStorage() {
     // Recuperar datos de sessionStorage al cargar la página
@@ -305,8 +259,7 @@ async function recuperarSessionStorage() {
   }
 
   /**
- * Checks if there is a user logged in by verifying the presence of a token
- * in the local storage.
+ * verifica que el usuario este logueado, si no lo devuelve al inicio
   * @returns {Usuario | null}
  */
   function getLoggedUserData() {
@@ -324,7 +277,7 @@ async function mostrarParadasDisponibles() {
   const paradasDisponibles = await obtenerParadasDisponibles(rutaConParadas[0].ciudad_id);
   const listaParadasDisponibles = document.getElementById('lista-paradas-disponibles');
   if (listaParadasDisponibles) {
-      listaParadasDisponibles.innerHTML = ''; // Limpiar la lista
+      listaParadasDisponibles.innerHTML = ''; 
 
       paradasDisponibles.forEach((parada) => {
           const paradaItem = document.createElement('li');
@@ -394,42 +347,40 @@ if (botonOcultarParadas) {
 
 /**
  * @function obtenerParadasDisponibles
- * @param {string} ciudadId 
+ * @param {string} ciudadId
  */
 async function obtenerParadasDisponibles(ciudadId) {
   const urlParams = new URLSearchParams(location.search);
-    const rutaId = urlParams.get('id');
+  const rutaId = urlParams.get('id');
   const paradasDeLaRuta = await getApiData(`${location.protocol}//${location.hostname}${API_PORT}/api/read/paradasRuta/rutaPersonalizada/${rutaId}`)
-    try {
-      console.log('id ciudad + las paradas ya seleccioandas', ciudadId, paradasDeLaRuta);
-        const response = await getApiData(
-            `${location.protocol}//${location.hostname}${API_PORT}/api/read/paradasPorCiudad/${ciudadId}`,
-            'GET'
-        );
-        console.log(response);
-        if (!response || !Array.isArray(response)) {
-            throw new Error('Error al obtener las paradas de la ciudad.');
-        }
+  console.log(paradasDeLaRuta);
+  try {
+      const response = await getApiData(`${location.protocol}//${location.hostname}${API_PORT}/api/read/paradasPorCiudad/${ciudadId}`, 'GET');
+      if (!response || !Array.isArray(response)) {
+          throw new Error('Error al obtener las paradas de la ciudad.');
+      }
 
-        // Eliminar las paradas que ya están en la ruta
-        const paradasDisponibles = response.filter((ruta) => {
-          // @ts-ignore
-          return !paradasDeLaRuta.some((parada) => {
-              // @ts-ignore
-              return parada.parada_id === ruta._id;
-          });
-      });
-      return paradasDisponibles;
+      // Eliminar las paradas que ya están en la ruta
+      const paradasDisponibles = response.filter((ruta) => {
+        // @ts-ignore
+        return !paradasDeLaRuta.some((parada) => {
+            // @ts-ignore
+            return parada.parada_id === ruta._id;
+        });
+    });
+    console.log(paradasDisponibles);
+    return paradasDisponibles;
 
-  } catch (error) {
-      console.error('Error al obtener paradas disponibles:', error);
-      return [];
-  }
+} catch (error) {
+    console.error('Error al obtener paradas disponibles:', error);
+    return [];
+}
 }
 
 
 /**
- * Crear una parada para la ruta personalizada
+ * Crear objeto ParadaRuta el cual contiene una propiedad que es el id
+ * de la ruta a la que se asocia (forma parte)
  * 
  * @param {string} rutaId 
  * @param {string} paradaId 
@@ -451,6 +402,7 @@ async function agregarParadaARuta(rutaId, paradaId) {
     }
     alert('Parada agregada a la ruta.');
     // @ts-ignore
+    // eslint-disable-next-line no-undef
     paintParadaRow(response);
     }  catch (error) {
     console.error('Error al agregar parada a la ruta:', error);
@@ -464,7 +416,7 @@ async function agregarParadaARuta(rutaId, paradaId) {
  * @param {string | null} rutaIdData 
  * @param {string} nuevoNombre 
  */
-// Función para actualizar la ruta personalizada
+// Función para actualizar el nombre de la ruta a través de su id
 async function actualizarRutaPersonalizada(rutaIdData, nuevoNombre) {
   try {
       // Lógica para actualizar la ruta personalizada
@@ -560,20 +512,6 @@ async function initMap(paradasCompletas) {
                 }
             }
         );
-
-      paradasCompletas.forEach(parada => {
-          const lat = parada.parada.coordenadas[0];
-          const lng = parada.parada.coordenadas[1];
-
-          // @ts-ignore
-          // eslint-disable-next-line no-undef
-          const marker = new google.maps.Marker({
-              position: { lat: lat, lng: lng },
-              map: map,
-              title: parada.parada.nombre_parada,
-          });
-          console.log(marker);
-      });
   } catch (error) {
       console.error("Error al mostrar las paradas en el mapa:", error);
   }

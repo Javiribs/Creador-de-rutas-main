@@ -1,0 +1,60 @@
+/* Estilos para la lista de paradas */
+.info-parada {
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    margin: 20px auto;
+    width: 90%;
+    max-width: 300px;
+    box-shadow: 0 4px 8px #0000001a;
+}
+
+.info-parada article {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.info-parada figure {
+    margin-bottom: 20px;
+}
+
+.info-parada figure img {
+    max-width: 100%;
+    border-radius: 8px;
+}
+
+.info-parada section {
+    text-align: center;
+}
+
+.info-parada h2 {
+    font-size: 1.5em;
+    margin-bottom: 10px;
+}
+
+.info-parada p {
+    color: #777;
+    margin-bottom: 20px;
+}
+
+.info-parada button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    min-width: 80px;
+    max-width: 150px;
+    width: auto;
+    display: inline-block;
+    text-align: center;
+}
+
+.info-parada button:hover {
+    background-color: #0056b3;
+}
+

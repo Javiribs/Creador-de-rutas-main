@@ -41,7 +41,7 @@ export async function inicializarCreacionRuta(botonCrearRuta, paradasSeleccionad
             rutaPersonalizada_id: ''
           }
         });
-
+        console.log(selectedParadas)
         const rutaPersonalizadaData = { 
             
           ciudad_id: ciudadEncontrada._id,
@@ -50,8 +50,6 @@ export async function inicializarCreacionRuta(botonCrearRuta, paradasSeleccionad
           fechaCreacion: new Date(),
           // selectedParadas
         }
-        
-        console.log(selectedParadas)
 
         try {
           
