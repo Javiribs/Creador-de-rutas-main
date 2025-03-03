@@ -1,4 +1,4 @@
-// @ts-check
+/* eslint-disable no-useless-escape */
 
 /** @type {import('jest').Config} */
 const config = {

@@ -6,8 +6,7 @@ import { initMap, abrirGoogleMaps, obtenerGeolocalizacion } from './lib/mapsFunc
 
 const API_PORT = location.port ? `:${location.port}` : ''
 
-/** @import {Ciudad, Paradas} from './class/ciudades.js' */
-/** @import {RutaPersonalizada, ParadasRutas} from './class/rutaPersonalizada.js' */
+/** @import {Ciudad} from './class/ciudades.js' */
 /** @import {Usuario} from './class/usuario.js' */
 
 document.addEventListener('DOMContentLoaded', onDomContentLoaded);
@@ -178,6 +177,7 @@ export async function obtenerRuta() {
  */
 
 /**
+ * funcion para pintar la informacion de la ruta personalizada con el detalle de las paradas
  * @param {Rutas} rutaConParadas 
  */
 //Pintar elementos en el DOM
@@ -231,7 +231,6 @@ async function addRuta(rutaConParadas) {
 // Función para mostrar las paradas no seleccionadas en la ruta
 async function mostrarParadasDisponibles() {
   const rutaConParadas = await obtenerRuta();
-
   // Obtener las paradas de la ciudad que no están en la ruta
   // @ts-ignore
   const paradasDisponibles = await obtenerParadasDisponibles(rutaConParadas[0].ciudad_id);
@@ -306,6 +305,8 @@ if (botonOcultarParadas) {
 
 
 /**
+ * Función para obtener las paradas que no forman parte de la ruta personalizada
+ * pero son de la ciudad seleccionada.
  * @function obtenerParadasDisponibles
  * @param {string} ciudadId
  */
@@ -339,8 +340,8 @@ async function obtenerParadasDisponibles(ciudadId) {
 
 
 /**
- * Crear objeto ParadaRuta el cual contiene una propiedad que es el id
- * de la ruta a la que se asocia (forma parte)
+ * Funcion para crear el objeto ParadasRuta el cual va a contener el id de la parada
+ * que contiene su información y el id de la ruta personalizada
  * 
  * @param {string} rutaId 
  * @param {string} paradaId 
@@ -395,9 +396,8 @@ async function actualizarRutaPersonalizada(rutaIdData, nuevoNombre) {
   }
 }
 
-
+// Recuperar datos de sessionStorage del usuario al cargar la página
 async function recuperarSessionStorage() {
-  // Recuperar datos de sessionStorage al cargar la página
   const usuarioGuardado = sessionStorage.getItem('usuario');
 
   if (usuarioGuardado) {

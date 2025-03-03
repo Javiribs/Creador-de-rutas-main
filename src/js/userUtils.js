@@ -30,7 +30,7 @@ function onDomContentLoaded() {
  */
 //Funciones que se activan al apretar el registerbutton
 //busca crea un nuevo usuario
-async function registerUser(e) {
+export async function registerUser(e) {
     e.preventDefault()
 
   const registerName = getElementValue('register-name')

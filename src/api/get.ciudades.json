@@ -1,0 +1,17 @@
+[
+   {
+     "_id": "1",
+     "name": "Madrid",
+     "country": "España"
+   },
+   {
+     "_id": "2",
+     "name": "París",
+     "country": "Francia"
+   },
+   {
+     "_id": "3",
+     "name": "Londres",
+     "country": "Reino Unido"
+   }
+]

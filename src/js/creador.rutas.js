@@ -123,7 +123,7 @@ function resetBuscador() {
 }
 
 //funcion propuesta autocompletar inputSearch usuario
-async function searchProposal() {
+export async function searchProposal() {
     const searchInput = document.getElementById('searchInput')
     const nameBuscado = getInputValue(searchInput)?.toLowerCase()
     const datalist = document.getElementById('ciudades')
