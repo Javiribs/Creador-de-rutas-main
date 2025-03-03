@@ -1,0 +1,34 @@
+[
+    {
+      "id": "1",
+      "nombre_parada": "Parada 1",
+      "imagen": "parada1.jpg",
+      "info": "Información de la parada 1",
+      "enlace": "https://parada1.com",
+      "categoria": "Categoría 1"
+    },
+    {
+      "id": "2",
+      "nombre_parada": "Parada 2",
+      "imagen": "parada2.jpg",
+      "info": "Información de la parada 2",
+      "enlace": "https://parada2.com",
+      "categoria": "Categoría 2"
+    },
+    {
+      "id": "3",
+      "nombre_parada": "Parada 3",
+      "imagen": "parada3.jpg",
+      "info": "Información de la parada 3",
+      "enlace": "https://parada3.com",
+      "categoria": "Categoría 3"
+    },
+    {
+      "id": "4",
+      "nombre_parada": "Parada 4",
+      "imagen": "parada4.jpg",
+      "info": "Información de la parada 4",
+      "enlace": "https://parada2.com",
+      "categoria": "Categoría 4"
+    }
+]
