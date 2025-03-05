@@ -55,7 +55,7 @@ export class LitInfoParadasRuta extends LitElement {
             </ul>
         `;
     }
-
+    
     //------------Private Methods------------------//
     //obtener las paradas de la ruta a partir del id.
     async _getRutaInfo() {
