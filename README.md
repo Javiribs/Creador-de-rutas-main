@@ -13,9 +13,10 @@ Entra en el siguiente enlace para utilizar la app: <https://creadorderutas.netli
 Para usar la aplicación es obligatorio registrarse (no es necesario que el mail sea válido, simplemente con *******@mail.com)
 
 Esta aplicación está compuesta por varias páginas:
--Buscador
--Perfil
--Visionado/Edición de la ruta
+
+- Buscador
+- Perfil
+- Visionado/Edición de la ruta
 
 ### Buscador de ciudades
 
@@ -24,12 +25,13 @@ En el buscador, podremos introducir el nombre de una ciudad (fase beta: Barcelon
 ### Visionado y edición de la ruta
 
 Los puntos de interés se mustran en el mapa según la distancia existente entre ellos (mayor eficiencia de la ruta). Esta página de visionado de la ruta te permite:
--Modificar el nombre de la ruta mediante el botón "Editar nombre de la Ruta"
--Ver un mapa estático.
--Añadir tu geolocalización en el mapa mediante el botón "Mostrar mi ubicación en el mapa".
--Iniciar la ruta con el gps de Google Maps mediante el botón "Abrir con Google Maps"
--Acceder a más información de cada punto de interés mediente el botón "+ Info"
--Agregar más puntos de interés a la ruta mediante el botón "Añadir Puntos de Interés"
+
+- Modificar el nombre de la ruta mediante el botón "Editar nombre de la Ruta"
+- Ver un mapa estático.
+- Añadir tu geolocalización en el mapa mediante el botón "Mostrar mi ubicación en el mapa".
+- Iniciar la ruta con el gps de Google Maps mediante el botón "Abrir con Google Maps"
+- Acceder a más información de cada punto de interés mediente el botón "+ Info"
+- Agregar más puntos de interés a la ruta mediante el botón "Añadir Puntos de Interés"
 
 La intención de esta página de la app, es que el usuario tenga la versión digital de un mapa físico, con la información detallada de aquello que está visitando, o, seguir la ruta en el gps externo.
 
@@ -109,11 +111,11 @@ En la aplicación, se utilizan estilos responsive según el tamaño de la pantal
 
 Cada función/componente se ha creado intentando cumplir con los estándares de SOLID.
 
-Existe la validación de tipados por medio de JSDoc en los comentarios, y ESLint tanto en los Git Hooks como apoyo por medio del plugin de VS Code.
+Existe la validación de tipados por medio de [JSDoc](https://jsdoc.app/) en los comentarios, y [ESLint](https://eslint.org/) tanto en los Git Hooks como apoyo por medio del plugin de VS Code.
 
 ## Documentación
 
-Para generar la documentación de la aplicación se usa JSDoc y se guarda en la carpeta out. Para verla puedes ejecutar el comando npm run build:docs.
+Para generar la documentación de la aplicación se usa [JSDoc](https://jsdoc.app/) y se guarda en la carpeta `out`. Para verla puedes ejecutar el comando `npm run build:docs`.
 
 ## Modelo de datos
 
@@ -121,7 +123,7 @@ Para generar la documentación de la aplicación se usa JSDoc y se guarda en la 
 
 ## Testeo
 
-Utilizamos [Jest] como herramienta de testeo. Para poder ejecutar los test los hacemos por medio del comando:
+Utilizamos [Jest](https://jestjs.io/) como herramienta de testeo. Para poder ejecutar los test los hacemos por medio del comando:
 
 npm run test
 
