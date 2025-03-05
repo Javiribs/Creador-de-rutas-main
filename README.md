@@ -42,54 +42,58 @@ El usuario también tiene la opción de cerrar su sesión o de eliminar la cuent
 
 En este repositorio se aplican los siguientes recursos:
 
--HTML.
--CSS (Responsive).
--JavaScript: programación funcional, principios de SOLID, patrones de diseño.
--Javascript nativo y Lit Element como librería de componentes web.
--Servidor de estáticos y APIs REST con ExpressJS.
--Base de datos con MongoDB.
--Habilitación como PWA para poder instalarla en dispositivos móviles.
--TypeScript para el tipado del código
--JSdocs para la documentación
--GitHub para gestión de repositorios
--GitHooks y Linters para comprobación de errores en el código
--Jest como herramienta de testeo. En la carpeta /js/test hay varios ejemplos de testing
--Archivo api.mjs en la carpeta netlify/functions para poder desplegar el servidor en netlify, y netlify.toml en la raiz para su configuración
+- HTML.
+- CSS (Responsive).
+- JavaScript: programación funcional, principios de SOLID, patrones de diseño.
+- Javascript nativo y Lit Element como librería de componentes web.
+- Servidor de estáticos y APIs REST con ExpressJS.
+- Base de datos con MongoDB.
+- Habilitación como PWA para poder instalarla en dispositivos móviles.
+- TypeScript para el tipado del código
+- JSdocs para la documentación
+- GitHub para gestión de repositorios
+- GitHooks y Linters para comprobación de errores en el código
+- Jest como herramienta de testeo. En la carpeta /js/test hay varios ejemplos de testing
+- Archivo api.mjs en la carpeta netlify/functions para poder desplegar el servidor en netlify, y netlify.toml en la raiz para su configuración
 
 ## Dependenciad de la app
 
-Node >= 20.0.0
-Express
-MongoDB
-JSDoc
-Typescript
-Jest
-ESLint
-Lint-Staged
-StyleLint
-Netlify (sólo si se va a desplegar en netlify)
+- Node >= 20.0.0
+- Express
+- MongoDB
+- JSDoc
+- Typescript
+- Jest
+- ESLint
+- Lint-Staged
+- StyleLint
+- Netlify (sólo si se va a desplegar en netlify)
 
 ## Plugins de VS
 
-GitHub Pull Requests
-Live Preview
-Live Server
-commitlint
-ESLint
-Conventional Commits
-Error Lens
-markdownlint
-Postman
-Stylelint
-lit-html
+- GitHub Pull Requests
+- Live Preview
+- Live Server
+- commitlint
+- ESLint
+- Conventional Commits
+- Error Lens
+- markdownlint
+- Postman
+- Stylelint
+- lit-html
 
 ## Instalación y Ejecución
 
+```bash
 npm install
+```
 
 Es necesario ejecutar el terminal para el servidor del backend:
 
+```bash
 npm run server:express:start
+```
 
 Una vez en ejecución, podemos acceder al front end de la aplicación en: [http://127.0.0.1:1337](http://127.0.0.1:1337)
 
