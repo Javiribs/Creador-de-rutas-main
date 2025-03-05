@@ -363,14 +363,35 @@ async function agregarParadaARuta(rutaId, paradaId) {
     }
     alert('Parada agregada a la ruta.');
     // @ts-ignore
-    // eslint-disable-next-line no-undef
-    paintParadaRow(response);
+     
+    actualizarListaRuta(response);
     }  catch (error) {
     console.error('Error al agregar parada a la ruta:', error);
     alert('Error al agregar la parada a la ruta. Por favor, inténtalo de nuevo más tarde.');
   }
  }
 }
+
+/**
+ * Actualiza la lista de paradas en el componente LitInfoParadasRuta con una nueva
+ * parada.
+ *
+ * @param {object} nuevaParada - La parada que se va a agregar a la lista.
+ */
+
+function actualizarListaRuta(nuevaParada) {
+  // Encuentra el componente LitInfoParadasRuta en el DOM
+  const componente = document.querySelector('info-paradas-ruta');
+  if (componente) {
+      // Añade la nueva parada a la lista existente
+      // @ts-ignore
+      componente.listaRutaPersonalizada[0].paradasRuta.push(nuevaParada);
+      // Solicita una actualización del componente para que se renderice con la nueva parada
+      // @ts-ignore
+      componente.requestUpdate();
+  }
+}
+
 
 /**
  * 
