@@ -95,7 +95,7 @@ async function getApiData (apiURL, method = 'GET', data) {
     }   
     apiData  = await simpleFetch (apiURL, { 
       // Si la petición tarda demasiado, la abortamos
-      signal: AbortSignal.timeout(3000),
+      signal: AbortSignal.timeout(10000),
       method: method,
       // @ts-ignore
       body: data ?? undefined,
