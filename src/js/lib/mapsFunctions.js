@@ -1,6 +1,17 @@
 
 
 /**
+ * @typedef {object} DirectionsRoute
+ * @property {any[]} waypoint_order
+ */
+
+/**
+ * @typedef {object} DirectionsResponse
+ * @property {object[]} routes
+ * @property {DirectionsRoute[]} routes
+ */
+
+/**
  * @param {any[]} paradasCompletas
  */
 export async function initMap(paradasCompletas) {
@@ -48,7 +59,7 @@ export async function initMap(paradasCompletas) {
                 // eslint-disable-next-line no-undef
                 travelMode: google.maps.TravelMode.WALKING,
             },
-            (/** @type {{ routes: { waypoint_order: any; }[]; }} */ response, /** @type {string} */ status) => {
+            (/** @type {DirectionsResponse} */ response, /** @type {string} */ status) => {
                 if (status === "OK") {
                     directionsRenderer.setDirections(response);
                     const optimizedWaypoints = response.routes[0].waypoint_order;
@@ -81,6 +92,14 @@ export async function initMap(paradasCompletas) {
     }
   }
   
+/**
+ * Attempts to obtain the user's current geolocation and place a marker on the map.
+ * If the geolocation is successful, it adds a marker at the user's location.
+ * If the geolocation fails or is not supported, it logs an error to the console.
+ *
+ * @param {google.maps.Map} map - The Google Map object where the user's location will be marked.
+ */
+
   export function obtenerGeolocalizacion(map) {
     if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
