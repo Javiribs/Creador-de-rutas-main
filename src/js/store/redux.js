@@ -59,6 +59,18 @@ const ACTION_TYPES = {
   
   // Reducer, gestion del estado de ciudades (array vacio de inicio) mediante 7 acciones
   /**
+ * @typedef {object} Ciudad
+ * @property {string|boolean} id
+ * @property {string} _id
+ */
+
+  /**
+ * @typedef {object} Parada
+ * @property {string|undefined} id
+ * @property {string} _id
+ */
+
+/**
  * Reducer for the app state.
  *
  * @param {State} state - The current state
@@ -83,8 +95,8 @@ const ACTION_TYPES = {
     case ACTION_TYPES.UPDATE_CIUDAD:
         return {
             ...state,
-            ciudades: state.ciudades.map((/** @type {{ id: string | boolean; }} */ ciudad) =>
-            ciudad.id === (typeof actionWithCiudad?.ciudad === 'object' && actionWithCiudad.ciudad?.id)
+            ciudades: state.ciudades.map((/** @type {Ciudad} */ ciudad) =>
+            ciudad._id === (typeof actionWithCiudad?.ciudad === 'object' && actionWithCiudad.ciudad?._id)
             ? actionWithCiudad.ciudad
             : ciudad
             )
@@ -93,7 +105,7 @@ const ACTION_TYPES = {
     case ACTION_TYPES.DELETE_CIUDAD:
         return {
             ...state,
-            ciudades: state.ciudades.filter((/** @type {{ id: string | undefined; }} */ ciudad) => ciudad.id !== actionWithCiudad?.ciudad?.id)
+            ciudades: state.ciudades.filter((/** @type {Ciudad} */ ciudad) => ciudad._id !== actionWithCiudad?.ciudad?._id)
         };
     //accion 4 añade bojeto parada al INITIAL_STATE
     case ACTION_TYPES.CREATE_PARADA:
@@ -108,15 +120,15 @@ const ACTION_TYPES = {
         case ACTION_TYPES.UPDATE_PARADA:
             return {
               ...state,
-              paradas: state.paradas.map((/** @type {{ id: string | undefined; }} */ parada) =>
-                parada.id === actionWithParadas?.paradas?.id ? actionWithParadas.paradas : parada
+              paradas: state.paradas.map((/** @type {Parada} */ parada) =>
+                parada.id === actionWithParadas?.paradas?._id ? actionWithParadas.paradas : parada
               )
             };
         //accion 6 elimina parada del listado paradas
         case ACTION_TYPES.DELETE_PARADA:
             return {
                 ...state,
-                paradas: state.paradas.filter((/** @type {{ id: any; }} */ parada) => parada.id !== parada.id)        
+                paradas: state.paradas.filter((/** @type {Parada} */ parada) => parada.id !== parada.id)        
             };
         //accion 7 crear un nuevo usuario
         case ACTION_TYPES.CREATE_USUARIO:
@@ -131,15 +143,15 @@ const ACTION_TYPES = {
         case ACTION_TYPES.UPDATE_USUARIO:
               return {
                   ...state,
-                  usuario: state.usuario.map((/** @type {{ id: string | undefined; }} */ usuario) =>
-                      usuario.id === actionWithUsuario?.usuario?.id ? actionWithUsuario.usuario : usuario
+                  usuario: state.usuario.map((/** @type {Usuario} */ usuario) =>
+                      usuario._id === actionWithUsuario?.usuario?._id ? actionWithUsuario.usuario : usuario
                     )
                 };
         //accion 9 elimina usuario del listado paradas
         case ACTION_TYPES.DELETE_USUARIO:
               return {
                   ...state,
-                  usuario: state.usuario.filter((/** @type {{ id: any; }} */ usuario) => usuario.id !== usuario.id)        
+                  usuario: state.usuario.filter((/** @type {Usuario} */ usuario) => usuario._id !== usuario._id)        
               };    
     // accion  lee el listado de ciudades
     case ACTION_TYPES.READ_LIST:
@@ -248,21 +260,21 @@ const getState = () => { return currentState };
  * @param {string} id
  * @returns {Ciudad | undefined}
  */
-const getCiudadById = (id) => { return currentState.ciudad.find((/** @type {Ciudad} */ ciudad) => ciudad.id === id) };
+const getCiudadById = (id) => { return currentState.ciudad.find((/** @type {Ciudad} */ ciudad) => ciudad._id === id) };
 
 /**
  * Returns the parada with the specified id
  * @param {string} id
  * @returns {Paradas | undefined}
  */
-const getParadaById = (id) => { return currentState.ciudad.find((/** @type {Paradas} */ parada) => parada.id === id) };
+const getParadaById = (id) => { return currentState.ciudad.find((/** @type {Paradas} */ parada) => parada._id === id) };
 
 /**
  * Returns the parada with the specified id
  * @param {string} id
  * @returns {Usuario | undefined}
  */
-const getUsuarioById = (id) => { return currentState.ciudad.find((/** @type {Usuario} */ usuario) => usuario.id === id) };
+const getUsuarioById = (id) => { return currentState.ciudad.find((/** @type {Usuario} */ usuario) => usuario._id === id) };
 
  /**
    * Returns all the ciudades
