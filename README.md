@@ -121,10 +121,27 @@ Para generar la documentación de la aplicación se usa [JSDoc](https://jsdoc.ap
 
 ## Relación entre componentes
 
+Cada página que visualiza el usuario tiene asociado un archivo bundle, el cual, recoge todas las importaciones y exportaciones de componente que se despliegan en esa página. De esta forma, nos aseguramos que los componentes solo se rendericen cuando son llamados o usado. Para identificar correctamente donde se recogen los componentes, cada archivo bundle tiene la siguiente nomenclatura: bundle-(nombre del archivo html de la página).js
+
+Las carpetas que se encuentran dentro la carpeta components, son los archivos que afectan al componente (estructura, estilo y funcionalidad). Los archivos js que afectan a la funcionalidad de un componente, su nombre empieza por las letras Lit. Estos componentes son los creados mediante [Lit Element](https://lit.dev/)
+
+## pre-commit
+
+En la app se ha integrado [lint-staged](https://github.com/okonet/lint-staged) para pdoer ejecutar validaciones antes de los commit.
+
+```bash
+#!/usr/bin/env sh
+
+echo PRE-COMMIT GIT HOOK
+npx lint-staged
+```
+
 ## Testeo
 
 Utilizamos [Jest](https://jestjs.io/) como herramienta de testeo. Para poder ejecutar los test los hacemos por medio del comando:
 
+```bash
 npm run test
+```
 
 El fichero de configuración de jest es jest.config.js
