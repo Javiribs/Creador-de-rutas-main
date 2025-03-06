@@ -119,6 +119,48 @@ Para generar la documentación de la aplicación se usa [JSDoc](https://jsdoc.ap
 
 ## Modelo de datos
 
+Los datos que se gestionan en la aplicación tienen la siguiente forma:
+
+- Ciudades
+  - id: (Objeto)
+  - name: (String)
+  - country: (String)
+
+- Paradas (puntos de interés recomendados)
+  - id (de la propia parada): (Objeto)
+  - id de la ciudad a la que pertenece: (String)
+  - nombre de la parada: (String)
+  - coordenadas: (Array)
+  - descripcion de la parada: (String)
+  - imagen: (Enlace)
+  - horario: (String)
+  - categoria: (String)
+  - enlace: (String)
+  - info: (String)
+  - visitada (booleano referente a si se ha visitado o no)
+
+- RutaPersonalizada (es la ruta que crea el usuario y se personaliza a su gusto para visitar una ciudad)
+  - id (de la propia ruta): (Objeto)
+  - id de la ciudad a la que pertenece: (String)
+  - nombre de la ruta: (String)
+  - id del usuario que la crea: (String)
+  - fecha de creación de la ruta: (String)
+
+- ParadasRuta (son las paradas seleccionadas por el usuario, para formar parte de la ruta)
+  - id (de la propia parada): (Objeto)
+  - id de la parada que el usuario ha seleccionado para formar parte de la ruta y así extraer la información de dicha parada: (String)
+  - orden (el usuario puede dar un valor prioritario a las paradas): (Number)
+  - id de la ruta personalizada de la que forma parte como parada: (String)
+
+- Usuarios (datos que rellena el usuario al registrarse)
+  - id: (Objeto)
+  - name: (String)
+  - lastname: (String)
+  - birthdate: (String)
+  - country: (String)
+  - email: (String)
+  - password: (String)
+
 ## Relación entre componentes
 
 Cada página que visualiza el usuario tiene asociado un archivo bundle, el cual, recoge todas las importaciones y exportaciones de componente que se despliegan en esa página. De esta forma, nos aseguramos que los componentes solo se rendericen cuando son llamados o usado. Para identificar correctamente donde se recogen los componentes, cada archivo bundle tiene la siguiente nomenclatura: bundle-(nombre del archivo html de la página).js
