@@ -37,9 +37,9 @@ export class LitLoginForm extends LitElement {
         <slot></slot>
     <form id="login-form" @submit="${this._onFormSubmit}">
       <h3>Iniciar Sesión</h3>
-      <label>Usuario: <input type="text" id="email" placeholder="email" /></label>
-      <label>Contraseña: <input type="password" id="password" placeholder="contraseña" /></label>
-      <button type="submit" id="loginButton" title="Login">Login</button>
+      <label><input type="text" id="email" placeholder="Correo electrónico" /></label>
+      <label><input type="password" id="password" placeholder="Contraseña" /></label>
+      <button type="submit" id="loginButton" title="Login">Iniciar sesión</button>
       <slot name="error"></slot>
     </form>
     `

@@ -119,6 +119,12 @@ function resetBuscador() {
       searchInput.value = '';
   }
 
+  const componenteCiudades = document.querySelector('ciudades-disponibles-ficha');
+  if (componenteCiudades) {
+      // @ts-ignore
+      componenteCiudades.listaVisible = true; // Muestra la lista
+  }
+
   // Limpiar el componente info-lista-paradas
   const componenteParadas = document.querySelector('info-lista-paradas');
   if (componenteParadas) {

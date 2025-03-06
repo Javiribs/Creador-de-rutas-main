@@ -35,7 +35,7 @@ export class LitInfoListaParadas extends LitElement {
 
         return html`
             <ol id="paradas-interesantes">
-                <button id="crearRuta" @click="${() => inicializarCreacionRuta(this.shadowRoot.querySelector('#crearRuta'), this.paradasSeleccionadas, infoCiudad)}">Crear ruta</button>
+                <button id="crear-ruta" @click="${() => inicializarCreacionRuta(this.shadowRoot.querySelector('#crear-ruta'), this.paradasSeleccionadas, infoCiudad)}">Crear ruta</button>
                 <button class="alternar-seleccion" id="alternar-seleccion" @click="${this._alternarSeleccion}">${this.botonSeleccionarTodosTexto}</button>
                 ${paradas.map(parada => html`
                     <li class="info-lista-paradas">
@@ -53,7 +53,7 @@ export class LitInfoListaParadas extends LitElement {
                         </article>
                     </li>
                 `)}
-                <button id="crearRuta" @click="${() => inicializarCreacionRuta(this.shadowRoot.querySelector('#crearRuta'), this.paradasSeleccionadas, infoCiudad)}">Crear ruta</button>
+                <button id="crear-ruta" @click="${() => inicializarCreacionRuta(this.shadowRoot.querySelector('#crear-ruta'), this.paradasSeleccionadas, infoCiudad)}">Crear ruta</button>
             </ol>
         `;
     }

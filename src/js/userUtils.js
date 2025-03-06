@@ -25,6 +25,8 @@ function onDomContentLoaded() {
 
 
 // EVENTOS
+
+
 /**
  * @param {SubmitEvent} e
  */
@@ -71,6 +73,8 @@ export async function registerUser(e) {
         }
         alert('Registro exitoso. ¡Puedes iniciar sesión!')
         document.getElementById('register-form')?.dispatchEvent(new Event('reset')) // Limpia el formulario
+        //iniciar sesion automaticamente
+        await loginUser(registerEmail, registerPassword);
     } catch (error) {
         console.error('Error al registrar usuario:', error)
         alert('Error al registrar usuario. Por favor, inténtalo de nuevo más tarde.')   
@@ -155,6 +159,33 @@ export async function getAPIData(apiURL, method = 'GET', data) {
     return apiData;
    
   }
+
+/**
+ * Inicia sesión en la aplicación
+ * @param {string} email - Email del usuario
+ * @param {string} password - Contraseña del usuario
+ * @throws {Error} Si no se puede iniciar sesión
+ */
+  export async function loginUser(email, password) {
+    try {
+        const userData = {
+            email: email,
+            password: password,
+        };
+        const payload = JSON.stringify(userData);
+        const response = await getAPIData(`${location.protocol}//${location.hostname}${API_PORT}/api/login`, 'POST', payload);
+        // @ts-ignore
+        if (!response || !response.token) {
+            throw new Error('Error al iniciar sesión');
+        }
+        sessionStorage.setItem('usuario', JSON.stringify(response)); // Almacena el objeto user completo
+        alert('Inicio de sesión exitoso.');
+        window.location.href = 'inicio.html'; // Redirige al usuario
+    } catch (error) {
+        console.error('Error al iniciar sesión:', error);
+        alert('Error al iniciar sesión. Por favor, inténtalo de nuevo.');
+    }
+}
 
 
 //Obtener el value de los inputs del usuario por el ID

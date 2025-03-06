@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="module" src="./js/components/bundle-userUtils.js" defer></script>
+    <script type="module" src="./js/userUtils.js" defer></script>
+    <link rel="stylesheet" href="./css/reset.css" />
+    <link rel="stylesheet" href="./css/app.css" />
+    <title>Registro</title>
+</head>
+<body>
+    <h2>Creador de rutas</h2>
+    <h3>Descubre ciudades en solo un click</h3>
+
+    <form id="register-form">
+        <h3>Registrarse</h3>
+        <input type="text" id="register-name" placeholder="Nombre" required>
+        <input type="text" id="register-lastname" placeholder="Apellidos" required>
+        <label for="register-birthdate">Fecha de nacimiento:</label>
+        <input type="date" id="register-birthdate" required>
+        <input type="text" id="register-country" placeholder="Pais" required>
+        <input type="email" id="register-email" placeholder="Correo electrónico" required>
+        <input type="password" id="register-password" placeholder="Contraseña" required>
+        <button type="submit">Registrarse</button>
+    </form>
+
+    <a href="./index.html" id="volver-iniciar-sesion">¿Ya tienes una cuenta?</a>
+    
+</body>
+</html>

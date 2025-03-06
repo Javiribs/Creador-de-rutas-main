@@ -9,12 +9,14 @@ import LitCiudadesDisponiblesFichaCSS from './CiudadesDisponiblesFicha.css' with
 export class LitCiudadesDisponiblesFicha extends LitElement {
     static styles = [ResetCSS, AppCSS, LitCiudadesDisponiblesFichaCSS];
     static properties = {
-        listaCiudades: { type: Array }
+        listaCiudades: { type: Array },
+        listaVisible: { type: Boolean }
     }
 
     constructor() {
         super();
         this.listaCiudades = [];
+        this.listaVisible = true;
     }
 
     connectedCallback() {
@@ -25,13 +27,13 @@ export class LitCiudadesDisponiblesFicha extends LitElement {
     render() {
         return html`
             <div class="ciudades-disponibles-ficha">
-                <ul>
-                    ${this.listaCiudades.map(ciudad => html`
-                        <li @click="${() => {
-                            this._buscarCiudad(ciudad.name);
-                        }}">${ciudad.name}, ${ciudad.country}</li>
-                    `)}
-                </ul>
+                ${this.listaVisible ? html`
+                    <ul>
+                        ${this.listaCiudades.map(ciudad => html`
+                            <li @click="${() => this._buscarCiudad(ciudad.name)}">${ciudad.name}, ${ciudad.country}</li>
+                        `)}
+                    </ul>
+                ` : ''}
             </div>
         `;
     }
@@ -63,6 +65,7 @@ export class LitCiudadesDisponiblesFicha extends LitElement {
             componenteParadas.setAttribute('ciudadEncontradaInfo', JSON.stringify([ciudadEncontrada]));
         }
         addTitle(ciudadEncontrada);
+        this.listaVisible = false;
     } catch (error) {
         console.error("Error en la búsqueda de ciudades:", error);
         alert("Ocurrió un error durante la búsqueda. Inténtalo de nuevo más tarde.");
