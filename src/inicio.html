@@ -12,7 +12,6 @@
 </head>
 <body class="debug">
   <header>
-    <h1>LOGO</h1>
     <nav>
       <ol>
         <li><button type="reset" id="boton-inicio" class="boton-inicio">Buscador</button></li>
@@ -21,14 +20,14 @@
     </nav>
   </header>
   <main>
-    <form id="searchForm">
-      <fieldset>
-        <label id="searchLabelTitle" class="search-label-title" for="search">Qué ciudad quieres visitar?</label>
-        <input list="ciudades" type="text" id="searchInput" autocomplete="off" />
-        <datalist id="ciudades"></datalist>
-      </fieldset>
-      <button type="button" id="searchButton" title="Buscar">Buscar</button>
-    </form>
+      <form id="searchForm">
+        <fieldset>
+          <label id="searchLabelTitle" class="search-label-title" for="search">Qué ciudad quieres visitar?</label>
+          <input list="ciudades" type="text" id="searchInput" autocomplete="off" />
+          <datalist id="ciudades"></datalist>
+        </fieldset>
+        <button type="button" id="searchButton" title="Buscar">Buscar</button>
+      </form>
     <ciudades-disponibles-ficha></ciudades-disponibles-ficha>
     <h2 class="recomendacion" id="recomendacion"></h2>
     <h1 class="titulo-ciudad" id="tituloCiudad"></h1>
