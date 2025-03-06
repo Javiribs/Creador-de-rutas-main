@@ -103,23 +103,27 @@ async function searchButtonOnClick() {
 
 //funcion para resetear toda la busqueda
 function resetBuscador() {
-    localStorage.removeItem('paradasRecomendadas')
-    const LISTADO = document.getElementsByClassName('paradas-interesantes')[0]
-    if (LISTADO) {
-        LISTADO.innerHTML = '' // Elimina todos los elementos de la lista
-    }
+  localStorage.removeItem('paradasRecomendadas');
+  const LISTADO = document.getElementsByClassName('paradas-interesantes')[0];
+  if (LISTADO) {
+      LISTADO.innerHTML = ''; // Elimina todos los elementos de la lista
+  }
 
-    // 2. Limpiar el título de la ciudad (si lo tienes)
-    const titleList = document.getElementById('tituloCiudad')
-    if (titleList) {
-        titleList.innerText = '' // Restablece el título a su valor inicial o vacío
-    }
+  const titleList = document.getElementById('tituloCiudad');
+  if (titleList) {
+      titleList.innerText = ''; // Restablece el título a su valor inicial o vacío
+  }
 
-    // 3. Limpiar el input de búsqueda (si lo tienes)
-    const searchInput = document.getElementById('searchInput')
-    if (searchInput instanceof HTMLInputElement) {
-        searchInput.value = ''
-    }
+  const searchInput = document.getElementById('searchInput');
+  if (searchInput instanceof HTMLInputElement) {
+      searchInput.value = '';
+  }
+
+  // Limpiar el componente info-lista-paradas
+  const componenteParadas = document.querySelector('info-lista-paradas');
+  if (componenteParadas) {
+      componenteParadas.setAttribute('ciudadEncontradaInfo', JSON.stringify([])); // Limpia los datos
+  }
 }
 
 //funcion propuesta autocompletar inputSearch usuario
@@ -192,25 +196,40 @@ export async function getCiudadesData (apiURL, method = 'GET', data) {
   return ciudadesData
 }
 
-//funcion obtener datos a partir del parametro name de la ciudad
+//funcion para obtener todas las ciudades
+/**
+ * 
+ * @returns {Promise<Ciudad[]>}
+ */
+export async function obtenerCiudades() {
+  try {
+    const ciudades = await getCiudadesData(`${location.protocol}//${location.hostname}${API_PORT}/api/read/ciudades`);
+    return ciudades;
+  } catch (error) {
+    console.error("Error al obtener las ciudades:", error);
+    return [];
+  }
+}
+
+//funcion obtener datos de la ciudad a partir del parametro name de ciudad
 /**
 * Obtiene los datos de la ciudad por nombre.
 * @returns {Promise<Ciudad | null>}
 */
 export async function obtenerCiudadPorNombre() {
-const searchInput = document.getElementById('searchInput');
-const nameBuscado = getInputValue(searchInput)?.toLowerCase();
-const nombreCiudad = nameBuscado.split(' (')[0];
-try {
+  const searchInput = document.getElementById('searchInput');
+  const nameBuscado = getInputValue(searchInput)?.toLowerCase();
+  const nombreCiudad = nameBuscado.split(' (')[0];
+  try {
     const ciudadInfo = await getCiudadesData(`${location.protocol}//${location.hostname}${API_PORT}/api/filter/ciudades/${nombreCiudad}`);
     if (ciudadInfo && ciudadInfo.length > 0) {
         return ciudadInfo[0]; 
     }
     return null; 
-} catch (error) {
+  } catch (error) {
     console.error("Error al obtener la ciudad por nombre:", error);
     return null; 
-}
+  }
 }
 
 //funcion para obtener el value del elemento concreto
@@ -230,7 +249,7 @@ function getInputValue(inputElement) {
 /**
  * @param {Ciudad} ciudadEncontrada
  */
-function addTitle(ciudadEncontrada) {
+export function addTitle(ciudadEncontrada) {
     const recomendacion = document.getElementById('recomendacion')    
     const titleList = document.getElementById('tituloCiudad')
     if (titleList && recomendacion) {

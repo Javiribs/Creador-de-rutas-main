@@ -95,6 +95,7 @@ app.get('/api/check/:nombre', async (req, res) => {
 
 app.get('/api/read/ciudades', requireAuth, async (req, res) => {
   res.json(await db.ciudades.get())
+  console.log('ciudades recibidas:', await db.ciudades.get())
 })
 
 app.get('/api/filter/ciudades/:name', requireAuth, async (req, res) => {
