@@ -11,7 +11,12 @@
         <script type="module" src="./js/components/bundle-ruta.js"></script>
         <script type="module" src="./js/crear-ruta-personalizada.js"></script>
         <script type="module" src="./js/ruta.js"></script>
-        <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB21PeYApWeiOvMbWJKoLB41j554bpR3WU&callback=initMap"></script>
+        <script type="module">
+          import { GOOGLE_MAPS_API_KEY } from './secrets.js';
+          const script = document.createElement('script');
+          script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&callback=initMap`;
+          document.head.appendChild(script);
+        </script>
         <title>Ruta</title>
     </head>
 </head>

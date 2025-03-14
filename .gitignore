@@ -1,3 +1,4 @@
 _hidden
 node_modules
 out
+secrets.js
